@@ -21,6 +21,14 @@ export interface EmergencyContact {
   relationship: string;
 }
 
+export interface DiseaseDetail {
+  conditionName: string;
+  durationYears?: string;
+  medications?: string;
+  severity?: string;
+  notes?: string;
+}
+
 export interface UserProfile {
   id: string;
   fullName: string;
@@ -32,6 +40,7 @@ export interface UserProfile {
   allergies: string[];
   medications: string[];
   medicalConditions: string[];
+  medicalHistoryDetails?: DiseaseDetail[];
   emergencyContacts: EmergencyContact[];
   budgetCeiling: number;
   insuranceProvider?: string;

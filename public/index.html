@@ -928,9 +928,175 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Blood Type & Medical Conditions</label>
-              <input type="text" id="pConditions" class="form-control" placeholder="Blood O+, Penicillin Allergy, Hypertension">
+            <!-- INDIAN HOUSEHOLD MEDICAL HISTORY & CHRONIC CONDITIONS SECTION -->
+            <div class="card" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-sage-deep); padding: 18px; margin-bottom: 20px;">
+              <div style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+                <span>📋 Comprehensive Medical History (Common Household Conditions)</span>
+                <span class="price-tag tier-budget">Mandatory Health Declaration</span>
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+                Please select any pre-existing medical conditions present in your personal/family health history. For every condition selected, specify diagnosis duration, medications, and details.
+              </p>
+
+              <div class="grid-2" style="margin-bottom: 12px;">
+                <div class="form-group">
+                  <label>Blood Group</label>
+                  <select id="pBloodType" class="form-control" required>
+                    <option value="O+">O+ (Positive)</option>
+                    <option value="O-">O- (Negative)</option>
+                    <option value="A+">A+ (Positive)</option>
+                    <option value="A-">A- (Negative)</option>
+                    <option value="B+">B+ (Positive)</option>
+                    <option value="B-">B- (Negative)</option>
+                    <option value="AB+">AB+ (Positive)</option>
+                    <option value="AB-">AB- (Negative)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Known Drug / Food Allergies</label>
+                  <input type="text" id="pAllergies" class="form-control" placeholder="e.g. Penicillin, Sulfa, Dust, Peanuts (or None)">
+                </div>
+              </div>
+
+              <!-- Indian Household Disease Checklist -->
+              <label style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest); display: block; margin-bottom: 8px;">
+                Select Pre-existing Household Diseases & Provide Details:
+              </label>
+
+              <div style="display: flex; flex-direction: column; gap: 10px;" id="indianDiseaseChecklist">
+                <!-- Diabetes -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_diabetes" onchange="toggleDiseaseDetailInput('diabetes')">
+                    🩺 Diabetes Mellitus (Sugar / Type 1 / Type 2 / Gestational)
+                  </label>
+                  <div id="detail_diabetes" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <div class="grid-2">
+                      <input type="text" id="dur_diabetes" class="form-control" style="font-size: 12px;" placeholder="Years diagnosed (e.g. 4 years)">
+                      <input type="text" id="med_diabetes" class="form-control" style="font-size: 12px;" placeholder="Current Medications (e.g. Metformin 500mg, Insulin)">
+                    </div>
+                    <input type="text" id="note_diabetes" class="form-control" style="font-size: 12px; margin-top: 6px;" placeholder="Severity & Doctor Notes (e.g. Fasting Sugar ~140 mg/dL)">
+                  </div>
+                </div>
+
+                <!-- Hypertension -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_hypertension" onchange="toggleDiseaseDetailInput('hypertension')">
+                    🩸 Hypertension / High Blood Pressure (BP)
+                  </label>
+                  <div id="detail_hypertension" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <div class="grid-2">
+                      <input type="text" id="dur_hypertension" class="form-control" style="font-size: 12px;" placeholder="Years diagnosed (e.g. 2 years)">
+                      <input type="text" id="med_hypertension" class="form-control" style="font-size: 12px;" placeholder="Current Medications (e.g. Amlodipine 5mg, Telmisartan)">
+                    </div>
+                    <input type="text" id="note_hypertension" class="form-control" style="font-size: 12px; margin-top: 6px;" placeholder="Average Reading & Notes (e.g. 140/90 mmHg)">
+                  </div>
+                </div>
+
+                <!-- Cardiac Diseases -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_cardiac" onchange="toggleDiseaseDetailInput('cardiac')">
+                    🫀 Coronary Artery / Cardiac Disease / Past Angioplasty / Heart Attack
+                  </label>
+                  <div id="detail_cardiac" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <div class="grid-2">
+                      <input type="text" id="dur_cardiac" class="form-control" style="font-size: 12px;" placeholder="Years diagnosed / Event Year (e.g. Stent in 2022)">
+                      <input type="text" id="med_cardiac" class="form-control" style="font-size: 12px;" placeholder="Medications (e.g. Sorbitrate, Clopidogrel, Atorvastatin)">
+                    </div>
+                    <input type="text" id="note_cardiac" class="form-control" style="font-size: 12px; margin-top: 6px;" placeholder="Cardiologist Notes & Stent/Pacemaker details">
+                  </div>
+                </div>
+
+                <!-- Asthma / Respiratory -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_asthma" onchange="toggleDiseaseDetailInput('asthma')">
+                    🫁 Asthma / Chronic Bronchitis / Respiratory Breathlessness
+                  </label>
+                  <div id="detail_asthma" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <div class="grid-2">
+                      <input type="text" id="dur_asthma" class="form-control" style="font-size: 12px;" placeholder="Duration / Frequency of Attacks">
+                      <input type="text" id="med_asthma" class="form-control" style="font-size: 12px;" placeholder="Inhaler / Medicines (e.g. Asthalin Inhaler, Budecort)">
+                    </div>
+                    <input type="text" id="note_asthma" class="form-control" style="font-size: 12px; margin-top: 6px;" placeholder="Triggers (e.g. Cold weather, Pollution, Dust)">
+                  </div>
+                </div>
+
+                <!-- Thyroid Disorders -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_thyroid" onchange="toggleDiseaseDetailInput('thyroid')">
+                    🦋 Thyroid Disorder (Hypothyroidism / Hyperthyroidism)
+                  </label>
+                  <div id="detail_thyroid" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <div class="grid-2">
+                      <input type="text" id="dur_thyroid" class="form-control" style="font-size: 12px;" placeholder="Duration diagnosed (e.g. 5 years)">
+                      <input type="text" id="med_thyroid" class="form-control" style="font-size: 12px;" placeholder="Daily Dosage (e.g. Thyronorm 50mcg)">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chronic Kidney Disease -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_kidney" onchange="toggleDiseaseDetailInput('kidney')">
+                    🩺 Chronic Kidney Disease (CKD) / Renal Stones / Dialysis
+                  </label>
+                  <div id="detail_kidney" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <div class="grid-2">
+                      <input type="text" id="dur_kidney" class="form-control" style="font-size: 12px;" placeholder="Stage / Years Diagnosed">
+                      <input type="text" id="med_kidney" class="form-control" style="font-size: 12px;" placeholder="Creatinine Level / Dialysis schedule if any">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- High Cholesterol -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_cholesterol" onchange="toggleDiseaseDetailInput('cholesterol')">
+                    🧪 High Cholesterol / Dyslipidemia / High Triglycerides
+                  </label>
+                  <div id="detail_cholesterol" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <input type="text" id="med_cholesterol" class="form-control" style="font-size: 12px;" placeholder="Medications (e.g. Rosuvastatin 10mg, Atorva)">
+                  </div>
+                </div>
+
+                <!-- Gastritis / Acidity / GERD -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_gastritis" onchange="toggleDiseaseDetailInput('gastritis')">
+                    🧪 Gastric Ulcers / Severe Acidity / GERD / Fatty Liver
+                  </label>
+                  <div id="detail_gastritis" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <input type="text" id="med_gastritis" class="form-control" style="font-size: 12px;" placeholder="Medications (e.g. Pantoprazole 40mg, Gelusil)">
+                  </div>
+                </div>
+
+                <!-- Tuberculosis / Pulmonary -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_tb" onchange="toggleDiseaseDetailInput('tb')">
+                    🫁 Tuberculosis (TB) / Past Pulmonary History
+                  </label>
+                  <div id="detail_tb" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <input type="text" id="note_tb" class="form-control" style="font-size: 12px;" placeholder="Treatment Year & Status (e.g. Completed AKT 6-month course in 2021)">
+                  </div>
+                </div>
+
+                <!-- Arthritis / Rheumatic -->
+                <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); border-radius: 10px; padding: 10px 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-dark-forest);">
+                    <input type="checkbox" id="chk_arthritis" onchange="toggleDiseaseDetailInput('arthritis')">
+                    🦴 Arthritis / Osteoarthritis / Rheumatic Joint Pain
+                  </label>
+                  <div id="detail_arthritis" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--color-sage-ash);">
+                    <input type="text" id="med_arthritis" class="form-control" style="font-size: 12px;" placeholder="Affected Joints & Painkillers / Calcium Supplements">
+                  </div>
+                </div>
+              </div>
             </div>
 
             <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Create Patient Account</button>
@@ -1225,12 +1391,24 @@
         </section>
 
         <section class="card">
-          <h2 class="card-title">👤 Patient Profile & Emergency Contacts</h2>
+          <h2 class="card-title">👤 Patient Health Profile & Household Medical History</h2>
           <div style="font-size: 14px; line-height: 1.6;">
             <p id="patientWelcomeText">Logged in as: <strong>Jane Doe</strong> (ID: usr-101)</p>
-            <p style="margin-top: 6px;">Blood Type: <strong>O+</strong> | Medical Conditions: <strong>Hypertension</strong></p>
-            <p>Allergies: <span class="price-tag" style="background:#fee2e2; color:#b91c1c;">Penicillin</span></p>
-            <p style="margin-top: 10px; color: var(--text-muted); font-size: 13px;">Emergency Contact: <strong>John Doe (Spouse) - +1-555-0188</strong></p>
+            <p style="margin-top: 6px;" id="patientBloodTypeEl">Blood Group: <strong>O+</strong></p>
+            <p style="margin-top: 4px;" id="patientAllergiesEl">Allergies: <span class="price-tag" style="background:#fee2e2; color:#b91c1c;">Penicillin</span></p>
+            
+            <div style="margin-top: 12px; padding-top: 10px; border-top: 1.5px solid var(--color-sage-ash);">
+              <div style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 6px;">
+                📋 Pre-existing Household Medical History:
+              </div>
+              <div id="patientMedicalHistoryList" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                <div style="color: var(--text-muted);">None declared during signup.</div>
+              </div>
+            </div>
+
+            <p style="margin-top: 12px; color: var(--text-muted); font-size: 13px;" id="patientEmerContactEl">
+              Emergency Contact: <strong>Primary Contact Registered at Signup (+91-98765-43210)</strong>
+            </p>
           </div>
         </section>
       </div>
@@ -1898,8 +2076,7 @@
           } else {
             state.authRole = 'patient';
             state.currentUser = data.user;
-            const welcomeEl = document.getElementById('patientWelcomeText');
-            if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>${data.user.fullName}</strong> (ID: ${data.user.id})`;
+            renderPatientProfileUI();
             navigateTo('user-dashboard');
           }
           return;
@@ -1930,7 +2107,7 @@
 
       // Patient database lookup
       let registeredUsers = [
-        { id: 'usr-101', fullName: 'Jane Doe', email: 'jane.doe@example.com', phoneNumber: '+1-555-0199', password: 'password123', budgetCeiling: 40000, insuranceProvider: 'BlueCross' }
+        { id: 'usr-101', fullName: 'Jane Doe', email: 'jane.doe@example.com', phoneNumber: '+1-555-0199', password: 'password123', budgetCeiling: 40000, insuranceProvider: 'BlueCross', bloodType: 'O+', allergies: ['Penicillin'], medicalConditions: ['Hypertension'], medicalHistoryDetails: [{ conditionName: 'Hypertension (High BP)', durationYears: '3 years', medications: 'Amlodipine 5mg', notes: '135/85 mmHg baseline' }] }
       ];
 
       try {
@@ -1964,8 +2141,7 @@
       // Successful Client Validation
       state.authRole = 'patient';
       state.currentUser = foundUser;
-      const welcomeEl = document.getElementById('patientWelcomeText');
-      if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>${foundUser.fullName}</strong> (ID: ${foundUser.id})`;
+      renderPatientProfileUI();
       navigateTo('user-dashboard');
     }
 
@@ -2027,6 +2203,14 @@
       document.getElementById('pBudgetRange').value = val;
     }
 
+    function toggleDiseaseDetailInput(diseaseKey) {
+      const chk = document.getElementById(`chk_${diseaseKey}`);
+      const detailBox = document.getElementById(`detail_${diseaseKey}`);
+      if (detailBox) {
+        detailBox.style.display = (chk && chk.checked) ? 'block' : 'none';
+      }
+    }
+
     async function handlePatientSignup(e) {
       e.preventDefault();
       const name = document.getElementById('pName').value.trim();
@@ -2036,6 +2220,54 @@
       const budget = Number(document.getElementById('pBudgetValue').value);
       const insurance = document.getElementById('pInsurance').value;
 
+      const bloodType = document.getElementById('pBloodType') ? document.getElementById('pBloodType').value : 'O+';
+      const allergiesText = document.getElementById('pAllergies') ? document.getElementById('pAllergies').value.trim() : 'None';
+      const allergiesList = allergiesText ? allergiesText.split(',').map(s => s.trim()) : [];
+
+      // Indian Household Medical Conditions Checklist Evaluation
+      const diseases = [
+        { key: 'diabetes', name: 'Diabetes Mellitus' },
+        { key: 'hypertension', name: 'Hypertension (High BP)' },
+        { key: 'cardiac', name: 'Coronary Artery / Heart Disease' },
+        { key: 'asthma', name: 'Asthma / Respiratory Disorder' },
+        { key: 'thyroid', name: 'Thyroid Disorder' },
+        { key: 'kidney', name: 'Chronic Kidney Disease' },
+        { key: 'cholesterol', name: 'High Cholesterol / Dyslipidemia' },
+        { key: 'gastritis', name: 'Gastritis / Severe Acidity / GERD' },
+        { key: 'tb', name: 'Tuberculosis (TB) History' },
+        { key: 'arthritis', name: 'Arthritis / Joint Rheumatic Disease' }
+      ];
+
+      const medicalHistoryDetails = [];
+      const medicalConditionsList = [];
+
+      for (const d of diseases) {
+        const chk = document.getElementById(`chk_${d.key}`);
+        if (chk && chk.checked) {
+          const durEl = document.getElementById(`dur_${d.key}`);
+          const medEl = document.getElementById(`med_${d.key}`);
+          const noteEl = document.getElementById(`note_${d.key}`);
+
+          const duration = durEl ? durEl.value.trim() : '';
+          const medications = medEl ? medEl.value.trim() : '';
+          const notes = noteEl ? noteEl.value.trim() : '';
+
+          if (!duration && !medications && !notes) {
+            alert(`⚠️ Please provide details (duration, medications, or notes) for checked condition: ${d.name}`);
+            if (durEl) durEl.focus();
+            return;
+          }
+
+          medicalConditionsList.push(d.name);
+          medicalHistoryDetails.push({
+            conditionName: d.name,
+            durationYears: duration,
+            medications: medications,
+            notes: notes
+          });
+        }
+      }
+
       const payload = {
         id: `usr-${Date.now()}`,
         fullName: name,
@@ -2043,7 +2275,11 @@
         phoneNumber: phone,
         password: password,
         budgetCeiling: budget,
-        insuranceProvider: insurance
+        insuranceProvider: insurance,
+        bloodType: bloodType,
+        allergies: allergiesList,
+        medicalConditions: medicalConditionsList,
+        medicalHistoryDetails: medicalHistoryDetails
       };
 
       try {
@@ -2068,10 +2304,52 @@
 
       state.currentUser = payload;
       state.authRole = 'patient';
-      const welcomeEl = document.getElementById('patientWelcomeText');
-      if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>${name}</strong> (ID: ${payload.id})`;
-      alert(`Account successfully created for ${name}! Proceeding to your patient portal dashboard.`);
+      renderPatientProfileUI();
+      alert(`Account successfully created for ${name}!\n\nYour Medical History (${medicalHistoryDetails.length} household condition(s) declared) has been saved.`);
       navigateTo('user-dashboard');
+    }
+
+    function renderPatientProfileUI() {
+      const user = state.currentUser || {};
+      const welcomeEl = document.getElementById('patientWelcomeText');
+      if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>${user.fullName || 'Jane Doe'}</strong> (ID: ${user.id || 'usr-101'})`;
+
+      const bloodEl = document.getElementById('patientBloodTypeEl');
+      if (bloodEl) bloodEl.innerHTML = `Blood Group: <strong>${user.bloodType || 'O+'}</strong>`;
+
+      const allergiesEl = document.getElementById('patientAllergiesEl');
+      if (allergiesEl) {
+        const list = Array.isArray(user.allergies) ? user.allergies : (user.allergies ? [user.allergies] : ['None']);
+        allergiesEl.innerHTML = `Allergies: ${list.map(a => `<span class="price-tag" style="background:#fee2e2; color:#b91c1c;">${a}</span>`).join(' ')}`;
+      }
+
+      const listEl = document.getElementById('patientMedicalHistoryList');
+      if (listEl) {
+        const history = user.medicalHistoryDetails || [];
+        if (history.length === 0 && (!user.medicalConditions || user.medicalConditions.length === 0)) {
+          listEl.innerHTML = `<div style="color: var(--text-muted);">None declared during signup. Baseline health active.</div>`;
+        } else if (history.length > 0) {
+          listEl.innerHTML = history.map(item => `
+            <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); padding: 8px 10px; border-radius: 8px; font-size: 12px;">
+              <strong style="color: var(--color-dark-forest);">🩺 ${item.conditionName}</strong>
+              ${item.durationYears ? `<span style="color: var(--text-muted); font-size: 11px;"> • Diagnosed: ${item.durationYears}</span>` : ''}
+              ${item.medications ? `<div style="color: #1b5e20; margin-top: 2px;">💊 Meds: <strong>${item.medications}</strong></div>` : ''}
+              ${item.notes ? `<div style="color: var(--text-muted); font-size: 11px; margin-top: 2px;">📝 Details: ${item.notes}</div>` : ''}
+            </div>
+          `).join('');
+        } else {
+          listEl.innerHTML = user.medicalConditions.map(c => `
+            <div style="background: #ffffff; border: 1px solid var(--color-sage-ash); padding: 6px 10px; border-radius: 8px; color: var(--color-dark-forest);">
+              <strong>🩺 ${c}</strong>
+            </div>
+          `).join('');
+        }
+      }
+
+      const emerContactEl = document.getElementById('patientEmerContactEl');
+      if (emerContactEl) {
+        emerContactEl.innerHTML = `Emergency Contact: <strong>Primary Contact (${user.phoneNumber || '+91-98765-43210'})</strong>`;
+      }
     }
 
     async function handleHospitalSignup(event) {
