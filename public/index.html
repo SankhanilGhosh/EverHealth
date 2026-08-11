@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EverHealth | Smart Dispatch & Hospital Allocation</title>
+  <link rel="icon" type="image/png" href="./everhealth-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================================
+       EARTHY SAGE & WARM CREAM DESIGN SYSTEM (CAREPLUS STRUCTURE)
+       Palette Tokens:
+       - Deep Sage Green: #769382
+       - Warm Beige Cream: #EAE3D2
+       - Soft Sage Ash: #C0C3B9
+       - Warm Ivory White: #F3EFE3
+       ======================================================== */
+    :root {
+      --color-sage-deep: #769382;
+      --color-sage-deep-hover: #5d7868;
+      --color-cream-warm: #EAE3D2;
+      --color-cream-dark: #ded5c2;
+      --color-sage-ash: #C0C3B9;
+      --color-sage-ash-hover: #aab0a2;
+      --color-ivory-light: #F3EFE3;
+      --color-dark-forest: #1f2b24;
+
+      --bg-dark: #F3EFE3;
+      --card-bg: #FFFFFF;
+      --card-border: #C0C3B9;
+      --primary: #769382;
+      --primary-hover: #5d7868;
+      --accent: #2c3e35;
+      --accent-hover: #1f2b24;
+      --success: #2e7d32;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --text-main: #1f2b24;
+      --text-muted: #526359;
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-main);
+    }
+
+    /* Header Navigation Bar - CarePlus Rounded Pill Design */
+    .navbar {
+      background-color: var(--color-sage-deep);
+      border-bottom: 2px solid #5d7868;
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(31, 43, 36, 0.12);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .brand-icon {
+      font-size: 22px;
+      background: var(--color-cream-warm);
+      color: var(--color-dark-forest);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      border: 1px solid var(--color-sage-ash);
+    }
+    .brand-logo-img {
+      height: 46px;
+      width: auto;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 3px 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      border: 1px solid var(--color-sage-ash);
+      object-fit: contain;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--color-cream-warm);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--color-ivory-light);
+      padding: 8px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn:hover {
+      color: #fff;
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+    .nav-btn.active {
+      color: var(--color-dark-forest);
+      background: var(--color-cream-warm);
+      border-color: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+    .role-badge {
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-patient { background: var(--color-cream-warm); color: var(--color-dark-forest); border: 1px solid var(--color-sage-ash); }
+    .badge-hospital { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
+
+    /* Main Container */
+    .content-area {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px;
+      flex: 1;
+    }
+
+    /* Views visibility */
+    .view-page {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .view-page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero Banner Section - Inspired by CarePlus Medical Structure */
+    .hero-banner-card {
+      background: linear-gradient(135deg, rgba(234, 227, 210, 0.7), rgba(243, 239, 227, 0.9)), url('/images/hero.png');
+      background-size: cover;
+      background-position: center right;
+      border-radius: 28px;
+      padding: 40px;
+      margin-bottom: 32px;
+      border: 2px solid var(--color-sage-ash);
+      box-shadow: 0 15px 35px rgba(118, 147, 130, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-content {
+      max-width: 620px;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-title {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--color-dark-forest);
+      margin-bottom: 12px;
+      letter-spacing: -0.8px;
+    }
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    /* Floating Glassmorphic Control Bar Overlay */
+    .hero-glass-bar {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      border: 2px solid var(--color-sage-ash);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(31, 43, 36, 0.1);
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+    @media (max-width: 960px) {
+      .hero-glass-bar { grid-template-columns: 1fr; }
+    }
+
+    /* Department Cards Section - CarePlus 3-Column Icons */
+    .section-title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--color-dark-forest);
+      margin-bottom: 24px;
+    }
+    .departments-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 800px) { .departments-grid { grid-template-columns: 1fr; } }
+
+    .department-card {
+      background: #FFFFFF;
+      border: 2px solid var(--color-sage-ash);
+      border-radius: 24px;
+      padding: 28px 20px;
+      text-align: center;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(118, 147, 130, 0.08);
+    }
+    .department-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-sage-deep);
+      box-shadow: 0 12px 30px rgba(118, 147, 130, 0.2);
+      background: var(--color-ivory-light);
+    }
+    .department-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .department-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--color-dark-forest);
+    }
+
+    /* Featured Services Section - CarePlus Image Cards */
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 800px) { .featured-grid { grid-template-columns: 1fr; } }
+
+    .featured-card {
+      background: #FFFFFF;
+      border: 2px solid var(--color-sage-ash);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(118, 147, 130, 0.1);
+      transition: transform 0.2s ease;
+    }
+    .featured-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--color-sage-deep);
+    }
+    .featured-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .featured-body {
+      padding: 20px;
+    }
+    .featured-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--color-dark-forest);
+      margin-bottom: 6px;
+    }
+    .featured-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Shared Card Components */
+    .card {
+      background-color: var(--card-bg);
+      border: 2px solid var(--color-sage-ash);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(118, 147, 130, 0.1);
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1.5px solid var(--color-sage-ash);
+      background-color: var(--color-ivory-light);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--color-sage-deep);
+      background-color: #FFFFFF;
+      box-shadow: 0 0 8px rgba(118, 147, 130, 0.3);
+    }
+    select.form-control { cursor: pointer; }
+
+    /* Buttons - CarePlus Pill Buttons */
+    .btn {
+      background: linear-gradient(135deg, var(--color-sage-deep), var(--primary-hover));
+      color: #FFFFFF;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(118, 147, 130, 0.25);
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, var(--primary-hover), #455a4f);
+      box-shadow: 0 6px 16px rgba(118, 147, 130, 0.35);
+    }
+    .btn-secondary {
+      background: var(--color-cream-warm);
+      border: 1px solid var(--color-sage-ash);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: var(--color-sage-ash);
+    }
+    .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
+    .btn-success { background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; }
+
+    /* Auth Pages Styling */
+    .auth-container {
+      max-width: 480px;
+      margin: 40px auto;
+    }
+    .auth-card {
+      background: #FFFFFF;
+      border: 2px solid var(--color-sage-deep);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 15px 35px rgba(118, 147, 130, 0.2);
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .auth-header h2 {
+      font-size: 24px;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .auth-header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .role-selector {
+      display: flex;
+      background: var(--color-ivory-light);
+      padding: 4px;
+      border-radius: 30px;
+      margin-bottom: 24px;
+      border: 1px solid var(--color-sage-ash);
+    }
+    .role-option {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .role-option.active {
+      background: var(--color-sage-deep);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(118, 147, 130, 0.3);
+    }
+
+    .demo-login-box {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--color-sage-ash);
+    }
+    .demo-login-box p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+    .demo-btn {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      background: var(--color-ivory-light);
+      border: 1px solid var(--color-sage-ash);
+      border-radius: 12px;
+      color: var(--color-dark-forest);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .demo-btn:hover {
+      background: var(--color-cream-warm);
+      border-color: var(--color-sage-deep);
+    }
+
+    /* Modal Overlay for Hospital Verification */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(31, 43, 36, 0.7);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: #FFFFFF;
+      border: 3px solid var(--color-sage-deep);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      animation: modalSlide 0.3s ease-out;
+    }
+    @keyframes modalSlide {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Hospital Recommendation Cards */
+    .hospital-card {
+      background-color: var(--color-ivory-light);
+      border: 1.5px solid var(--color-sage-ash);
+      border-radius: 20px;
+      padding: 20px;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    .hospital-card:hover {
+      border-color: var(--color-sage-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(118, 147, 130, 0.2);
+    }
+    .hospital-card.preferred {
+      border: 2px solid var(--color-sage-deep);
+      background: #FFFFFF;
+      box-shadow: 0 4px 15px rgba(118, 147, 130, 0.25);
+    }
+    .rank-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--color-sage-deep);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .price-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .tier-budget { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
+    .tier-standard { background: var(--color-cream-warm); color: var(--color-dark-forest); border: 1px solid var(--color-sage-ash); }
+    .tier-premium { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .tag-item {
+      background: var(--color-cream-warm);
+      color: var(--color-dark-forest);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid var(--color-sage-ash);
+    }
+
+    /* Hospital Inventory Counters */
+    .inv-control-row {
+      background-color: var(--color-ivory-light);
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--color-sage-ash);
+      margin-bottom: 10px;
+    }
+    .inv-counter-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .counter-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--color-sage-ash);
+      border: 1px solid var(--color-sage-deep);
+      color: var(--color-dark-forest);
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .counter-btn:hover { background: var(--color-cream-warm); }
+    .counter-val {
+      width: 36px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--color-dark-forest);
+    }
+
+    /* Services Tag Manager */
+    .services-tag-manager {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .service-chip {
+      background: var(--color-ivory-light);
+      border: 1px solid var(--color-sage-ash);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .service-chip.active {
+      background: var(--color-sage-deep);
+      border-color: var(--color-sage-deep);
+      color: #FFFFFF;
+    }
+    .service-chip:hover {
+      border-color: var(--color-sage-deep);
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th {
+      padding: 12px 14px;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--color-sage-ash);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--color-ivory-light);
+    }
+    td {
+      padding: 14px;
+      border-bottom: 1px solid var(--color-sage-ash);
+      font-size: 14px;
+    }
+
+    /* Alert Banner */
+    .emergency-banner {
+      background: linear-gradient(135deg, #7f1d1d, #991b1b);
+      border: 2px solid #ef4444;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.3);
+      display: none;
+      animation: pulseAlert 2s infinite ease-in-out;
+    }
+    @keyframes pulseAlert {
+      0% { box-shadow: 0 0 15px rgba(220, 38, 38, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(220, 38, 38, 0.6); }
+      100% { box-shadow: 0 0 15px rgba(220, 38, 38, 0.3); }
+    }
+
+    /* Department Pages & Navigation Tabs */
+    .dept-tab-btn {
+      background: var(--color-cream-warm);
+      border: 1.5px solid var(--color-sage-ash);
+      color: var(--color-dark-forest);
+      padding: 9px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dept-tab-btn:hover {
+      background: var(--color-sage-ash);
+    }
+    .dept-tab-btn.active {
+      background: var(--color-sage-deep);
+      color: #FFFFFF;
+      border-color: var(--color-sage-deep);
+      box-shadow: 0 4px 14px rgba(118, 147, 130, 0.3);
+    }
+
+    .dept-header-card {
+      background: linear-gradient(135deg, rgba(234, 227, 210, 0.9), rgba(243, 239, 227, 0.95));
+      border: 2px solid var(--color-sage-deep);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(118, 147, 130, 0.15);
+    }
+    .dept-title-box {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .dept-icon-large {
+      font-size: 48px;
+      background: #FFFFFF;
+      width: 76px;
+      height: 76px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border: 2px solid var(--color-sage-ash);
+      flex-shrink: 0;
+    }
+    .dept-badge-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .dept-badge {
+      background: #FFFFFF;
+      border: 1.5px solid var(--color-sage-deep);
+      color: var(--color-dark-forest);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Modal Overlay & Modal Window */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(31, 43, 36, 0.65);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .modal-card {
+      background: #FFFFFF;
+      border: 2px solid var(--color-sage-deep);
+      border-radius: 28px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header - CarePlus Pill Structure -->
+  <header class="navbar">
+    <div class="brand" onclick="navigateTo('login')">
+      <img src="./everhealth-logo.png" alt="EverHealth Logo" class="brand-logo-img">
+      <div>
+        <div class="brand-title">EverHealth</div>
+        <div class="brand-sub">Smart Dispatch & Hospital Allocation</div>
+      </div>
+    </div>
+
+    <!-- Navigation Bar Links -->
+    <div class="nav-links">
+      <button id="navLogin" class="nav-btn active" onclick="navigateTo('login')">🔑 Login</button>
+      <button id="navSignup" class="nav-btn" onclick="navigateTo('signup')">📝 Signup</button>
+      
+      <!-- Active Mode Badge & Logout Button -->
+      <span id="roleBadgeDisplay" class="role-badge badge-patient" style="display:none;">Patient Mode</span>
+      <button id="navLogout" class="nav-btn btn-secondary" style="display:none;" onclick="handleLogout()">🚪 Logout</button>
+    </div>
+  </header>
+
+  <main class="content-area">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: LOGIN PAGE                          -->
+    <!-- ========================================== -->
+    <div id="view-login" class="view-page active">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header" style="text-align: center;">
+            <img src="./everhealth-logo.png" alt="EverHealth Logo" style="height: 70px; width: auto; background: #ffffff; padding: 6px 16px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid var(--color-sage-ash); margin-bottom: 12px;">
+            <h2>Welcome Back</h2>
+            <p>Sign in to access your EverHealth emergency portal</p>
+          </div>
+
+          <div class="role-selector">
+            <div id="loginRolePatient" class="role-option active" onclick="setLoginRole('patient')">👤 Patient Login</div>
+            <div id="loginRoleHospital" class="role-option" onclick="setLoginRole('hospital')">🏥 Hospital Login</div>
+          </div>
+
+          <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+            <div class="form-group">
+              <label id="loginIdLabel">Patient Email / Phone</label>
+              <input type="text" id="loginId" class="form-control" placeholder="jane.doe@example.com" required value="jane.doe@example.com">
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="form-control" placeholder="••••••••" required value="password123">
+            </div>
+            <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Sign In to Portal</button>
+          </form>
+
+          <div class="demo-login-box">
+            <p>⚡ Quick Demo Auto-Login</p>
+            <button type="button" class="demo-btn" onclick="quickLogin('patient', 'usr-101')">
+              <span>👤 Patient Quick Login: <strong>Jane Doe</strong> (Budget ₹40,000)</span>
+              <span>→</span>
+            </button>
+            <button type="button" class="demo-btn" onclick="quickLogin('hospital', 'hosp-001')">
+              <span>🏥 Hospital Quick Login: <strong>St. Jude Trauma Center</strong></span>
+              <span>→</span>
+            </button>
+            <button type="button" class="demo-btn" onclick="quickLogin('hospital', 'hosp-002')">
+              <span>🏥 Hospital Quick Login: <strong>Mercy Regional Emergency</strong></span>
+              <span>→</span>
+            </button>
+          </div>
+
+          <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+            Don't have an account yet? <a href="javascript:void(0)" onclick="navigateTo('signup')" style="color: var(--primary); text-decoration: none; font-weight: 700;">Sign up here</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: SIGNUP PAGE                         -->
+    <!-- ========================================== -->
+    <div id="view-signup" class="view-page">
+      <div class="auth-container" style="max-width: 580px;">
+        <div class="auth-card">
+          <div class="auth-header" style="text-align: center;">
+            <img src="./everhealth-logo.png" alt="EverHealth Logo" style="height: 60px; width: auto; background: #ffffff; padding: 5px 14px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid var(--color-sage-ash); margin-bottom: 10px;">
+            <h2>Create New Account</h2>
+            <p>Register for EverHealth as a Patient or Hospital Facility</p>
+          </div>
+
+          <div class="role-selector">
+            <div id="signupRolePatient" class="role-option active" onclick="setSignupRole('patient')">👤 Register Patient</div>
+            <div id="signupRoleHospital" class="role-option" onclick="setSignupRole('hospital')">🏥 Register Hospital</div>
+          </div>
+
+          <!-- Patient Registration Form -->
+          <form id="signupPatientForm" onsubmit="handlePatientSignup(event)">
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="pName" class="form-control" placeholder="Alex Morgan" required>
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="pEmail" class="form-control" placeholder="alex@example.com" required>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="pPhone" class="form-control" placeholder="+91 98765 43210" required>
+              </div>
+              <div class="form-group">
+                <label>Insurance Provider</label>
+                <select id="pInsurance" class="form-control">
+                  <option value="BlueCross">BlueCross BlueShield</option>
+                  <option value="UnitedHealth">UnitedHealth Group</option>
+                  <option value="Kaiser">Kaiser Permanente</option>
+                  <option value="Aetna">Aetna Care</option>
+                  <option value="None">Self-Pay / None</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Patient Hospital Budget in Rupees -->
+            <div class="card" style="background: var(--color-ivory-light); border-color: var(--color-sage-deep); padding: 16px; margin-bottom: 16px;">
+              <label style="color: var(--color-dark-forest); font-size: 14px; font-weight: 700; display: block; margin-bottom: 6px;">
+                💰 Maximum Hospital Budget Ceiling (₹ Rupees)
+              </label>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+                The platform will automatically suggest and filter hospitals according to your budget limit.
+              </p>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" id="pBudgetRange" min="5000" max="150000" step="2500" value="40000" class="form-control" style="flex: 1;" oninput="updateSignupBudgetText(this.value)">
+                <div style="display: flex; align-items: center;">
+                  <span style="color: var(--color-dark-forest); font-weight: bold; font-size: 18px; margin-right: 4px;">₹</span>
+                  <input type="number" id="pBudgetValue" value="40000" class="form-control" style="width: 110px; text-align: center; font-weight: bold;" oninput="updateSignupBudgetRange(this.value)">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Blood Type & Medical Conditions</label>
+              <input type="text" id="pConditions" class="form-control" placeholder="Blood O+, Penicillin Allergy, Hypertension">
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Create Patient Account</button>
+          </form>
+
+          <!-- Hospital Registration Form -->
+          <form id="signupHospitalForm" onsubmit="handleHospitalSignup(event)" style="display: none;">
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Hospital / Facility Name</label>
+                <input type="text" id="hName" class="form-control" placeholder="Apollo Hospital Center" required>
+              </div>
+              <div class="form-group">
+                <label>License ID</label>
+                <input type="text" id="hLicense" class="form-control" placeholder="LIC-CA-94812" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Street Address</label>
+              <input type="text" id="hAddress" class="form-control" placeholder="500 Medical Drive, MG Road, India" required>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Hospital Pricing Tier (₹ Rupees)</label>
+                <select id="hPricingTier" class="form-control">
+                  <option value="1">Tier 1: Budget (~₹15,000 per incident)</option>
+                  <option value="2" selected>Tier 2: Standard (~₹35,000 per incident)</option>
+                  <option value="3">Tier 3: Premium (~₹60,000 per incident)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Total Ambulance Fleet</label>
+                <input type="number" id="hFleet" class="form-control" value="4" min="1" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Medical Services Offered</label>
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Select all specialized care departments available:</div>
+              <div class="services-tag-manager" id="signupServicesTagBox">
+                <span class="service-chip active" onclick="toggleChip(this, 'cardiac')">✓ Cardiac Care</span>
+                <span class="service-chip active" onclick="toggleChip(this, 'trauma')">✓ Trauma Center</span>
+                <span class="service-chip active" onclick="toggleChip(this, 'icu')">✓ Intensive Care (ICU)</span>
+                <span class="service-chip" onclick="toggleChip(this, 'pediatric')">+ Pediatric Unit</span>
+                <span class="service-chip" onclick="toggleChip(this, 'orthopedic')">+ Orthopedics</span>
+                <span class="service-chip" onclick="toggleChip(this, 'neurology')">+ Neurology</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 8px;">Register Hospital Facility & Proceed to Verification</button>
+          </form>
+
+          <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+            Already have an account? <a href="javascript:void(0)" onclick="navigateTo('login')" style="color: var(--primary); text-decoration: none; font-weight: 700;">Log in here</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: PATIENT / USER DASHBOARD            -->
+    <!-- ========================================== -->
+    <div id="view-user-dashboard" class="view-page">
+
+      <!-- CAREPLUS STRUCTURE: HERO BANNER SECTION -->
+      <section class="hero-banner-card">
+        <div class="hero-content">
+          <h1 class="hero-title">Your Health, Our Priority</h1>
+          <p class="hero-subtitle">Compassionate emergency dispatch and instant hospital matching for you and your family.</p>
+        </div>
+
+        <!-- CAREPLUS STRUCTURE: FLOATING GLASSMORPHIC CONTROL BAR OVERLAY -->
+        <div class="hero-glass-bar">
+          <div>
+            <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+              Max Hospital Budget Ceiling (₹)
+            </label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="range" id="dashBudgetRange" min="5000" max="150000" step="2500" value="40000" class="form-control" style="flex: 1;" oninput="syncUserBudget(this.value)">
+              <span style="font-weight: 800; font-size: 16px; color: var(--color-dark-forest); white-space: nowrap;">₹<span id="dashBuddisplay">40,000</span></span>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+              Insurance Provider
+            </label>
+            <select id="dashInsurance" class="form-control" onchange="updateUserInsurance(this.value)">
+              <option value="BlueCross">BlueCross BlueShield</option>
+              <option value="UnitedHealth">UnitedHealth Group</option>
+              <option value="Kaiser">Kaiser Permanente</option>
+              <option value="Aetna">Aetna Care</option>
+              <option value="None">Self-Pay / None</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+              Emergency Severity
+            </label>
+            <select id="dashSeverity" class="form-control" onchange="fetchHospitalMatches()">
+              <option value="SEVERE">SEVERE (Enforce Budget)</option>
+              <option value="LIFE_THREATENING">LIFE_THREATENING (Bypass Override)</option>
+              <option value="MODERATE">MODERATE</option>
+            </select>
+          </div>
+
+          <button type="button" id="btnRequeryMatches" class="btn" style="white-space: nowrap;" onclick="requeryHospitalMatches()">🔍 Search & Rank Now</button>
+        </div>
+      </section>
+
+      <!-- CAREPLUS STRUCTURE: OUR DEPARTMENTS & CARE UNITS GRID -->
+      <h2 class="section-title">Our Departments & Care Units</h2>
+      <div class="departments-grid">
+        <div class="department-card" onclick="openDepartmentPage('emergency')">
+          <span class="department-icon">🚑</span>
+          <div class="department-name">Emergency Care & ICU</div>
+          <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
+        </div>
+        <div class="department-card" onclick="openDepartmentPage('pediatric')">
+          <span class="department-icon">🧸</span>
+          <div class="department-name">Pediatric Department</div>
+          <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
+        </div>
+        <div class="department-card" onclick="openDepartmentPage('cardiology')">
+          <span class="department-icon">❤️</span>
+          <div class="department-name">Cardiology & Cardiac Unit</div>
+          <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
+        </div>
+      </div>
+
+      <!-- CAREPLUS STRUCTURE: FEATURED SERVICES SECTION -->
+      <h2 class="section-title">Featured Services</h2>
+      <div class="featured-grid">
+        <div class="featured-card">
+          <img src="/images/diagnostics.png" alt="Advanced Diagnostics" class="featured-img" />
+          <div class="featured-body">
+            <h3 class="featured-title">Advanced Diagnostics & Continuous Vitals</h3>
+            <p class="featured-desc">Real-time wearable bio-monitors continuously stream SpO2, heart rate, and fall detection metrics directly to response centers.</p>
+          </div>
+        </div>
+        <div class="featured-card">
+          <img src="/images/surgeries.png" alt="Specialized Surgeries" class="featured-img" />
+          <div class="featured-body">
+            <h3 class="featured-title">Specialized Emergency Surgeries</h3>
+            <p class="featured-desc">Instant bed availability matching for trauma operating rooms, intensive care units, and critical cardiac care wards.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live False Alarm Countdown Emergency Banner -->
+      <div id="patientAlertBanner" class="emergency-banner">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="background: #dc2626; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;" id="pAlertTitle">🚨 VITAL ANOMALY TRIGGERED (LIFE_THREATENING)</span>
+          <span style="color: #ffffff; font-weight: bold; font-size: 18px; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 6px; border: 1px solid #ef4444;" id="pAlertCountdown">Auto-Dispatch SLA: 30s</span>
+        </div>
+        <div style="font-size: 15px; color: #fff; margin-bottom: 16px;" id="pAlertDetail">
+          Critical SpO2 drop detected (86%). Auto-executing hospital matching cascade...
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn btn-danger" style="background: linear-gradient(135deg, #dc2626, #991b1b); border: 1px solid #fca5a5; flex: 1; padding: 12px; font-weight: bold;" onclick="cancelEmergencyAlert()">✕ Cancel False Alert (Stop Dispatch)</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Patient Wearable Simulator Card -->
+        <section class="card">
+          <h2 class="card-title">⌚ Live Wearable Vitals Streamer</h2>
+          <form onsubmit="handleUserVitalsStream(event)">
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Heart Rate (BPM)</label>
+                <input type="number" id="userHr" value="168" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label>SpO2 Saturation (%)</label>
+                <input type="number" id="userSpo2" value="86" step="0.1" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Fall Sensor Status</label>
+              <select id="userFall" class="form-control">
+                <option value="false">No Fall Detected</option>
+                <option value="true">Hard Impact / Fall Detected</option>
+              </select>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <button type="submit" class="btn btn-danger" style="width: 100%;">📡 Stream Vitals & Test Anomaly Detection</button>
+              <button type="button" class="btn btn-secondary" style="width: 100%; font-size: 13px;" onclick="triggerTestEmergencyAnomaly()">⚡ Direct Test Anomaly Trigger (Start 30s False Alarm Countdown)</button>
+            </div>
+          </form>
+          <div id="userVitalsOutput" style="margin-top: 12px; font-size: 13px;"></div>
+        </section>
+
+        <section class="card">
+          <h2 class="card-title">👤 Patient Profile & Emergency Contacts</h2>
+          <div style="font-size: 14px; line-height: 1.6;">
+            <p id="patientWelcomeText">Logged in as: <strong>Jane Doe</strong> (ID: usr-101)</p>
+            <p style="margin-top: 6px;">Blood Type: <strong>O+</strong> | Medical Conditions: <strong>Hypertension</strong></p>
+            <p>Allergies: <span class="price-tag" style="background:#fee2e2; color:#b91c1c;">Penicillin</span></p>
+            <p style="margin-top: 10px; color: var(--text-muted); font-size: 13px;">Emergency Contact: <strong>John Doe (Spouse) - +1-555-0188</strong></p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Suggested Hospital Matching Grid -->
+      <section class="card">
+        <h2 class="card-title">
+          <span>🏥 Budget-Aware Recommended Hospitals (Prices in ₹)</span>
+          <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);" id="matchCountText">Finding nearby facilities...</span>
+        </h2>
+
+        <div class="grid-3" id="hospitalMatchesGrid">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </section>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: DEDICATED DEPARTMENT SELECTION PAGE-->
+    <!-- ========================================== -->
+    <div id="view-dept-page" class="view-page">
+      <!-- Breadcrumb & Department Switcher Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+        <button class="btn btn-secondary" onclick="navigateTo('user-dashboard')">
+          ← Back to Main Dashboard
+        </button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="dept-tab-btn" id="tabDept-emergency" onclick="openDepartmentPage('emergency')">🚑 Emergency & ICU</button>
+          <button class="dept-tab-btn" id="tabDept-pediatric" onclick="openDepartmentPage('pediatric')">🧸 Pediatric Department</button>
+          <button class="dept-tab-btn" id="tabDept-cardiology" onclick="openDepartmentPage('cardiology')">❤️ Cardiology Unit</button>
+        </div>
+      </div>
+
+      <!-- Department Dynamic Header Card -->
+      <section class="dept-header-card">
+        <div class="dept-title-box">
+          <div class="dept-icon-large" id="deptHeaderIcon">🧸</div>
+          <div>
+            <h1 style="font-size: 28px; color: var(--color-dark-forest); margin-bottom: 4px;" id="deptHeaderTitle">Pediatric Department</h1>
+            <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5;" id="deptHeaderDesc">
+              Dedicated child emergency response, pediatric intensive care units (PICU), neonatal incubators, and 24/7 pediatric specialists.
+            </p>
+          </div>
+        </div>
+        <div class="dept-badge-list" id="deptBadgeList">
+          <!-- Dynamically populated tags -->
+        </div>
+      </section>
+
+      <!-- Department Hospital Selection & Ranking Grid -->
+      <section class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+          <div>
+            <h2 style="font-size: 20px; color: var(--color-dark-forest);" id="deptHospitalSectionTitle">🏥 Hospitals with Pediatric Care Units</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;" id="deptMatchCountText">
+              Filtering nearby accredited facilities...
+            </p>
+          </div>
+
+          <!-- Quick Department Controls -->
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px;">Max Budget (₹)</label>
+              <select id="deptBudgetFilter" class="form-control" style="padding: 6px 12px; font-size: 13px;" onchange="changeDeptBudget(this.value)">
+                <option value="20000">₹20,000 (Tier 1 Budget)</option>
+                <option value="40000" selected>₹40,000 (Tier 2 Standard)</option>
+                <option value="75000">₹75,000 (Tier 3 Premium)</option>
+                <option value="150000">₹150,000 (Unlimited)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px;">Severity Mode</label>
+              <select id="deptSeverityFilter" class="form-control" style="padding: 6px 12px; font-size: 13px;" onchange="renderCurrentDeptMatches()">
+                <option value="SEVERE">SEVERE (Enforce Budget)</option>
+                <option value="LIFE_THREATENING">LIFE_THREATENING (Bypass Override)</option>
+                <option value="MODERATE">MODERATE</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3" id="deptHospitalGrid">
+          <!-- Dynamically Populated Hospital Cards -->
+        </div>
+      </section>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 6: DEDICATED HOSPITAL PROFILE & BOOKING PAGE -->
+    <!-- ========================================== -->
+    <div id="view-hospital-profile" class="view-page">
+      <!-- Back Navigation Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+        <button class="btn btn-secondary" onclick="goBackFromHospitalProfile()">
+          ← Back to Selection
+        </button>
+        <span class="role-badge badge-hospital" id="hpVerifiedBadge">
+          ✓ Verified & Accredited State Emergency Facility
+        </span>
+      </div>
+
+      <!-- Hospital Profile Banner Card -->
+      <section class="card" style="background: linear-gradient(135deg, #FFFFFF, var(--color-ivory-light)); border: 2px solid var(--color-sage-deep);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
+              <div style="font-size: 40px; background: var(--color-cream-warm); width: 68px; height: 68px; border-radius: 20px; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--color-sage-ash);">🏥</div>
+              <div>
+                <h1 style="font-size: 26px; color: var(--color-dark-forest); margin-bottom: 4px;" id="hpName">St. Jude Trauma & Cardiac Emergency Center</h1>
+                <p style="font-size: 13px; color: var(--text-muted);" id="hpAddress">📍 500 Medical Plaza, San Francisco, CA | 📞 Direct Line: <strong id="hpPhone">+1-555-0190</strong></p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;" id="hpBadges">
+              <!-- Badges -->
+            </div>
+          </div>
+
+          <div style="background: #e8f5e9; border: 1.5px solid #a5d6a7; padding: 16px 22px; border-radius: 18px; text-align: right; min-width: 220px;">
+            <div style="font-size: 12px; font-weight: 700; color: #1b5e20;">ESTIMATED INCIDENT COST</div>
+            <div style="font-size: 26px; font-weight: 800; color: #1b5e20;" id="hpCost">₹35,000</div>
+            <div style="font-size: 11px; color: #2e7d32; font-weight: 700;" id="hpInsuranceStatus">✓ In-Network with BlueCross</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hospital Services & Departments Tabs Section -->
+      <section class="card">
+        <h2 class="card-title">🩺 Medical Services Offered & Department Wards</h2>
+        <div class="services-tag-manager" id="hpServicesTags">
+          <!-- Active Service Chips -->
+        </div>
+
+        <div style="margin-top: 20px;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+            <button class="dept-tab-btn active" id="hpDeptTab-pediatric" onclick="switchHospitalDeptTab('pediatric')">🧸 Pediatric Care Ward</button>
+            <button class="dept-tab-btn" id="hpDeptTab-emergency" onclick="switchHospitalDeptTab('emergency')">🚑 Emergency & ICU</button>
+            <button class="dept-tab-btn" id="hpDeptTab-cardiology" onclick="switchHospitalDeptTab('cardiology')">❤️ Cardiology Unit</button>
+          </div>
+
+          <!-- Dynamic Department Content Container -->
+          <div id="hpDeptTabContent" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-sage-ash); border-radius: 18px; padding: 20px;">
+            <!-- Department specific info rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <div class="grid-2">
+        <!-- Live Ward Beds & Fleet Counter Card -->
+        <section class="card">
+          <h2 class="card-title">🛏️ Live Facility Bed & Fleet Capacity</h2>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; text-align: center;">
+            <div style="background: var(--color-ivory-light); border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+              <div style="font-size: 24px; font-weight: 800; color: var(--color-dark-forest);" id="hpIcu">4</div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">ICU Beds Available</div>
+            </div>
+            <div style="background: var(--color-ivory-light); border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+              <div style="font-size: 24px; font-weight: 800; color: var(--color-dark-forest);" id="hpCardiac">2</div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">Cardiac CCU Beds</div>
+            </div>
+            <div style="background: var(--color-ivory-light); border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+              <div style="font-size: 24px; font-weight: 800; color: var(--color-dark-forest);" id="hpTrauma">3</div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">Trauma Unit Beds</div>
+            </div>
+            <div style="background: var(--color-ivory-light); border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+              <div style="font-size: 24px; font-weight: 800; color: var(--color-dark-forest);" id="hpGeneral">12</div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">General Ward Beds</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; background: #e8f5e9; border: 1px solid #a5d6a7; padding: 12px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 13px; font-weight: 700; color: #1b5e20;">🚑 Ambulances Ready for Dispatch</span>
+            <span style="font-size: 16px; font-weight: 800; color: #1b5e20;" id="hpAmbulances">3 Fleet Units</span>
+          </div>
+        </section>
+
+        <!-- On-Duty Specialist Roster -->
+        <section class="card">
+          <h2 class="card-title">👨‍⚕️ On-Duty Specialist Doctors</h2>
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="hpDoctorsList">
+            <!-- Doctor List -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Booking Details & Dispatch Form Section -->
+      <section class="card" style="border: 2px solid var(--color-sage-deep);">
+        <h2 class="card-title">📝 Booking & Emergency Ambulance Dispatch Details</h2>
+        <form onsubmit="handleHospitalProfileBooking(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Patient Full Name</label>
+              <input type="text" id="hpPatientName" class="form-control" readonly value="Jane Doe" />
+            </div>
+            <div class="form-group">
+              <label>Target Medical Department</label>
+              <select id="hpTargetDept" class="form-control" onchange="updateBookingFormDept(this.value)">
+                <option value="pediatric">🧸 Pediatric Care & Emergency Unit</option>
+                <option value="emergency">🚑 Emergency Care & Intensive Care Unit (ICU)</option>
+                <option value="cardiology">❤️ Cardiology & Cardiac Unit</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Emergency Urgency Level</label>
+              <select id="hpSeverity" class="form-control">
+                <option value="SEVERE">SEVERE (High Priority Ambulance Dispatch)</option>
+                <option value="LIFE_THREATENING">LIFE_THREATENING (Critical Override)</option>
+                <option value="MODERATE">MODERATE (Standard Admission)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Insurance Coverage Status</label>
+              <input type="text" id="hpInsuranceInput" class="form-control" readonly value="BlueCross BlueShield (In-Network)" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Emergency Symptoms / Notes for Hospital Triage</label>
+            <input type="text" id="hpSymptoms" class="form-control" placeholder="Chest pain / pediatric fever / low oxygen levels..." value="Immediate department bed reservation requested." />
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 12px;">
+            <button type="submit" class="btn btn-success" style="flex: 2; padding: 14px; font-size: 15px;">
+              🚑 Confirm Booking & Dispatch Ambulance Now
+            </button>
+            <a id="hpPhoneBtn" href="tel:+1-555-0190" class="btn btn-secondary" style="flex: 1; text-decoration: none; padding: 14px; text-align: center;">
+              📞 Call Emergency Hotline
+            </a>
+          </div>
+        </form>
+      </section>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: HOSPITAL MANAGEMENT DASHBOARD       -->
+    <!-- ========================================== -->
+    <div id="view-hospital-dashboard" class="view-page">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h1 style="font-size: 26px; color: var(--text-main);">Hospital Inventory & Fleet Management Center</h1>
+            <span class="role-badge badge-hospital" id="hospitalVerifiedBadge">✓ Verified & Accredited Facility</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14px;" id="hospitalWelcomeText">
+            Update live bed counts, services offered, and ambulance availability
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <label style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Active Managed Hospital:</label>
+          <select id="hospitalSelector" class="form-control" style="width: auto; min-width: 220px;" onchange="switchManagedHospital(this.value)">
+            <option value="hosp-001">St. Jude Trauma Center</option>
+            <option value="hosp-002">Mercy Regional Emergency</option>
+          </select>
+          <button type="button" class="btn btn-secondary" onclick="handleLogout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- Live Emergency Dispatch Banner -->
+      <div id="hospitalDispatchBanner" class="emergency-banner">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <span style="background: #dc2626; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;" id="hDispatchSeverity">🚨 INCOMING EMERGENCY DISPATCH</span>
+          <span style="color: #fca5a5; font-weight: bold; font-size: 16px;" id="hDispatchSla">SLA Countdown: 25s</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 20px; color: #fff; margin-bottom: 4px;" id="hDispatchPatient">Jane Doe</h3>
+            <p style="color: #fecaca; font-size: 14px;" id="hDispatchCond">Condition: Low SpO2 (86%) & Tachycardia</p>
+            <p style="color: #fecaca; font-size: 13px;">Blood: O+ | Allergies: Penicillin</p>
+          </div>
+          <div style="background: #7f1d1d; padding: 10px 18px; border-radius: 8px; text-align: center;">
+            <span style="font-size: 22px; font-weight: bold; color: #fff; display: block;" id="hDispatchEta">6 MINS</span>
+            <span style="font-size: 10px; color: #fca5a5; font-weight: bold;">ESTIMATED ETA</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn btn-success" style="flex: 1;" onclick="acceptHospitalDispatch()">✓ ACCEPT BOOKING & DISPATCH AMBULANCE</button>
+          <button type="button" class="btn btn-danger" style="flex: 1;" onclick="rejectHospitalDispatch()">✕ REJECT / CASCADE TO NEXT HOSPITAL</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+
+        <!-- Hospital Inventory & Capacity Management (Requirement 3) -->
+        <section class="card">
+          <h2 class="card-title">
+            <span>🏥 Live Bed & Fleet Counter Control</span>
+            <span class="role-badge badge-hospital">Requirement #3</span>
+          </h2>
+
+          <div class="inv-control-row">
+            <div>
+              <span style="font-weight: 600;">ICU Beds Available</span>
+              <span class="price-tag tier-budget" style="margin-left: 8px;">CRITICAL</span>
+            </div>
+            <div class="inv-counter-btns">
+              <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', -1)">-</button>
+              <span class="counter-val" id="cntIcu">4</span>
+              <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="inv-control-row">
+            <div>
+              <span style="font-weight: 600;">Cardiac Ward Beds</span>
+            </div>
+            <div class="inv-counter-btns">
+              <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', -1)">-</button>
+              <span class="counter-val" id="cntCardiac">2</span>
+              <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="inv-control-row">
+            <div>
+              <span style="font-weight: 600;">Trauma Unit Beds</span>
+            </div>
+            <div class="inv-counter-btns">
+              <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', -1)">-</button>
+              <span class="counter-val" id="cntTrauma">3</span>
+              <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="inv-control-row">
+            <div>
+              <span style="font-weight: 600;">General Ward Beds</span>
+            </div>
+            <div class="inv-counter-btns">
+              <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', -1)">-</button>
+              <span class="counter-val" id="cntGeneral">12</span>
+              <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="inv-control-row">
+            <div>
+              <span style="font-weight: 600;">Available Ambulances</span>
+              <span class="price-tag tier-standard" style="margin-left: 8px;" id="fleetTotalLabel">Fleet: 5</span>
+            </div>
+            <div class="inv-counter-btns">
+              <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', -1)">-</button>
+              <span class="counter-val" id="cntAmb">3</span>
+              <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', 1)">+</button>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- Hospital Services Management (Requirement 3) -->
+        <section class="card">
+          <h2 class="card-title">
+            <span>🩺 Medical Services Provided</span>
+            <span class="role-badge badge-hospital">Requirement #3</span>
+          </h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Toggle specialized medical departments. Patient matching filters will match patients with these service tags.
+          </p>
+
+          <div class="services-tag-manager" id="hospitalServicesBox">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+            <input type="text" id="newServiceInput" class="form-control" placeholder="Add custom service (e.g. Stroke Center)..." style="flex: 1;">
+            <button type="button" class="btn btn-secondary" onclick="addCustomService()">+ Add Tag</button>
+          </div>
+
+          <button type="button" class="btn btn-success" style="width: 100%;" onclick="saveHospitalSettings()">💾 Save Bed Counters & Services to API</button>
+        </section>
+
+      </div>
+
+      <!-- Emergency Dispatches History -->
+      <section class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 class="card-title" style="margin-bottom: 0;">📋 Live Dispatch Desk & Incident History</h2>
+          <button type="button" class="btn btn-secondary" onclick="triggerSimulatedDispatch()">⚡ Simulate Test Emergency Dispatch</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Patient Name</th>
+                <th>Condition</th>
+                <th>Severity</th>
+                <th>ETA</th>
+                <th>Ambulance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dispatchesTableBody">
+              <tr>
+                <td>bk-9012</td>
+                <td><strong>Robert Chen</strong></td>
+                <td>SpO2 drop (86%) & Tachycardia</td>
+                <td><span class="price-tag" style="background: #ef4444; color: #fff;">LIFE_THREATENING</span></td>
+                <td>8 mins</td>
+                <td>AMB-104</td>
+                <td><span class="price-tag tier-standard">EN_ROUTE</span></td>
+              </tr>
+              <tr>
+                <td>bk-8991</td>
+                <td><strong>Maria Garcia</strong></td>
+                <td>Hard impact fall detected</td>
+                <td><span class="price-tag" style="background: #f59e0b; color: #fff;">SEVERE</span></td>
+                <td>0 mins</td>
+                <td>AMB-102</td>
+                <td><span class="price-tag tier-budget">ARRIVED</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- HOSPITAL VERIFICATION MODAL                -->
+  <!-- ========================================== -->
+  <div id="hospitalVerifyModal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 36px; margin-bottom: 8px;">🛡️</div>
+        <h2 style="font-size: 22px; color: var(--text-main);">State Medical Board Verification</h2>
+        <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
+          Verify facility medical license, state accreditation code, and 2FA PIN before accessing hospital portal.
+        </p>
+      </div>
+
+      <form onsubmit="submitHospitalVerification(event)">
+        <div class="form-group">
+          <label>Hospital Medical Board License ID</label>
+          <input type="text" id="vLicense" class="form-control" required value="LIC-CA-94812" placeholder="LIC-CA-94812">
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Accreditation Code</label>
+            <input type="text" id="vAccred" class="form-control" required value="SMC-88921-X" placeholder="SMC-88921-X">
+          </div>
+          <div class="form-group">
+            <label>Admin 2FA PIN (6 digits)</label>
+            <input type="password" id="vPin" class="form-control" required value="948120" maxlength="6" placeholder="948120">
+          </div>
+        </div>
+
+        <div id="verifyStatusBox" style="margin-bottom: 16px; font-size: 13px; text-align: center; display: none;"></div>
+
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeVerificationModal()">Cancel</button>
+          <button type="submit" id="btnVerifySubmit" class="btn btn-success" style="flex: 2;">🛡️ Verify & Unlock Hospital Portal</button>
+        </div>
+      </form>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- HOSPITAL DEPARTMENT DETAIL & BOOKING MODAL -->
+  <!-- ========================================== -->
+  <div id="hospitalDeptDetailModal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-sage-ash); padding-bottom: 16px; margin-bottom: 20px;">
+        <div style="display: flex; gap: 14px; align-items: center;">
+          <div style="font-size: 38px; background: var(--color-ivory-light); width: 64px; height: 64px; border-radius: 18px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-sage-ash);" id="modalDeptIcon">🧸</div>
+          <div>
+            <h2 style="font-size: 22px; color: var(--color-dark-forest);" id="modalHospitalTitle">St. Jude Emergency Center</h2>
+            <div style="font-size: 13px; color: var(--color-sage-deep); font-weight: 700;" id="modalDeptSubTitle">Pediatric Care & Emergency Ward</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeDeptModal()" style="background: var(--color-cream-warm); border: 1px solid var(--color-sage-ash); border-radius: 50%; width: 36px; height: 36px; font-size: 18px; cursor: pointer; color: var(--color-dark-forest); font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
+      </div>
+
+      <div id="modalBodyContent">
+        <!-- Dynamically rendered department detailed breakdown -->
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // Global Application State & Authentication Role
+    const state = {
+      authRole: 'guest',
+      currentUser: {
+        id: 'usr-101',
+        fullName: 'Jane Doe',
+        email: 'jane.doe@example.com',
+        budgetCeiling: 40000,
+        insuranceProvider: 'BlueCross'
+      },
+      currentHospitalId: 'hosp-001',
+      currentSelectedHospitalId: 'hosp-001',
+      pendingHospitalLoginId: null,
+      hospitalsMap: {},
+      hospitalInventory: {
+        icuBedsAvailable: 4,
+        generalBedsAvailable: 12,
+        cardiacBedsAvailable: 2,
+        traumaBedsAvailable: 3,
+        ambulancesAvailable: 3,
+        totalAmbulanceFleet: 5
+      },
+      hospitalServices: ['cardiac', 'trauma', 'icu', 'pediatric'],
+      activeRoute: 'login',
+      slaTimer: null,
+      slaCountdownVal: 25,
+      patientSlaTimer: null,
+      patientSlaVal: 30,
+      currentDeptKey: 'emergency',
+      currentDeptMatches: [],
+      activePatientAlertId: null
+    };
+
+    function navigateTo(route) {
+      if (route === 'user-dashboard' && state.authRole !== 'patient') {
+        route = 'login';
+      }
+      if (route === 'hospital-dashboard' && state.authRole !== 'hospital') {
+        route = 'login';
+      }
+      if ((route === 'dept-page' || route === 'hospital-profile') && state.authRole !== 'patient') {
+        state.authRole = 'patient';
+      }
+
+      state.activeRoute = route;
+
+      document.querySelectorAll('.view-page').forEach(el => el.classList.remove('active'));
+      const targetView = document.getElementById(`view-${route}`);
+      if (targetView) targetView.classList.add('active');
+
+      updateHeaderNavVisibility();
+
+      if (route === 'user-dashboard') fetchHospitalMatches();
+      if (route === 'hospital-dashboard') loadHospitalDashboard();
+      if (route === 'dept-page') renderCurrentDeptMatches();
+    }
+
+    function updateHeaderNavVisibility() {
+      const loginBtn = document.getElementById('navLogin');
+      const signupBtn = document.getElementById('navSignup');
+      const logoutBtn = document.getElementById('navLogout');
+      const badge = document.getElementById('roleBadgeDisplay');
+
+      if (!loginBtn || !signupBtn || !logoutBtn || !badge) return;
+
+      loginBtn.classList.remove('active');
+      signupBtn.classList.remove('active');
+
+      if (state.authRole === 'guest') {
+        loginBtn.style.display = 'inline-flex';
+        signupBtn.style.display = 'inline-flex';
+        logoutBtn.style.display = 'none';
+        badge.style.display = 'none';
+
+        if (state.activeRoute === 'login') loginBtn.classList.add('active');
+        if (state.activeRoute === 'signup') signupBtn.classList.add('active');
+      } 
+      else if (state.authRole === 'patient') {
+        loginBtn.style.display = 'none';
+        signupBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-flex';
+        badge.style.display = 'inline-block';
+        badge.innerText = 'Patient Mode';
+        badge.className = 'role-badge badge-patient';
+      } 
+      else if (state.authRole === 'hospital') {
+        loginBtn.style.display = 'none';
+        signupBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-flex';
+        badge.style.display = 'inline-block';
+        badge.innerText = 'Hospital Admin Mode';
+        badge.className = 'role-badge badge-hospital';
+      }
+    }
+
+    function handleLogout() {
+      state.authRole = 'guest';
+      state.pendingHospitalLoginId = null;
+      if (state.patientSlaTimer) clearInterval(state.patientSlaTimer);
+      alert('Logged out successfully.');
+      navigateTo('login');
+    }
+
+    function setLoginRole(role) {
+      document.getElementById('loginRolePatient').classList.toggle('active', role === 'patient');
+      document.getElementById('loginRoleHospital').classList.toggle('active', role === 'hospital');
+      document.getElementById('loginIdLabel').innerText = role === 'patient' ? 'Patient Email / Phone' : 'Hospital License ID / Admin Email';
+    }
+
+    function setSignupRole(role) {
+      document.getElementById('signupRolePatient').classList.toggle('active', role === 'patient');
+      document.getElementById('signupRoleHospital').classList.toggle('active', role === 'hospital');
+      document.getElementById('signupPatientForm').style.display = role === 'patient' ? 'block' : 'none';
+      document.getElementById('signupHospitalForm').style.display = role === 'hospital' ? 'block' : 'none';
+    }
+
+    function toggleChip(element, tag) {
+      element.classList.toggle('active');
+      if (element.classList.contains('active')) {
+        element.innerText = `✓ ${tag.charAt(0).toUpperCase() + tag.slice(1)}`;
+      } else {
+        element.innerText = `+ ${tag.charAt(0).toUpperCase() + tag.slice(1)}`;
+      }
+    }
+
+    function quickLogin(role, id) {
+      if (role === 'patient') {
+        state.authRole = 'patient';
+        state.currentUser.id = id;
+        const welcomeEl = document.getElementById('patientWelcomeText');
+        if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>Jane Doe</strong> (ID: ${id})`;
+        navigateTo('user-dashboard');
+      } else {
+        openHospitalVerificationModal(id);
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const isHospital = document.getElementById('loginRoleHospital').classList.contains('active');
+      if (isHospital) {
+        openHospitalVerificationModal('hosp-001');
+      } else {
+        state.authRole = 'patient';
+        navigateTo('user-dashboard');
+      }
+    }
+
+    function openHospitalVerificationModal(hospitalId = 'hosp-001') {
+      state.pendingHospitalLoginId = hospitalId;
+      document.getElementById('vLicense').value = hospitalId === 'hosp-002' ? 'LIC-CA-94815' : 'LIC-CA-94812';
+      document.getElementById('verifyStatusBox').style.display = 'none';
+      document.getElementById('hospitalVerifyModal').style.display = 'flex';
+    }
+
+    function closeVerificationModal() {
+      document.getElementById('hospitalVerifyModal').style.display = 'none';
+    }
+
+    async function submitHospitalVerification(e) {
+      e.preventDefault();
+      const lic = document.getElementById('vLicense').value.trim();
+      const accred = document.getElementById('vAccred').value.trim();
+      const pin = document.getElementById('vPin').value.trim();
+
+      const box = document.getElementById('verifyStatusBox');
+      const btn = document.getElementById('btnVerifySubmit');
+
+      box.style.display = 'block';
+      box.style.color = 'var(--primary)';
+      box.innerHTML = '⌛ Verifying credentials with State Medical Licensing Board...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        if (!lic || !accred || pin.length < 4) {
+          box.style.color = 'var(--danger)';
+          box.innerHTML = '❌ Verification Failed: Invalid license number or accreditation pin.';
+          btn.disabled = false;
+          return;
+        }
+
+        box.style.color = 'var(--success)';
+        box.innerHTML = `✓ <strong>VERIFICATION SUCCESSFUL!</strong><br>Medical Board License ${lic} Verified & Accredited.`;
+
+        setTimeout(() => {
+          btn.disabled = false;
+          closeVerificationModal();
+          state.authRole = 'hospital';
+          state.currentHospitalId = state.pendingHospitalLoginId || 'hosp-001';
+          const selector = document.getElementById('hospitalSelector');
+          if (selector) selector.value = state.currentHospitalId;
+          const badge = document.getElementById('hospitalVerifiedBadge');
+          if (badge) badge.innerText = `✓ Verified Facility (${lic})`;
+          navigateTo('hospital-dashboard');
+        }, 1000);
+
+      }, 1200);
+    }
+
+    function updateSignupBudgetText(val) {
+      document.getElementById('pBudgetValue').value = val;
+    }
+    function updateSignupBudgetRange(val) {
+      document.getElementById('pBudgetRange').value = val;
+    }
+
+    async function handlePatientSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('pName').value;
+      const email = document.getElementById('pEmail').value;
+      const phone = document.getElementById('pPhone').value;
+      const budget = Number(document.getElementById('pBudgetValue').value);
+      const insurance = document.getElementById('pInsurance').value;
+
+      const payload = {
+        fullName: name,
+        email: email,
+        phoneNumber: phone,
+        budgetCeiling: budget,
+        insuranceProvider: insurance
+      };
+
+      try {
+        const res = await fetch('/v1/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        state.currentUser = data.user;
+        state.authRole = 'patient';
+        const welcomeEl = document.getElementById('patientWelcomeText');
+        if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>${name}</strong> (ID: ${data.user.id})`;
+        alert(`Patient Account created for ${name}! Budget Ceiling: ₹${budget.toLocaleString('en-IN')}`);
+        navigateTo('user-dashboard');
+      } catch (err) {
+        alert('Signup failed: ' + err.message);
+      }
+    }
+
+    async function handleHospitalSignup(event) {
+      event.preventDefault();
+      const name = document.getElementById('hName').value;
+      const license = document.getElementById('hLicense').value;
+      const address = document.getElementById('hAddress').value;
+      const tier = Number(document.getElementById('hPricingTier').value);
+      const fleet = Number(document.getElementById('hFleet').value);
+
+      const id = `hosp-${Math.floor(100 + Math.random() * 900)}`;
+
+      const hospitalPayload = {
+        id: id,
+        name: name,
+        licenseId: license,
+        address: address,
+        latitude: 37.7749 + (Math.random() - 0.5) * 0.05,
+        longitude: -122.4194 + (Math.random() - 0.5) * 0.05,
+        pricingTier: tier,
+        serviceTags: ['cardiac', 'trauma', 'icu'],
+        acceptedInsurance: ['BlueCross', 'UnitedHealth'],
+        isActive: true,
+        phoneNumber: '+91 98765 43210'
+      };
+
+      const inventoryPayload = {
+        hospitalId: id,
+        icuBedsAvailable: 5,
+        generalBedsAvailable: 15,
+        cardiacBedsAvailable: 3,
+        traumaBedsAvailable: 4,
+        ambulancesAvailable: fleet,
+        totalAmbulanceFleet: fleet,
+        lastUpdatedAt: new Date()
+      };
+
+      try {
+        await fetch('/v1/hospitals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hospital: hospitalPayload, inventory: inventoryPayload })
+        });
+        alert(`Hospital ${name} registered! Please complete Medical Board Verification.`);
+        openHospitalVerificationModal(id);
+      } catch (err) {
+        alert('Hospital registration failed: ' + err.message);
+      }
+    }
+
+    async function syncUserBudget(val) {
+      const numVal = Number(val);
+      const displayEl = document.getElementById('dashBuddisplay');
+      if (displayEl) displayEl.innerText = numVal.toLocaleString('en-IN');
+      const rangeEl = document.getElementById('dashBudgetRange');
+      if (rangeEl) rangeEl.value = numVal;
+      state.currentUser.budgetCeiling = numVal;
+      
+      try {
+        await fetch(`/v1/users/${state.currentUser.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ budgetCeiling: numVal })
+        });
+      } catch (err) {
+        console.warn('Failed to update user budget on server:', err);
+      }
+
+      fetchHospitalMatches();
+    }
+
+    async function updateUserInsurance(val) {
+      state.currentUser.insuranceProvider = val;
+      try {
+        await fetch(`/v1/users/${state.currentUser.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ insuranceProvider: val })
+        });
+      } catch (err) {
+        console.warn('Failed to update insurance provider on server:', err);
+      }
+
+      fetchHospitalMatches();
+    }
+
+    async function requeryHospitalMatches() {
+      const btn = document.getElementById('btnRequeryMatches');
+      if (btn) {
+        btn.innerText = '⌛ Searching...';
+        btn.disabled = true;
+      }
+
+      const budgetEl = document.getElementById('dashBudgetRange');
+      const insuranceEl = document.getElementById('dashInsurance');
+      const budgetVal = budgetEl ? Number(budgetEl.value) : state.currentUser.budgetCeiling;
+      const insuranceVal = insuranceEl ? insuranceEl.value : state.currentUser.insuranceProvider;
+
+      state.currentUser.budgetCeiling = budgetVal;
+      state.currentUser.insuranceProvider = insuranceVal;
+
+      try {
+        await fetch(`/v1/users/${state.currentUser.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            budgetCeiling: budgetVal,
+            insuranceProvider: insuranceVal
+          })
+        });
+      } catch (err) {
+        console.warn('Failed to sync profile update prior to requery:', err);
+      }
+
+      await fetchHospitalMatches();
+
+      if (btn) {
+        btn.innerText = '✓ Matches Updated!';
+        setTimeout(() => {
+          btn.innerText = '🔍 Search & Rank Now';
+          btn.disabled = false;
+        }, 1200);
+      }
+    }
+
+    async function fetchHospitalMatches() {
+      const severityEl = document.getElementById('dashSeverity');
+      const severity = severityEl ? severityEl.value : 'SEVERE';
+      const insuranceEl = document.getElementById('dashInsurance');
+      const insurance = insuranceEl ? insuranceEl.value : state.currentUser.insuranceProvider;
+      const budget = state.currentUser.budgetCeiling || 40000;
+
+      const grid = document.getElementById('hospitalMatchesGrid');
+      if (!grid) return;
+      grid.innerHTML = '<div style="color: var(--text-muted); font-size: 14px; padding: 20px;">Querying spatial match engine...</div>';
+
+      try {
+        const res = await fetch(`/v1/hospitals/nearby?userId=${state.currentUser.id}&severity=${severity}&budgetCeiling=${budget}&insuranceProvider=${encodeURIComponent(insurance)}`);
+        const data = await res.json();
+        
+        const countText = document.getElementById('matchCountText');
+        if (countText) countText.innerText = `Found ${data.count} suitable facility matches`;
+        grid.innerHTML = '';
+
+        if (!data.matches || data.matches.length === 0) {
+          grid.innerHTML = `<div style="color: var(--text-main); grid-column: 1/-1; padding: 20px; background: var(--color-ivory-light); border-radius: 12px; border: 1.5px solid var(--color-sage-ash);">
+            ⚠️ No hospitals match your current budget ceiling (₹${Number(budget).toLocaleString('en-IN')}).<br>
+            <span style="font-size: 13px; color: var(--text-muted); margin-top: 6px; display: block;">
+              Tip: Increase your budget ceiling slider above, or switch Emergency Severity Mode to <strong>LIFE_THREATENING</strong> to bypass budget filters for critical emergencies.
+            </span>
+          </div>`;
+          return;
+        }
+
+        data.matches.forEach((m, idx) => {
+          const h = m.hospital;
+          const inv = m.inventory;
+          const estCost = h.pricingTier === 1 ? 15000 : h.pricingTier === 2 ? 35000 : 60000;
+          const isOverBudget = m.isBudgetExceeded;
+          const tierClass = h.pricingTier === 1 ? 'tier-budget' : h.pricingTier === 2 ? 'tier-standard' : 'tier-premium';
+          const tierLabel = h.pricingTier === 1 ? 'Tier 1 (Budget ~₹15,000)' : h.pricingTier === 2 ? 'Tier 2 (Standard ~₹35,000)' : 'Tier 3 (Premium ~₹60,000)';
+
+          const card = document.createElement('div');
+          card.className = `hospital-card ${idx === 0 ? 'preferred' : ''}`;
+          card.innerHTML = `
+            <span class="rank-badge">RANK #${idx + 1} • SCORE ${m.score}</span>
+            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">${h.name}</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">${h.address}</p>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="price-tag ${tierClass}">${tierLabel}</span>
+              ${isOverBudget ? 
+                `<span class="price-tag" style="background: #fee2e2; color:#b91c1c; border:1px solid #fca5a5;">⚠️ Exceeds Budget (₹${estCost.toLocaleString('en-IN')} > ₹${Number(budget).toLocaleString('en-IN')})</span>` :
+                `<span class="price-tag" style="background: #e8f5e9; color:#1b5e20; border:1px solid #a5d6a7;">✓ Within Budget (₹${estCost.toLocaleString('en-IN')})</span>`
+              }
+              ${h.acceptedInsurance.includes(insurance) ? 
+                `<span class="price-tag" style="background: var(--color-cream-warm); color:var(--color-dark-forest); border:1px solid var(--color-sage-ash);">✓ In-Network (${insurance})</span>` : ''
+              }
+            </div>
+
+            <div style="background: var(--color-ivory-light); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border: 1px solid var(--color-sage-ash);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>⏱️ Estimated ETA: <strong>${m.etaMinutes} mins</strong></span>
+                <span>🚑 Ambulances: <strong>${inv.ambulancesAvailable} avail</strong></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                <span>🛏️ ICU: ${inv.icuBedsAvailable} | Trauma: ${inv.traumaBedsAvailable}</span>
+                <span>Cardiac: ${inv.cardiacBedsAvailable} | General: ${inv.generalBedsAvailable}</span>
+              </div>
+            </div>
+
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Specialized Services:</div>
+            <div class="tag-list" style="margin-bottom: 12px;">
+              ${h.serviceTags.map(st => `<span class="tag-item">${st}</span>`).join('')}
+            </div>
+
+            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('${h.id}')">
+              🏥 Open Hospital Page & Department Details →
+            </button>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (err) {
+        grid.innerHTML = `<div style="color: var(--danger);">Error loading hospitals: ${err.message}</div>`;
+      }
+    }
+
+    async function handleUserVitalsStream(e) {
+      e.preventDefault();
+      const hr = Number(document.getElementById('userHr').value);
+      const spo2 = Number(document.getElementById('userSpo2').value);
+      const fall = document.getElementById('userFall').value === 'true';
+
+      const payload = {
+        userId: state.currentUser.id,
+        timestamp: new Date().toISOString(),
+        heartRate: hr,
+        spo2: spo2,
+        fallDetected: fall,
+        sourceDevice: 'Apple Watch Ultra'
+      };
+
+      const out = document.getElementById('userVitalsOutput');
+      out.innerHTML = '<span style="color: var(--text-muted);">Sending vitals packet...</span>';
+
+      try {
+        const res = await fetch('/v1/vitals/stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.status === 'ANOMALY_DETECTED') {
+          out.innerHTML = `<span style="color: var(--danger); font-weight: bold;">🚨 ANOMALY DETECTED! (${data.detection.severity}): ${data.detection.reason}</span>`;
+          const alertId = data.alert ? data.alert.id : null;
+          triggerPatientEmergencyBanner(data.detection.severity, data.detection.reason, alertId);
+        } else {
+          out.innerHTML = `<span style="color: var(--success); font-weight: bold;">✓ Vitals Normal: HR ${hr} bpm, SpO2 ${spo2}%</span>`;
+        }
+      } catch (err) {
+        out.innerHTML = `<span style="color: var(--danger);">Failed to stream vitals: ${err.message}</span>`;
+      }
+    }
+
+    function triggerTestEmergencyAnomaly() {
+      const out = document.getElementById('userVitalsOutput');
+      out.innerHTML = '<span style="color: var(--danger); font-weight: bold;">🚨 ANOMALY DETECTED! (LIFE_THREATENING): Critically low oxygen saturation (SpO2: 86%)</span>';
+      triggerPatientEmergencyBanner('LIFE_THREATENING', 'Critically low oxygen saturation (SpO2: 86%)', `test-evt-${Date.now()}`);
+    }
+
+    function triggerPatientEmergencyBanner(severity, reason, alertId = null) {
+      state.activePatientAlertId = alertId;
+      state.patientSlaVal = 30;
+
+      const banner = document.getElementById('patientAlertBanner');
+      if (banner) banner.style.display = 'block';
+      const titleEl = document.getElementById('pAlertTitle');
+      if (titleEl) titleEl.innerText = `🚨 VITAL ANOMALY TRIGGERED (${severity})`;
+      const detailEl = document.getElementById('pAlertDetail');
+      if (detailEl) detailEl.innerText = `${reason}. Auto-executing hospital matching cascade...`;
+      const countdownEl = document.getElementById('pAlertCountdown');
+      if (countdownEl) countdownEl.innerText = `Auto-Dispatch SLA: ${state.patientSlaVal}s`;
+
+      if (state.patientSlaTimer) clearInterval(state.patientSlaTimer);
+
+      state.patientSlaTimer = setInterval(() => {
+        state.patientSlaVal--;
+        const cEl = document.getElementById('pAlertCountdown');
+        if (cEl) cEl.innerText = `Auto-Dispatch SLA: ${state.patientSlaVal}s`;
+
+        if (state.patientSlaVal <= 0) {
+          clearInterval(state.patientSlaTimer);
+          state.patientSlaTimer = null;
+          if (titleEl) titleEl.innerText = `🚨 SLA EXPIRED - DISPATCH EXECUTED`;
+          if (cEl) cEl.innerText = `Status: DISPATCHED`;
+          if (detailEl) detailEl.innerText = `SLA 30s Countdown expired. Emergency ambulance dispatch sent to nearest hospital!`;
+          fetchHospitalMatches();
+        }
+      }, 1000);
+    }
+
+    async function cancelEmergencyAlert() {
+      if (state.patientSlaTimer) {
+        clearInterval(state.patientSlaTimer);
+        state.patientSlaTimer = null;
+      }
+
+      const alertId = state.activePatientAlertId;
+      const banner = document.getElementById('patientAlertBanner');
+      if (banner) banner.style.display = 'none';
+
+      if (alertId) {
+        try {
+          await fetch(`/v1/emergency/alerts/${alertId}/cancel`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: 'Cancelled by patient tap (False Alarm)' })
+          });
+        } catch (err) {
+          console.error('Failed to notify backend of alert cancellation:', err);
+        }
+      }
+
+      state.activePatientAlertId = null;
+      alert('✓ False alarm cancelled successfully! Emergency dispatch stopped.');
+    }
+
+    async function loadHospitalDashboard() {
+      try {
+        const res = await fetch('/v1/hospitals');
+        const data = await res.json();
+
+        if (data.list && data.list.length > 0) {
+          data.list.forEach(item => {
+            state.hospitalsMap[item.hospital.id] = item;
+          });
+        }
+
+        const current = state.hospitalsMap[state.currentHospitalId];
+        if (current) {
+          state.hospitalInventory = { ...current.inventory };
+          state.hospitalServices = [...current.hospital.serviceTags];
+        }
+
+        renderInventoryCounters();
+        renderHospitalServices();
+      } catch (err) {
+        console.error('Failed to load hospital details', err);
+      }
+    }
+
+    function switchManagedHospital(id) {
+      state.currentHospitalId = id;
+      loadHospitalDashboard();
+    }
+
+    function renderInventoryCounters() {
+      const inv = state.hospitalInventory;
+      const icuEl = document.getElementById('cntIcu');
+      if (icuEl) icuEl.innerText = inv.icuBedsAvailable;
+      const cdcEl = document.getElementById('cntCardiac');
+      if (cdcEl) cdcEl.innerText = inv.cardiacBedsAvailable;
+      const trmEl = document.getElementById('cntTrauma');
+      if (trmEl) trmEl.innerText = inv.traumaBedsAvailable;
+      const genEl = document.getElementById('cntGeneral');
+      if (genEl) genEl.innerText = inv.generalBedsAvailable;
+      const ambEl = document.getElementById('cntAmb');
+      if (ambEl) ambEl.innerText = inv.ambulancesAvailable;
+      const fltEl = document.getElementById('fleetTotalLabel');
+      if (fltEl) fltEl.innerText = `Fleet: ${inv.totalAmbulanceFleet}`;
+    }
+
+    function updateBedCount(field, delta) {
+      state.hospitalInventory[field] = Math.max(0, (state.hospitalInventory[field] || 0) + delta);
+      renderInventoryCounters();
+    }
+
+    function renderHospitalServices() {
+      const container = document.getElementById('hospitalServicesBox');
+      if (!container) return;
+      container.innerHTML = '';
+
+      state.hospitalServices.forEach(srv => {
+        const chip = document.createElement('span');
+        chip.className = 'service-chip active';
+        chip.innerHTML = `✓ ${srv.toUpperCase()} <span style="font-size:10px; margin-left:4px;">✕</span>`;
+        chip.onclick = () => removeHospitalService(srv);
+        container.appendChild(chip);
+      });
+    }
+
+    function removeHospitalService(srv) {
+      state.hospitalServices = state.hospitalServices.filter(s => s !== srv);
+      renderHospitalServices();
+    }
+
+    function addCustomService() {
+      const input = document.getElementById('newServiceInput');
+      if (!input) return;
+      const val = input.value.trim().toLowerCase();
+      if (val && !state.hospitalServices.includes(val)) {
+        state.hospitalServices.push(val);
+        input.value = '';
+        renderHospitalServices();
+      }
+    }
+
+    async function saveHospitalSettings() {
+      try {
+        await fetch(`/v1/hospitals/${state.currentHospitalId}/inventory`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(state.hospitalInventory)
+        });
+
+        await fetch(`/v1/hospitals/${state.currentHospitalId}/services`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ serviceTags: state.hospitalServices })
+        });
+
+        alert('Hospital beds, fleet, and services updated successfully!');
+      } catch (err) {
+        alert('Failed to save settings: ' + err.message);
+      }
+    }
+
+    function triggerSimulatedDispatch() {
+      const banner = document.getElementById('hospitalDispatchBanner');
+      if (banner) banner.style.display = 'block';
+      state.slaCountdownVal = 25;
+      const slaEl = document.getElementById('hDispatchSla');
+      if (slaEl) slaEl.innerText = `SLA Countdown: ${state.slaCountdownVal}s`;
+
+      if (state.slaTimer) clearInterval(state.slaTimer);
+      state.slaTimer = setInterval(() => {
+        state.slaCountdownVal--;
+        if (slaEl) slaEl.innerText = `SLA Countdown: ${state.slaCountdownVal}s`;
+        if (state.slaCountdownVal <= 0) {
+          clearInterval(state.slaTimer);
+          rejectHospitalDispatch('SLA Timeout');
+        }
+      }, 1000);
+    }
+
+    function acceptHospitalDispatch() {
+      if (state.slaTimer) clearInterval(state.slaTimer);
+      const banner = document.getElementById('hospitalDispatchBanner');
+      if (banner) banner.style.display = 'none';
+
+      updateBedCount('icuBedsAvailable', -1);
+      updateBedCount('ambulancesAvailable', -1);
+
+      const tbody = document.getElementById('dispatchesTableBody');
+      if (tbody) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>bk-${Math.floor(1000 + Math.random() * 9000)}</td>
+          <td><strong>Jane Doe</strong></td>
+          <td>Critically low SpO2 (86%) & Tachycardia</td>
+          <td><span class="price-tag" style="background: #ef4444; color: #fff;">LIFE_THREATENING</span></td>
+          <td>6 mins</td>
+          <td>AMB-108</td>
+          <td><span class="price-tag tier-budget">ACCEPTED</span></td>
+        `;
+        tbody.insertBefore(tr, tbody.firstChild);
+      }
+
+      alert('Booking ACCEPTED! Ambulance AMB-108 dispatched.');
+    }
+
+    function rejectHospitalDispatch(reason = 'Hospital Decision') {
+      if (state.slaTimer) clearInterval(state.slaTimer);
+      const banner = document.getElementById('hospitalDispatchBanner');
+      if (banner) banner.style.display = 'none';
+      alert(`Dispatch Rejected (${reason}). Cascading emergency request to next hospital.`);
+    }
+
+    const DEPARTMENT_CONFIG = {
+      emergency: {
+        key: 'emergency',
+        title: 'Emergency Care & Intensive Care Unit (ICU)',
+        icon: '🚑',
+        requiredTag: 'icu',
+        description: 'Level-1 Trauma & Intensive Care Center equipped for high-acuity resuscitation, respiratory distress, shock, and life-threatening emergencies.',
+        badges: ['🚨 Level-1 Trauma Ready', '🫁 ICU Ventilator Bay Active', '⚡ 3-Min Dispatch SLA', '👨‍⚕️ 8 Critical Care Specialists'],
+        doctorRoster: [
+          { name: 'Dr. Arthur Vance', role: 'Head of Emergency Medicine & Trauma' },
+          { name: 'Dr. Elena Rostova', role: 'Senior ICU Intensivist' },
+          { name: 'Dr. Marcus Brody', role: 'Emergency Resuscitation Specialist' }
+        ],
+        equipment: ['Advanced Ventilator Units', 'Defibrillators & Cardiac Monitors', 'Emergency Trauma Operating Theater', 'Rapid Blood Transfusion System'],
+        wardLocation: 'Ground Floor, Emergency Wing (Bay 1 - 12)'
+      },
+      pediatric: {
+        key: 'pediatric',
+        title: 'Pediatric Care & Child Emergency Unit',
+        icon: '🧸',
+        requiredTag: 'pediatric',
+        description: 'Specialized 24/7 pediatric emergency care for infants, children, and adolescents. Equipped with specialized pediatric ICU (PICU) beds and neonatal incubators.',
+        badges: ['🧸 Child-Friendly ER Bays', '👶 NICU/PICU Incubators', '🩺 6 Pediatric ER Doctors', '🍼 Specialized Pediatric Pharmacy'],
+        doctorRoster: [
+          { name: 'Dr. Sarah Jenkins', role: 'Chief of Pediatric Emergency Medicine' },
+          { name: 'Dr. Michael Chen', role: 'Pediatric Cardiologist & Critical Care' },
+          { name: 'Dr. Ananya Sharma', role: 'Neonatal Intensive Care Specialist' }
+        ],
+        equipment: ['Pediatric Oxygen & Resuscitation Kits', 'Neonatal Incubators (NICU)', 'Pediatric Ventilator Monitors', 'Child Pain Management Unit'],
+        wardLocation: 'Pediatric Wing, 3rd Floor (Rooms 301 - 325)'
+      },
+      cardiology: {
+        key: 'cardiology',
+        title: 'Cardiology & Cardiac Emergency Unit',
+        icon: '❤️',
+        requiredTag: 'cardiac',
+        description: 'Comprehensive 24/7 cardiac emergency care, cardiac catheterization lab (Cath Lab), STEMI heart attack intervention, and Coronary Care Units (CCU).',
+        badges: ['❤️ Active Cath Lab 24/7', '📈 CCU Bio-Monitoring Wards', '🩺 5 Interventional Cardiologists', '⚡ Emergency Angioplasty Ready'],
+        doctorRoster: [
+          { name: 'Dr. Robert Sterling', role: 'Director of Interventional Cardiology' },
+          { name: 'Dr. Meera Patel', role: 'Cardiac Electrophysiologist' },
+          { name: 'Dr. David Miller', role: 'Coronary Care Unit Lead' }
+        ],
+        equipment: ['24/7 Cardiac Catheterization Lab', '12-Lead Continuous Telemetry', 'ECMO Heart-Lung Bypass Unit', 'Intra-Aortic Balloon Pump (IABP)'],
+        wardLocation: 'Cardiology Center, 2nd Floor (CCU & Cath Lab)'
+      }
+    };
+
+    function openDepartmentPage(deptKey = 'emergency') {
+      if (state.authRole === 'guest') {
+        state.authRole = 'patient';
+      }
+      state.currentDeptKey = deptKey;
+
+      document.querySelectorAll('.dept-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeTab = document.getElementById(`tabDept-${deptKey}`);
+      if (activeTab) activeTab.classList.add('active');
+
+      const config = DEPARTMENT_CONFIG[deptKey] || DEPARTMENT_CONFIG.emergency;
+      const iconEl = document.getElementById('deptHeaderIcon');
+      if (iconEl) iconEl.innerText = config.icon;
+      const titleEl = document.getElementById('deptHeaderTitle');
+      if (titleEl) titleEl.innerText = config.title;
+      const descEl = document.getElementById('deptHeaderDesc');
+      if (descEl) descEl.innerText = config.description;
+
+      const badgeBox = document.getElementById('deptBadgeList');
+      if (badgeBox) {
+        badgeBox.innerHTML = config.badges.map(b => `<span class="dept-badge">${b}</span>`).join('');
+      }
+
+      const secTitle = document.getElementById('deptHospitalSectionTitle');
+      if (secTitle) secTitle.innerText = `🏥 Hospitals with ${config.title}`;
+      
+      const budgetFilter = document.getElementById('deptBudgetFilter');
+      if (budgetFilter) budgetFilter.value = state.currentUser.budgetCeiling || 40000;
+
+      navigateTo('dept-page');
+    }
+
+    function changeDeptBudget(val) {
+      syncUserBudget(val);
+      renderCurrentDeptMatches();
+    }
+
+    async function renderCurrentDeptMatches() {
+      const deptKey = state.currentDeptKey || 'emergency';
+      const config = DEPARTMENT_CONFIG[deptKey] || DEPARTMENT_CONFIG.emergency;
+
+      const severityEl = document.getElementById('deptSeverityFilter');
+      const severity = severityEl ? severityEl.value : 'SEVERE';
+      const budget = state.currentUser.budgetCeiling || 40000;
+      const insurance = state.currentUser.insuranceProvider || 'BlueCross';
+
+      const grid = document.getElementById('deptHospitalGrid');
+      if (!grid) return;
+      grid.innerHTML = '<div style="color: var(--text-muted); font-size: 14px; padding: 20px;">Filtering spatial matching engine for department...</div>';
+
+      try {
+        const res = await fetch(`/v1/hospitals/nearby?userId=${state.currentUser.id}&severity=${severity}&budgetCeiling=${budget}&insuranceProvider=${encodeURIComponent(insurance)}&requiredServices=${config.requiredTag}`);
+        const data = await res.json();
+
+        state.currentDeptMatches = data.matches || [];
+        const countText = document.getElementById('deptMatchCountText');
+        if (countText) countText.innerText = `Found ${state.currentDeptMatches.length} matching facilities for ${config.title}`;
+        grid.innerHTML = '';
+
+        if (!state.currentDeptMatches || state.currentDeptMatches.length === 0) {
+          grid.innerHTML = `<div style="color: var(--text-main); grid-column: 1/-1; padding: 24px; background: var(--color-ivory-light); border-radius: 16px; border: 1.5px solid var(--color-sage-ash);">
+            ⚠️ No hospitals found matching ${config.title} within budget ceiling (₹${Number(budget).toLocaleString('en-IN')}).<br>
+            <span style="font-size: 13px; color: var(--text-muted); margin-top: 6px; display: block;">
+              Try adjusting your max budget filter above or change Severity Mode to <strong>LIFE_THREATENING</strong> to view all accredited emergency centers.
+            </span>
+          </div>`;
+          return;
+        }
+
+        state.currentDeptMatches.forEach((m, idx) => {
+          const h = m.hospital;
+          const inv = m.inventory;
+          const estCost = h.pricingTier === 1 ? 15000 : h.pricingTier === 2 ? 35000 : 60000;
+          const isOverBudget = m.isBudgetExceeded;
+          const tierClass = h.pricingTier === 1 ? 'tier-budget' : h.pricingTier === 2 ? 'tier-standard' : 'tier-premium';
+          const tierLabel = h.pricingTier === 1 ? 'Tier 1 (~₹15,000)' : h.pricingTier === 2 ? 'Tier 2 (~₹35,000)' : 'Tier 3 (~₹60,000)';
+
+          let deptBedLabel = '';
+          if (deptKey === 'pediatric') {
+            deptBedLabel = `🧸 Pediatric/PICU Beds: <strong>${inv.icuBedsAvailable} ICU / ${inv.generalBedsAvailable} Gen</strong>`;
+          } else if (deptKey === 'cardiology') {
+            deptBedLabel = `❤️ Cardiac CCU Beds: <strong>${inv.cardiacBedsAvailable} Available</strong>`;
+          } else {
+            deptBedLabel = `🫁 ICU & Trauma Beds: <strong>${inv.icuBedsAvailable} ICU / ${inv.traumaBedsAvailable} Trauma</strong>`;
+          }
+
+          const card = document.createElement('div');
+          card.className = `hospital-card ${idx === 0 ? 'preferred' : ''}`;
+          card.innerHTML = `
+            <span class="rank-badge">RANK #${idx + 1} • MATCH ${m.score}</span>
+            <h3 style="font-size: 18px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">${h.name}</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">📍 ${h.address}</p>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+              <span class="price-tag ${tierClass}">${tierLabel}</span>
+              ${isOverBudget ? 
+                `<span class="price-tag" style="background: #fee2e2; color:#b91c1c; border:1px solid #fca5a5;">⚠️ Exceeds Budget</span>` :
+                `<span class="price-tag" style="background: #e8f5e9; color:#1b5e20; border:1px solid #a5d6a7;">✓ Within Budget (₹${estCost.toLocaleString('en-IN')})</span>`
+              }
+              ${h.acceptedInsurance.includes(insurance) ? 
+                `<span class="price-tag" style="background: var(--color-cream-warm); color:var(--color-dark-forest); border:1px solid var(--color-sage-ash);">✓ In-Network</span>` : ''
+              }
+            </div>
+
+            <!-- Department Specific Highlight Box -->
+            <div style="background: #FFFFFF; padding: 12px 14px; border-radius: 12px; font-size: 13px; margin-bottom: 14px; border: 1.5px solid var(--color-sage-deep);">
+              <div style="font-weight: 700; color: var(--color-dark-forest); margin-bottom: 4px;">
+                ${config.icon} ${config.title} Capacity:
+              </div>
+              <div style="color: var(--text-muted); margin-bottom: 6px;">
+                ${deptBedLabel}
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); border-top: 1px dashed var(--color-sage-ash); padding-top: 6px;">
+                <span>⏱️ ETA: <strong>${m.etaMinutes} mins</strong></span>
+                <span>🚑 Ambulances: <strong>${inv.ambulancesAvailable} Ready</strong></span>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('${h.id}')">
+                🏥 Open Department & Hospital Details →
+              </button>
+              <button class="btn btn-secondary" style="width: 100%; font-size: 12px;" onclick="bookDepartmentDispatch('${h.id}')">
+                ⚡ Direct Emergency Dispatch
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+      } catch (err) {
+        grid.innerHTML = `<div style="color: var(--danger); padding: 20px;">Error loading department matches: ${err.message}</div>`;
+      }
+    }
+
+    async function openHospitalProfilePage(hospitalId) {
+      if (state.authRole === 'guest') {
+        state.authRole = 'patient';
+      }
+      state.currentSelectedHospitalId = hospitalId;
+
+      let matchObj = (state.currentDeptMatches || []).find(m => m.hospital.id === hospitalId);
+      let hospital = matchObj ? matchObj.hospital : null;
+      let inventory = matchObj ? matchObj.inventory : null;
+
+      if (!hospital && state.hospitalsMap[hospitalId]) {
+        hospital = state.hospitalsMap[hospitalId].hospital;
+        inventory = state.hospitalsMap[hospitalId].inventory;
+      }
+
+      if (!hospital) {
+        try {
+          const res = await fetch('/v1/hospitals');
+          const data = await res.json();
+          if (data.list) {
+            data.list.forEach(item => { state.hospitalsMap[item.hospital.id] = item; });
+            const item = state.hospitalsMap[hospitalId];
+            if (item) {
+              hospital = item.hospital;
+              inventory = item.inventory;
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to fetch hospital details', err);
+        }
+      }
+
+      if (!hospital) {
+        hospital = {
+          id: hospitalId,
+          name: 'St. Jude Trauma & Cardiac Emergency Center',
+          address: '500 Medical Plaza, San Francisco, CA',
+          phoneNumber: '+1-555-0190',
+          pricingTier: 2,
+          acceptedInsurance: ['BlueCross', 'UnitedHealth', 'Kaiser'],
+          serviceTags: ['cardiac', 'trauma', 'icu', 'pediatric']
+        };
+        inventory = {
+          icuBedsAvailable: 4,
+          cardiacBedsAvailable: 2,
+          generalBedsAvailable: 12,
+          traumaBedsAvailable: 3,
+          ambulancesAvailable: 3
+        };
+      }
+
+      const hpNameEl = document.getElementById('hpName');
+      if (hpNameEl) hpNameEl.innerText = hospital.name;
+      const hpAddrEl = document.getElementById('hpAddress');
+      if (hpAddrEl) hpAddrEl.innerHTML = `📍 ${hospital.address} | 📞 Direct Line: <strong id="hpPhone">${hospital.phoneNumber || '+1-555-0190'}</strong>`;
+      
+      const phoneBtn = document.getElementById('hpPhoneBtn');
+      if (phoneBtn) phoneBtn.href = `tel:${hospital.phoneNumber || '+1-555-0190'}`;
+
+      const estCost = hospital.pricingTier === 1 ? 15000 : hospital.pricingTier === 2 ? 35000 : 60000;
+      const hpCostEl = document.getElementById('hpCost');
+      if (hpCostEl) hpCostEl.innerText = `₹${estCost.toLocaleString('en-IN')}`;
+
+      const userInsurance = state.currentUser.insuranceProvider || 'BlueCross';
+      const inNetwork = hospital.acceptedInsurance ? hospital.acceptedInsurance.includes(userInsurance) : true;
+      const hpInsEl = document.getElementById('hpInsuranceStatus');
+      if (hpInsEl) hpInsEl.innerText = inNetwork ? `✓ In-Network with ${userInsurance}` : `Self-Pay / Out of Network`;
+
+      const badgesBox = document.getElementById('hpBadges');
+      if (badgesBox) {
+        const tierLabel = hospital.pricingTier === 1 ? 'Tier 1 Budget (~₹15,000)' : hospital.pricingTier === 2 ? 'Tier 2 Standard (~₹35,000)' : 'Tier 3 Premium (~₹60,000)';
+        badgesBox.innerHTML = `
+          <span class="price-tag tier-standard">${tierLabel}</span>
+          <span class="price-tag tier-budget">🟢 24/7 Active Emergency Ward</span>
+          <span class="price-tag tier-standard">🛡️ State Medical Board Verified</span>
+        `;
+      }
+
+      const servicesBox = document.getElementById('hpServicesTags');
+      if (servicesBox && hospital.serviceTags) {
+        servicesBox.innerHTML = hospital.serviceTags.map(st => `
+          <span class="service-chip active" style="cursor:default;">✓ ${st.toUpperCase()}</span>
+        `).join('');
+      }
+
+      if (inventory) {
+        const icuEl = document.getElementById('hpIcu');
+        if (icuEl) icuEl.innerText = inventory.icuBedsAvailable;
+        const cdcEl = document.getElementById('hpCardiac');
+        if (cdcEl) cdcEl.innerText = inventory.cardiacBedsAvailable || 2;
+        const trmEl = document.getElementById('hpTrauma');
+        if (trmEl) trmEl.innerText = inventory.traumaBedsAvailable || 3;
+        const genEl = document.getElementById('hpGeneral');
+        if (genEl) genEl.innerText = inventory.generalBedsAvailable;
+        const ambEl = document.getElementById('hpAmbulances');
+        if (ambEl) ambEl.innerText = `${inventory.ambulancesAvailable} Fleet Units`;
+      }
+
+      const doctorsBox = document.getElementById('hpDoctorsList');
+      if (doctorsBox) {
+        doctorsBox.innerHTML = `
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-weight: 700; font-size: 14px; color: var(--color-dark-forest);">👨‍⚕️ Dr. Sarah Jenkins</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Chief of Pediatric Emergency Medicine & PICU</div>
+            </div>
+            <span class="price-tag tier-budget">ON DUTY</span>
+          </div>
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-weight: 700; font-size: 14px; color: var(--color-dark-forest);">👨‍⚕️ Dr. Arthur Vance</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Director of Trauma Resuscitation & ICU</div>
+            </div>
+            <span class="price-tag tier-budget">ON DUTY</span>
+          </div>
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-weight: 700; font-size: 14px; color: var(--color-dark-forest);">👨‍⚕️ Dr. Robert Sterling</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Lead Interventional Cardiologist (Cath Lab)</div>
+            </div>
+            <span class="price-tag tier-budget">ON CALL</span>
+          </div>
+        `;
+      }
+
+      const targetDeptSelect = document.getElementById('hpTargetDept');
+      if (targetDeptSelect) {
+        targetDeptSelect.value = state.currentDeptKey || 'pediatric';
+      }
+
+      switchHospitalDeptTab(state.currentDeptKey || 'pediatric');
+
+      navigateTo('hospital-profile');
+    }
+
+    function switchHospitalDeptTab(deptKey) {
+      document.querySelectorAll('#view-hospital-profile .dept-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`hpDeptTab-${deptKey}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const targetSelect = document.getElementById('hpTargetDept');
+      if (targetSelect) targetSelect.value = deptKey;
+
+      const config = DEPARTMENT_CONFIG[deptKey] || DEPARTMENT_CONFIG.emergency;
+      const container = document.getElementById('hpDeptTabContent');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+          <span style="font-size: 36px; background: #fff; width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-sage-ash);">${config.icon}</span>
+          <div>
+            <h3 style="font-size: 19px; color: var(--color-dark-forest);">${config.title}</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">📍 Location & Ward: <strong>${config.wardLocation}</strong></p>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--text-main); line-height: 1.5; margin-bottom: 14px;">${config.description}</p>
+
+        <div style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 8px;">🔬 Ward Facilities & Specialized Medical Tech:</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          ${config.equipment.map(eq => `<span class="service-chip active" style="cursor:default; font-size:12px;">✓ ${eq}</span>`).join('')}
+        </div>
+      `;
+    }
+
+    function updateBookingFormDept(deptKey) {
+      switchHospitalDeptTab(deptKey);
+    }
+
+    function goBackFromHospitalProfile() {
+      if (state.currentDeptKey) {
+        navigateTo('dept-page');
+      } else {
+        navigateTo('user-dashboard');
+      }
+    }
+
+    function handleHospitalProfileBooking(e) {
+      e.preventDefault();
+      const hospitalId = state.currentSelectedHospitalId || 'hosp-001';
+      const hpNameEl = document.getElementById('hpName');
+      const hospitalName = hpNameEl ? hpNameEl.innerText : 'St. Jude Emergency Center';
+      const deptKey = document.getElementById('hpTargetDept').value || 'pediatric';
+      const config = DEPARTMENT_CONFIG[deptKey] || DEPARTMENT_CONFIG.pediatric;
+      const severity = document.getElementById('hpSeverity').value;
+
+      const bookingId = `bk-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      alert(`✅ EMERGENCY BOOKING & DISPATCH CONFIRMED!\n\n` +
+        `• Booking Reference ID: ${bookingId}\n` +
+        `• Hospital Facility: ${hospitalName}\n` +
+        `• Reserved Department Ward: ${config.title}\n` +
+        `• Urgency Level: ${severity}\n` +
+        `• Patient Name: Jane Doe\n` +
+        `• Ambulance Status: En Route (ETA ~4-6 mins)\n\n` +
+        `The hospital department has reserved your bed and dispatched the emergency response team.`);
+    }
+
+    function bookDepartmentDispatch(hospitalId) {
+      const deptKey = state.currentDeptKey || 'emergency';
+      const config = DEPARTMENT_CONFIG[deptKey] || DEPARTMENT_CONFIG.emergency;
+      const matchObj = (state.currentDeptMatches || []).find(m => m.hospital.id === hospitalId);
+      const hospitalName = matchObj ? matchObj.hospital.name : 'St. Jude Emergency Center';
+
+      const bookingId = `bk-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      alert(`✅ EMERGENCY DISPATCH & BED RESERVATION CONFIRMED!\n\n` +
+        `• Booking Reference: ${bookingId}\n` +
+        `• Facility: ${hospitalName}\n` +
+        `• Department: ${config.title}\n` +
+        `• Ambulance Status: En Route (ETA 6-8 mins)\n\n` +
+        `The emergency department has been notified of your incoming transfer.`);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      syncUserBudget(40000);
+      navigateTo('login');
+    });
+  </script>
+</body>
+</html>
