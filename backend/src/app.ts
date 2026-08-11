@@ -221,6 +221,76 @@ app.post('/v1/auth/login', (req: Request, res: Response) => {
   }
 });
 
+// In-memory OTP store (email -> { code, expiresAt, verified })
+const otpStore = new Map<string, { code: string; expiresAt: number; verified: boolean }>();
+
+/**
+ * Send OTP to Email
+ * POST /v1/auth/send-otp
+ */
+app.post('/v1/auth/send-otp', (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 10 * 60 * 1000;
+
+    otpStore.set(cleanEmail, { code, expiresAt, verified: false });
+
+    console.log(`[OTP Service] Generated 6-digit OTP ${code} for email ${cleanEmail}`);
+
+    return res.status(200).json({
+      status: 'OK',
+      message: `OTP sent to ${cleanEmail}`,
+      demoOtp: code
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to generate OTP' });
+  }
+});
+
+/**
+ * Verify Email OTP
+ * POST /v1/auth/verify-otp
+ */
+app.post('/v1/auth/verify-otp', (req: Request, res: Response) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ error: 'Email and 6-digit OTP code are required.' });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const record = otpStore.get(cleanEmail);
+
+    if (!record) {
+      return res.status(400).json({ error: 'No OTP requested for this email. Please click Send OTP first.' });
+    }
+
+    if (Date.now() > record.expiresAt) {
+      return res.status(400).json({ error: 'OTP code expired. Please request a new OTP.' });
+    }
+
+    if (record.code !== String(otp).trim()) {
+      return res.status(400).json({ error: 'Invalid 6-digit OTP code. Please check and try again.' });
+    }
+
+    record.verified = true;
+    otpStore.set(cleanEmail, record);
+
+    return res.status(200).json({
+      status: 'VERIFIED',
+      message: 'Email address verified successfully!'
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'OTP verification failed' });
+  }
+});
+
 /**
  * NoiseFit Smartwatch Integration Endpoint
  * POST /v1/integrations/noisefit/sync
