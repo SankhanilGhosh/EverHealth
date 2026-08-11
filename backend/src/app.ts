@@ -222,6 +222,62 @@ app.post('/v1/auth/login', (req: Request, res: Response) => {
 });
 
 /**
+ * Google Fit Smartwatch Integration Endpoint
+ * POST /v1/integrations/google-fit/sync
+ */
+app.post('/v1/integrations/google-fit/sync', async (req: Request, res: Response) => {
+  try {
+    const { userId, heartRate, spo2, deviceName } = req.body;
+    const targetUserId = userId || mockUser.id;
+
+    const hrVal = Number(heartRate !== undefined ? heartRate : 72);
+    const spo2Val = Number(spo2 !== undefined ? spo2 : 98.2);
+
+    const isFallDetected = (hrVal >= 160 || hrVal <= 38 || spo2Val < 88);
+
+    const reading: VitalReading = {
+      userId: targetUserId,
+      timestamp: new Date(),
+      heartRate: hrVal,
+      spo2: spo2Val,
+      fallDetected: isFallDetected,
+      sourceDevice: deviceName || 'Google Fit Wear OS Smartwatch'
+    };
+
+    const result = await vitalsIngestionService.ingestReading(reading);
+    syncVitalToSupabase(reading);
+
+    if (result.detectionResult.isEmergency) {
+      const alert = await alertService.triggerAlert(
+        targetUserId,
+        reading,
+        `[Google Fit Telemetry] ${result.detectionResult.reason}`,
+        result.detectionResult.severity
+      );
+      syncEmergencyEventToSupabase(targetUserId, result.detectionResult.reason, result.detectionResult.severity);
+
+      return res.status(200).json({
+        status: 'ANOMALY_DETECTED',
+        source: 'Google Fit API',
+        reading,
+        detection: result.detectionResult,
+        alert
+      });
+    }
+
+    return res.status(200).json({
+      status: 'OK',
+      source: 'Google Fit API',
+      reading,
+      detection: result.detectionResult
+    });
+  } catch (err: any) {
+    console.error('Error syncing Google Fit telemetry:', err);
+    return res.status(500).json({ error: 'Failed to process Google Fit watch sync' });
+  }
+});
+
+/**
  * 1. Stream continuous vitals
  * POST /v1/vitals/stream
  */
