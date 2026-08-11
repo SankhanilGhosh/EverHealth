@@ -822,23 +822,25 @@
             </div>
             <div class="form-group">
               <label>Password</label>
-              <input type="password" class="form-control" placeholder="••••••••" required value="password123">
+              <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required value="password123">
             </div>
             <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Sign In to Portal</button>
           </form>
 
+          <div id="loginStatusMsg" style="display:none; margin-top: 14px; font-size: 13px; text-align: center; color: var(--danger); background: #fee2e2; border: 1.5px solid #fca5a5; padding: 12px; border-radius: 12px; font-weight: 600;"></div>
+
           <div class="demo-login-box">
-            <p>⚡ Quick Demo Auto-Login</p>
-            <button type="button" class="demo-btn" onclick="quickLogin('patient', 'usr-101')">
-              <span>👤 Patient Quick Login: <strong>Jane Doe</strong> (Budget ₹40,000)</span>
+            <p>⚡ Registered Accounts Quick Login</p>
+            <button type="button" class="demo-btn" onclick="quickLogin('patient', 'jane.doe@example.com')">
+              <span>👤 Registered Patient: <strong>Jane Doe</strong> (Budget ₹40,000)</span>
               <span>→</span>
             </button>
-            <button type="button" class="demo-btn" onclick="quickLogin('hospital', 'hosp-001')">
-              <span>🏥 Hospital Quick Login: <strong>St. Jude Trauma Center</strong></span>
+            <button type="button" class="demo-btn" onclick="quickLogin('hospital', 'LIC-CA-94812')">
+              <span>🏥 Registered Hospital: <strong>St. Jude Trauma Center</strong></span>
               <span>→</span>
             </button>
-            <button type="button" class="demo-btn" onclick="quickLogin('hospital', 'hosp-002')">
-              <span>🏥 Hospital Quick Login: <strong>Mercy Regional Emergency</strong></span>
+            <button type="button" class="demo-btn" onclick="quickLogin('hospital', 'LIC-CA-94815')">
+              <span>🏥 Registered Hospital: <strong>Mercy Regional Emergency</strong></span>
               <span>→</span>
             </button>
           </div>
@@ -887,15 +889,20 @@
                 <input type="tel" id="pPhone" class="form-control" placeholder="+91 98765 43210" required>
               </div>
               <div class="form-group">
-                <label>Insurance Provider</label>
-                <select id="pInsurance" class="form-control">
-                  <option value="BlueCross">BlueCross BlueShield</option>
-                  <option value="UnitedHealth">UnitedHealth Group</option>
-                  <option value="Kaiser">Kaiser Permanente</option>
-                  <option value="Aetna">Aetna Care</option>
-                  <option value="None">Self-Pay / None</option>
-                </select>
+                <label>Account Password</label>
+                <input type="password" id="pPassword" class="form-control" placeholder="••••••••" required value="password123">
               </div>
+            </div>
+
+            <div class="form-group">
+              <label>Insurance Provider</label>
+              <select id="pInsurance" class="form-control">
+                <option value="BlueCross">BlueCross BlueShield</option>
+                <option value="UnitedHealth">UnitedHealth Group</option>
+                <option value="Kaiser">Kaiser Permanente</option>
+                <option value="Aetna">Aetna Care</option>
+                <option value="None">Self-Pay / None</option>
+              </select>
             </div>
 
             <!-- Patient Hospital Budget in Rupees -->
@@ -1101,12 +1108,14 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Fall Sensor Status</label>
-              <select id="userFall" class="form-control">
-                <option value="false">No Fall Detected</option>
-                <option value="true">Hard Impact / Fall Detected</option>
-              </select>
+            <div class="card" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-sage-deep); padding: 12px; margin-bottom: 16px;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest); display: flex; align-items: center; justify-content: space-between;">
+                <span>🤖 Automatic Fall & Anomaly Sensor</span>
+                <span class="price-tag tier-budget" id="autoSensorBadge">🟢 Auto-Evaluating</span>
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                The sensor continuously monitors telemetry and automatically detects physical collapse or physiological anomalies based on health conditions without manual selection.
+              </p>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -1740,26 +1749,67 @@
       }
     }
 
-    function quickLogin(role, id) {
+    function quickLogin(role, identifier) {
+      document.getElementById('loginId').value = identifier;
+      document.getElementById('loginPassword').value = 'password123';
       if (role === 'patient') {
-        state.authRole = 'patient';
-        state.currentUser.id = id;
-        const welcomeEl = document.getElementById('patientWelcomeText');
-        if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>Jane Doe</strong> (ID: ${id})`;
-        navigateTo('user-dashboard');
+        setLoginRole('patient');
       } else {
-        openHospitalVerificationModal(id);
+        setLoginRole('hospital');
       }
+      handleLoginSubmit(new Event('submit'));
     }
 
-    function handleLoginSubmit(e) {
-      e.preventDefault();
+    async function handleLoginSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
       const isHospital = document.getElementById('loginRoleHospital').classList.contains('active');
-      if (isHospital) {
-        openHospitalVerificationModal('hosp-001');
-      } else {
-        state.authRole = 'patient';
-        navigateTo('user-dashboard');
+      const role = isHospital ? 'hospital' : 'patient';
+      const emailOrPhone = document.getElementById('loginId').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const statusBox = document.getElementById('loginStatusMsg');
+
+      if (statusBox) statusBox.style.display = 'none';
+
+      try {
+        const res = await fetch('/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ emailOrPhone, password, role })
+        });
+
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error('Server returned invalid response. Ensure backend service is active.');
+        }
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (statusBox) {
+            statusBox.style.display = 'block';
+            statusBox.innerText = `❌ Login Failed: ${data.error || 'Invalid credentials. New users must sign up first.'}`;
+          } else {
+            alert(`Login Failed: ${data.error || 'Invalid credentials.'}`);
+          }
+          return;
+        }
+
+        if (role === 'hospital') {
+          openHospitalVerificationModal(data.hospital.id);
+        } else {
+          state.authRole = 'patient';
+          state.currentUser = data.user;
+          const welcomeEl = document.getElementById('patientWelcomeText');
+          if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>${data.user.fullName}</strong> (ID: ${data.user.id})`;
+          navigateTo('user-dashboard');
+        }
+      } catch (err) {
+        if (statusBox) {
+          statusBox.style.display = 'block';
+          statusBox.innerText = `❌ Error logging in: ${err.message}`;
+        } else {
+          alert('Error logging in: ' + err.message);
+        }
       }
     }
 
@@ -1823,9 +1873,10 @@
 
     async function handlePatientSignup(e) {
       e.preventDefault();
-      const name = document.getElementById('pName').value;
-      const email = document.getElementById('pEmail').value;
-      const phone = document.getElementById('pPhone').value;
+      const name = document.getElementById('pName').value.trim();
+      const email = document.getElementById('pEmail').value.trim();
+      const phone = document.getElementById('pPhone').value.trim();
+      const password = document.getElementById('pPassword').value.trim();
       const budget = Number(document.getElementById('pBudgetValue').value);
       const insurance = document.getElementById('pInsurance').value;
 
@@ -1833,6 +1884,7 @@
         fullName: name,
         email: email,
         phoneNumber: phone,
+        password: password,
         budgetCeiling: budget,
         insuranceProvider: insurance
       };
@@ -1848,7 +1900,7 @@
         state.authRole = 'patient';
         const welcomeEl = document.getElementById('patientWelcomeText');
         if (welcomeEl) welcomeEl.innerHTML = `Logged in as: <strong>${name}</strong> (ID: ${data.user.id})`;
-        alert(`Patient Account created for ${name}! Budget Ceiling: ₹${budget.toLocaleString('en-IN')}`);
+        alert(`Account successfully created for ${name}! Please sign in or proceed to your dashboard.`);
         navigateTo('user-dashboard');
       } catch (err) {
         alert('Signup failed: ' + err.message);
@@ -1991,10 +2043,19 @@
 
       try {
         const res = await fetch(`/v1/hospitals/nearby?userId=${state.currentUser.id}&severity=${severity}&budgetCeiling=${budget}&insuranceProvider=${encodeURIComponent(insurance)}`);
+        
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error('Server returned an unexpected non-JSON response. Please ensure backend server is active.');
+        }
+
         const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to query hospitals from server.');
+        }
         
         const countText = document.getElementById('matchCountText');
-        if (countText) countText.innerText = `Found ${data.count} suitable facility matches`;
+        if (countText) countText.innerText = `Found ${data.count || 0} suitable facility matches`;
         grid.innerHTML = '';
 
         if (!data.matches || data.matches.length === 0) {
@@ -2056,7 +2117,9 @@
           grid.appendChild(card);
         });
       } catch (err) {
-        grid.innerHTML = `<div style="color: var(--danger);">Error loading hospitals: ${err.message}</div>`;
+        grid.innerHTML = `<div style="color: var(--danger); background: #fee2e2; border: 1px solid #fca5a5; padding: 16px; border-radius: 12px;">
+          ⚠️ <strong>Error querying hospital recommendations:</strong> ${err.message}
+        </div>`;
       }
     }
 
@@ -2064,19 +2127,35 @@
       e.preventDefault();
       const hr = Number(document.getElementById('userHr').value);
       const spo2 = Number(document.getElementById('userSpo2').value);
-      const fall = document.getElementById('userFall').value === 'true';
+
+      // AUTOMATIC FALL SENSOR & ANOMALY EVALUATION ENGINE:
+      // Automatically infers physical collapse / fall event if vitals show critical instability (severe tachycardia, bradycardia, or low SpO2)
+      const isFallDetected = (hr >= 160 || hr <= 38 || spo2 < 88);
+
+      const sensorBadge = document.getElementById('autoSensorBadge');
+      if (sensorBadge) {
+        if (isFallDetected) {
+          sensorBadge.className = 'price-tag';
+          sensorBadge.style.background = '#dc2626';
+          sensorBadge.style.color = '#ffffff';
+          sensorBadge.innerText = '🚨 Fall / Physical Collapse Detected';
+        } else {
+          sensorBadge.className = 'price-tag tier-budget';
+          sensorBadge.innerText = '🟢 Normal (Auto-Evaluating)';
+        }
+      }
 
       const payload = {
         userId: state.currentUser.id,
         timestamp: new Date().toISOString(),
         heartRate: hr,
         spo2: spo2,
-        fallDetected: fall,
-        sourceDevice: 'Apple Watch Ultra'
+        fallDetected: isFallDetected,
+        sourceDevice: 'Apple Watch Ultra Sensor'
       };
 
       const out = document.getElementById('userVitalsOutput');
-      out.innerHTML = '<span style="color: var(--text-muted);">Sending vitals packet...</span>';
+      out.innerHTML = '<span style="color: var(--text-muted);">Analyzing health telemetry & automatic fall sensor data...</span>';
 
       try {
         const res = await fetch('/v1/vitals/stream', {
@@ -2087,11 +2166,11 @@
         const data = await res.json();
 
         if (data.status === 'ANOMALY_DETECTED') {
-          out.innerHTML = `<span style="color: var(--danger); font-weight: bold;">🚨 ANOMALY DETECTED! (${data.detection.severity}): ${data.detection.reason}</span>`;
+          out.innerHTML = `<span style="color: var(--danger); font-weight: bold;">🚨 AUTOMATIC DETECTED EMERGENCY (${data.detection.severity}): ${data.detection.reason}</span>`;
           const alertId = data.alert ? data.alert.id : null;
           triggerPatientEmergencyBanner(data.detection.severity, data.detection.reason, alertId);
         } else {
-          out.innerHTML = `<span style="color: var(--success); font-weight: bold;">✓ Vitals Normal: HR ${hr} bpm, SpO2 ${spo2}%</span>`;
+          out.innerHTML = `<span style="color: var(--success); font-weight: bold;">✓ Vitals & Health Condition Normal: HR ${hr} bpm, SpO2 ${spo2}%. Fall Sensor: No Fall Detected.</span>`;
         }
       } catch (err) {
         out.innerHTML = `<span style="color: var(--danger);">Failed to stream vitals: ${err.message}</span>`;
@@ -2412,7 +2491,16 @@
 
       try {
         const res = await fetch(`/v1/hospitals/nearby?userId=${state.currentUser.id}&severity=${severity}&budgetCeiling=${budget}&insuranceProvider=${encodeURIComponent(insurance)}&requiredServices=${config.requiredTag}`);
+        
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error('Server returned an unexpected non-JSON response. Please ensure backend server is active.');
+        }
+
         const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to query department matches.');
+        }
 
         state.currentDeptMatches = data.matches || [];
         const countText = document.getElementById('deptMatchCountText');

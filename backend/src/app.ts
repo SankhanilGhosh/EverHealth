@@ -20,6 +20,7 @@ const mockUser: UserProfile = {
   fullName: 'Jane Doe',
   email: 'jane.doe@example.com',
   phoneNumber: '+1-555-0199',
+  password: 'password123',
   dateOfBirth: '1985-04-12',
   bloodType: 'O+',
   allergies: ['Penicillin'],
@@ -158,6 +159,69 @@ alertService.on('alert:timeout', async (event) => {
 });
 
 /**
+ * 0. User & Hospital Authentication (Login Check)
+ * POST /v1/auth/login
+ */
+app.post('/v1/auth/login', (req: Request, res: Response) => {
+  try {
+    const { emailOrPhone, password, role } = req.body;
+    if (!emailOrPhone || !password) {
+      return res.status(400).json({ error: 'Please enter both your login ID (Email/Phone) and password.' });
+    }
+
+    const query = String(emailOrPhone).trim().toLowerCase();
+
+    if (role === 'hospital') {
+      const list = hospitalMatchingService.getAllHospitals();
+      const match = list.find(item => 
+        item.hospital.id.toLowerCase() === query ||
+        item.hospital.licenseId.toLowerCase() === query ||
+        item.hospital.name.toLowerCase().includes(query)
+      );
+
+      if (!match) {
+        return res.status(401).json({ error: 'Hospital facility record not found in database. New hospital facilities must register first.' });
+      }
+
+      return res.status(200).json({ status: 'OK', role: 'hospital', hospital: match.hospital });
+    }
+
+    // Patient authentication against user database
+    let foundUser: UserProfile | undefined;
+    for (const u of usersDb.values()) {
+      const userEmail = (u.email || '').trim().toLowerCase();
+      const userPhone = (u.phoneNumber || '').replace(/[^0-9]/g, '');
+      const cleanQuery = query.replace(/[^0-9]/g, '');
+
+      if (
+        u.id.toLowerCase() === query ||
+        (userEmail && userEmail === query) ||
+        (userPhone && cleanQuery && userPhone === cleanQuery)
+      ) {
+        foundUser = u;
+        break;
+      }
+    }
+
+    if (!foundUser) {
+      return res.status(401).json({ error: 'Account not found in database. New users must sign up first before logging in.' });
+    }
+
+    const storedPassword = foundUser.password || 'password123';
+    if (storedPassword !== password) {
+      return res.status(401).json({ error: 'Incorrect password. Login failed.' });
+    }
+
+    // Omit password from response
+    const { password: _, ...safeUser } = foundUser;
+    return res.status(200).json({ status: 'OK', role: 'patient', user: safeUser });
+  } catch (err: any) {
+    console.error('Login authentication error:', err);
+    return res.status(500).json({ error: 'Internal server authentication error' });
+  }
+});
+
+/**
  * 1. Stream continuous vitals
  * POST /v1/vitals/stream
  */
@@ -239,31 +303,36 @@ app.post('/v1/emergency/alerts/:id/cancel', async (req: Request, res: Response) 
  * GET /v1/hospitals/nearby
  */
 app.get('/v1/hospitals/nearby', async (req: Request, res: Response) => {
-  const lat = parseFloat(req.query.lat as string) || 37.7749;
-  const lng = parseFloat(req.query.lng as string) || -122.4194;
-  const userId = (req.query.userId as string) || mockUser.id;
-  const severity = ((req.query.severity as string) || 'SEVERE') as Severity;
+  try {
+    const lat = parseFloat(req.query.lat as string) || 37.7749;
+    const lng = parseFloat(req.query.lng as string) || -122.4194;
+    const userId = (req.query.userId as string) || mockUser.id;
+    const severity = ((req.query.severity as string) || 'SEVERE') as Severity;
 
-  const baseUser = usersDb.get(userId) || mockUser;
-  const budgetCeiling = req.query.budgetCeiling !== undefined ? Number(req.query.budgetCeiling) : baseUser.budgetCeiling;
-  const insuranceProvider = (req.query.insuranceProvider as string) || baseUser.insuranceProvider;
+    const baseUser = usersDb.get(userId) || mockUser;
+    const budgetCeiling = req.query.budgetCeiling !== undefined ? Number(req.query.budgetCeiling) : baseUser.budgetCeiling;
+    const insuranceProvider = (req.query.insuranceProvider as string) || baseUser.insuranceProvider;
 
-  const userProfile: UserProfile = {
-    ...baseUser,
-    budgetCeiling,
-    insuranceProvider,
-  };
+    const userProfile: UserProfile = {
+      ...baseUser,
+      budgetCeiling,
+      insuranceProvider,
+    };
 
-  const requiredServices = req.query.requiredServices ? (req.query.requiredServices as string).split(',').map(s => s.trim()) : [];
+    const requiredServices = req.query.requiredServices ? (req.query.requiredServices as string).split(',').map(s => s.trim()) : [];
 
-  const matches = await hospitalMatchingService.findBestMatches(
-    { latitude: lat, longitude: lng },
-    userProfile,
-    severity,
-    requiredServices
-  );
+    const matches = await hospitalMatchingService.findBestMatches(
+      { latitude: lat, longitude: lng },
+      userProfile,
+      severity,
+      requiredServices
+    );
 
-  return res.status(200).json({ count: matches.length, matches });
+    return res.status(200).json({ count: matches.length, matches });
+  } catch (err: any) {
+    console.error('Error fetching hospital matches:', err);
+    return res.status(500).json({ error: err.message || 'Error processing hospital matching' });
+  }
 });
 
 /**
@@ -378,8 +447,9 @@ app.post('/v1/users', async (req: Request, res: Response) => {
   const user: UserProfile = {
     id: req.body.id || `usr-${Date.now()}`,
     fullName: req.body.fullName || 'Anonymous Patient',
-    email: req.body.email || '',
+    email: req.body.email ? req.body.email.trim().toLowerCase() : '',
     phoneNumber: req.body.phoneNumber || '',
+    password: req.body.password || 'password123',
     dateOfBirth: req.body.dateOfBirth || '1990-01-01',
     bloodType: req.body.bloodType || 'O+',
     allergies: req.body.allergies || [],

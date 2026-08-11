@@ -39,6 +39,7 @@ export interface UserProfile {
   preferredHospitalIds: string[];
   preferredHospitalTier: 'STANDARD' | 'PREMIUM' | 'ANY';
   deviceTokens: string[];
+  password?: string;
 }
 
 export interface BaselineProfile {
