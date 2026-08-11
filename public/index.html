@@ -884,32 +884,8 @@
                 <input type="text" id="pName" class="form-control" placeholder="Alex Morgan" required>
               </div>
               <div class="form-group">
-                <label style="display: flex; justify-content: space-between; align-items: center;">
-                  <span>Email Address</span>
-                  <span class="price-tag" id="otpStatusBadge" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;">🔴 Unverified</span>
-                </label>
-                <div style="display: flex; gap: 8px;">
-                  <input type="email" id="pEmail" class="form-control" placeholder="alex@example.com" required style="flex: 1;">
-                  <button type="button" class="btn" id="btnSendOtp" style="padding: 6px 12px; font-size: 12px; white-space: nowrap;" onclick="sendEmailOtp()">
-                    📩 Send OTP
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Email OTP Verification Box -->
-            <div id="otpVerificationBox" style="background: var(--color-ivory-light); border: 1.5px dashed var(--color-sage-deep); padding: 12px; border-radius: 12px; margin-bottom: 16px;">
-              <div style="font-size: 12px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 6px;">
-                🔑 Enter 6-Digit Email Verification Code (OTP)
-              </div>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <input type="text" id="pEmailOtp" class="form-control" maxlength="6" placeholder="e.g. 849201" style="font-size: 16px; font-weight: bold; letter-spacing: 4px; text-align: center; flex: 1;">
-                <button type="button" class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px;" onclick="verifyEmailOtp()">
-                  ✓ Verify OTP
-                </button>
-              </div>
-              <div id="otpMsg" style="font-size: 12px; margin-top: 6px; color: var(--text-muted);">
-                Click <strong>"Send OTP"</strong> to receive your 6-digit verification code.
+                <label>Email Address</label>
+                <input type="email" id="pEmail" class="form-control" placeholder="alex@example.com" required>
               </div>
             </div>
 
@@ -2235,131 +2211,6 @@
       }
     }
 
-    /* ========================================================
-       EMAIL OTP GENERATION & VERIFICATION SERVICE
-       ======================================================== */
-    let isEmailOtpVerified = false;
-    let verifiedEmailAddress = '';
-
-    async function sendEmailOtp() {
-      const emailInput = document.getElementById('pEmail');
-      const email = emailInput ? emailInput.value.trim() : '';
-      const btn = document.getElementById('btnSendOtp');
-      const msg = document.getElementById('otpMsg');
-      const badge = document.getElementById('otpStatusBadge');
-
-      if (!email || !email.includes('@')) {
-        alert('⚠️ Please enter a valid email address first.');
-        if (emailInput) emailInput.focus();
-        return;
-      }
-
-      if (btn) { btn.innerText = '⌛ Sending...'; btn.disabled = true; }
-      if (msg) msg.innerHTML = `Sending 6-digit OTP to <strong>${email}</strong>...`;
-
-      try {
-        const res = await fetch('/v1/auth/send-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const contentType = res.headers.get('content-type') || '';
-        let data = {};
-        if (contentType.includes('application/json')) {
-          data = await res.json();
-        }
-
-        const otpCode = data.demoOtp || Math.floor(100000 + Math.random() * 900000).toString();
-
-        if (btn) { btn.innerText = '🔄 Resend OTP'; btn.disabled = false; }
-        if (msg) {
-          msg.style.color = '#1b5e20';
-          msg.innerHTML = `📩 <strong>OTP Sent to ${email}!</strong><br>Enter your 6-digit code below. <span style="background:#e8f5e9; padding:2px 6px; border-radius:4px; border:1px solid #a5d6a7;">Demo Code: <strong>${otpCode}</strong></span>`;
-        }
-        if (badge) {
-          badge.innerText = `⌛ OTP Sent (${otpCode})`;
-          badge.style.background = '#fef3c7';
-          badge.style.color = '#92400e';
-          badge.style.borderColor = '#fde68a';
-        }
-
-        const otpInput = document.getElementById('pEmailOtp');
-        if (otpInput) {
-          otpInput.value = otpCode;
-          otpInput.focus();
-        }
-      } catch (err) {
-        const fallbackCode = Math.floor(100000 + Math.random() * 900000).toString();
-        if (btn) { btn.innerText = '🔄 Resend OTP'; btn.disabled = false; }
-        if (msg) {
-          msg.style.color = '#1b5e20';
-          msg.innerHTML = `📩 <strong>OTP Sent to ${email}!</strong> Demo Code: <strong>${fallbackCode}</strong>`;
-        }
-        const otpInput = document.getElementById('pEmailOtp');
-        if (otpInput) otpInput.value = fallbackCode;
-      }
-    }
-
-    async function verifyEmailOtp() {
-      const email = document.getElementById('pEmail').value.trim();
-      const otpInput = document.getElementById('pEmailOtp');
-      const otp = otpInput ? otpInput.value.trim() : '';
-      const msg = document.getElementById('otpMsg');
-      const badge = document.getElementById('otpStatusBadge');
-
-      if (!otp || otp.length < 6) {
-        alert('⚠️ Please enter the 6-digit OTP code received in your email.');
-        if (otpInput) otpInput.focus();
-        return;
-      }
-
-      try {
-        const res = await fetch('/v1/auth/verify-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, otp })
-        });
-        const contentType = res.headers.get('content-type') || '';
-        let isSuccess = false;
-        if (contentType.includes('application/json')) {
-          const data = await res.json();
-          if (res.ok) isSuccess = true;
-          else {
-            alert(`❌ OTP Verification Failed: ${data.error || 'Invalid code'}`);
-            return;
-          }
-        } else {
-          isSuccess = true;
-        }
-
-        if (isSuccess) {
-          isEmailOtpVerified = true;
-          verifiedEmailAddress = email;
-          if (badge) {
-            badge.innerText = '🟢 Email Verified ✓';
-            badge.style.background = '#ceead6';
-            badge.style.color = '#0d652d';
-            badge.style.borderColor = '#82c99b';
-          }
-          if (msg) {
-            msg.style.color = '#0d652d';
-            msg.innerHTML = `✓ <strong>EMAIL VERIFICATION SUCCESSFUL!</strong> ${email} is verified.`;
-          }
-          alert(`✓ Success! Email address ${email} has been verified.`);
-        }
-      } catch (err) {
-        isEmailOtpVerified = true;
-        verifiedEmailAddress = email;
-        if (badge) {
-          badge.innerText = '🟢 Email Verified ✓';
-          badge.style.background = '#ceead6';
-          badge.style.color = '#0d652d';
-          badge.style.borderColor = '#82c99b';
-        }
-        alert(`✓ Success! Email address ${email} has been verified.`);
-      }
-    }
-
     async function handlePatientSignup(e) {
       e.preventDefault();
       const name = document.getElementById('pName').value.trim();
@@ -2368,13 +2219,6 @@
       const password = document.getElementById('pPassword').value.trim();
       const budget = Number(document.getElementById('pBudgetValue').value);
       const insurance = document.getElementById('pInsurance').value;
-
-      if (!isEmailOtpVerified || verifiedEmailAddress.toLowerCase() !== email.toLowerCase()) {
-        alert('⚠️ Email verification required!\n\nPlease click "Send OTP", enter the 6-digit code sent to your email, and click "Verify OTP" before completing your signup.');
-        const emailInput = document.getElementById('pEmail');
-        if (emailInput) emailInput.focus();
-        return;
-      }
 
       const bloodType = document.getElementById('pBloodType') ? document.getElementById('pBloodType').value : 'O+';
       const allergiesText = document.getElementById('pAllergies') ? document.getElementById('pAllergies').value.trim() : 'None';
