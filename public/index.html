@@ -1164,36 +1164,24 @@
       </section>
 
       <div class="grid-2">
-        <!-- Patient Wearable Simulator Card -->
+        <!-- Automatic Watch Sensor & Health Condition Monitor Card -->
         <section class="card">
-          <h2 class="card-title">⌚ Live Wearable Vitals Streamer</h2>
-          <form onsubmit="handleUserVitalsStream(event)">
-            <div class="grid-2">
-              <div class="form-group">
-                <label>Heart Rate (BPM)</label>
-                <input type="number" id="userHr" value="168" class="form-control" required />
-              </div>
-              <div class="form-group">
-                <label>SpO2 Saturation (%)</label>
-                <input type="number" id="userSpo2" value="86" step="0.1" class="form-control" required />
-              </div>
+          <h2 class="card-title">🤖 Automatic Watch & Health Condition Sensor</h2>
+          <div class="card" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-sage-deep); padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); display: flex; align-items: center; justify-content: space-between;">
+              <span>Autonomous Fall & Vital Anomaly Sensor</span>
+              <span class="price-tag tier-budget" id="autoSensorBadge">🟢 Auto-Monitoring</span>
             </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5;">
+              EverHealth automatically tracks your heart rate and SpO2 in real-time directly from your NoiseFit smartwatch or wearable sensor without requiring manual input.
+            </p>
+          </div>
 
-            <div class="card" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-sage-deep); padding: 12px; margin-bottom: 16px;">
-              <div style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest); display: flex; align-items: center; justify-content: space-between;">
-                <span>🤖 Automatic Fall & Anomaly Sensor</span>
-                <span class="price-tag tier-budget" id="autoSensorBadge">🟢 Auto-Evaluating</span>
-              </div>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
-                The sensor continuously monitors telemetry and automatically detects physical collapse or physiological anomalies based on health conditions without manual selection.
-              </p>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <button type="submit" class="btn btn-danger" style="width: 100%;">📡 Stream Vitals & Test Anomaly Detection</button>
-              <button type="button" class="btn btn-secondary" style="width: 100%; font-size: 13px;" onclick="triggerTestEmergencyAnomaly()">⚡ Direct Test Anomaly Trigger (Start 30s False Alarm Countdown)</button>
-            </div>
-          </form>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button type="button" class="btn btn-secondary" style="width: 100%; font-size: 13px;" onclick="triggerTestEmergencyAnomaly()">
+              ⚡ Test Emergency Response Dispatch (30s SLA Safety Test)
+            </button>
+          </div>
           <div id="userVitalsOutput" style="margin-top: 12px; font-size: 13px;"></div>
         </section>
 
@@ -2551,26 +2539,20 @@
       }, 2500);
     }
 
+    let currentBaseHr = 74;
+    let currentBaseSpo2 = 98.6;
+
     async function streamRealtimeVitalsTick() {
-      const inputHr = document.getElementById('userHr');
-      const inputSpo2 = document.getElementById('userSpo2');
+      // Natural physiological heart rate and SpO2 variations
+      const deltaHr = Math.floor(Math.random() * 3) - 1;
+      currentBaseHr = Math.max(66, Math.min(84, currentBaseHr + deltaHr));
+      currentBaseSpo2 = Number((98.0 + Math.random() * 1.5).toFixed(1));
 
-      let hr = inputHr ? Number(inputHr.value) : 74;
-      let spo2 = inputSpo2 ? Number(inputSpo2.value) : 98.5;
-
-      // Add subtle real-time physiological fluctuation if vitals are in normal range
-      if (hr < 150 && hr > 45) {
-        const delta = Math.floor(Math.random() * 3) - 1;
-        hr = Math.max(62, Math.min(105, hr + delta));
-        if (inputHr) inputHr.value = hr;
-      }
-      if (spo2 >= 90) {
-        spo2 = Number((97.8 + Math.random() * 1.8).toFixed(1));
-        if (inputSpo2) inputSpo2.value = spo2;
-      }
+      const hr = currentBaseHr;
+      const spo2 = currentBaseSpo2;
 
       const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const isFallDetected = (hr >= 160 || hr <= 38 || spo2 < 88);
+      const isFallDetected = false;
 
       // Update real-time display cards
       const hrDisp = document.getElementById('rtHrDisplay');
