@@ -830,6 +830,10 @@
               <label>Password</label>
               <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required value="password123">
             </div>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-dark-forest); margin: 10px 0; cursor: pointer;">
+              <input type="checkbox" id="loginKeepLoggedIn" checked style="width: 16px; height: 16px; accent-color: var(--primary);">
+              🔒 Keep me logged in on this device (Auto-opens on this device)
+            </label>
             <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Sign In to Portal</button>
           </form>
 
@@ -1412,6 +1416,65 @@
           </div>
         </section>
       </div>
+
+      <!-- HEALTH RISK PREDICTOR & AI RECOMMENDATION SYSTEM -->
+      <section class="card" style="border: 2px solid var(--primary); background: linear-gradient(135deg, #FFFFFF, var(--color-cream-light)); margin-top: 24px;">
+        <div class="card-title">
+          <span>🔮 AI Health Risk Predictor & Recommendation Engine</span>
+          <span class="price-tag tier-premium">Health Score Model</span>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          Provide your physiological parameters below (Heart Rate, SpO2 Oxygen, Stress Level, Daily Activity Minutes) to calculate your predicted Health Score (0-100), classify Risk Level, and receive personalized medical & lifestyle recommendations.
+        </p>
+
+        <!-- Input Parameters Form -->
+        <div class="grid-4" style="margin-bottom: 16px;">
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Heart Rate (BPM)</label>
+            <input type="number" id="recHr" value="74" min="30" max="220" class="form-control" placeholder="74">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">SpO2 Oxygen (%)</label>
+            <input type="number" id="recSpo2" value="98.5" min="70" max="100" step="0.1" class="form-control" placeholder="98.5">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Stress Level (1-100)</label>
+            <input type="number" id="recStress" value="28" min="1" max="100" class="form-control" placeholder="28">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Daily Activity (Mins)</label>
+            <input type="number" id="recActivity" value="35" min="0" max="300" class="form-control" placeholder="35">
+          </div>
+        </div>
+
+        <button type="button" class="btn" style="width: 100%; margin-bottom: 16px;" onclick="calculateHealthRecommendations()">
+          🔮 Evaluate Risk Level & Generate Health Recommendations
+        </button>
+
+        <!-- Prediction Result Output Container -->
+        <div id="healthRecommendationOutput" style="display: none; background: #FFFFFF; border: 1.5px solid var(--color-sage-deep); border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash);">
+            <div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">PREDICTED HEALTH SCORE</div>
+              <div style="font-size: 36px; font-weight: 800; color: var(--color-dark-forest);" id="resHealthScore">88 / 100</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">RISK CLASSIFICATION</div>
+              <span class="price-tag tier-budget" style="font-size: 16px; padding: 6px 14px;" id="resRiskBadge">🟢 LOW RISK</span>
+            </div>
+          </div>
+
+          <p style="font-size: 13px; color: var(--text-main); line-height: 1.5; margin-bottom: 16px;" id="resStatusSummary">
+            Optimal physiological baseline. Vitals, stress, and activity parameters are balanced.
+          </p>
+
+          <h4 style="font-size: 14px; color: var(--color-dark-forest); margin-bottom: 10px;">📋 Tailored AI Health Recommendations:</h4>
+          <div id="resRecommendationsList" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Dynamically populated recommendations -->
+          </div>
+        </div>
+      </section>
 
       <!-- Suggested Hospital Matching Grid -->
       <section class="card">
@@ -1999,10 +2062,11 @@
     }
 
     function handleLogout() {
+      localStorage.removeItem('everhealth_persistent_session');
       state.authRole = 'guest';
       state.pendingHospitalLoginId = null;
       if (state.patientSlaTimer) clearInterval(state.patientSlaTimer);
-      alert('Logged out successfully.');
+      alert('Logged out successfully. Your saved session on this device has been cleared.');
       navigateTo('login');
     }
 
@@ -2072,10 +2136,12 @@
           }
 
           if (role === 'hospital') {
+            savePersistentSession('hospital', data.hospital.id);
             openHospitalVerificationModal(data.hospital.id);
           } else {
             state.authRole = 'patient';
             state.currentUser = data.user;
+            savePersistentSession('patient', data.user);
             renderPatientProfileUI();
             navigateTo('user-dashboard');
           }
@@ -2095,6 +2161,7 @@
         ];
         const match = validHospitals.find(h => h.id.toLowerCase() === query || h.licenseId.toLowerCase() === query || h.name.toLowerCase().includes(query));
         if (match) {
+          savePersistentSession('hospital', match.id);
           openHospitalVerificationModal(match.id);
         } else {
           if (statusBox) {
@@ -2141,8 +2208,47 @@
       // Successful Client Validation
       state.authRole = 'patient';
       state.currentUser = foundUser;
+      savePersistentSession('patient', foundUser);
       renderPatientProfileUI();
       navigateTo('user-dashboard');
+    }
+
+    function savePersistentSession(role, userOrHospitalId) {
+      const keepLoggedIn = document.getElementById('loginKeepLoggedIn') ? document.getElementById('loginKeepLoggedIn').checked : true;
+      if (!keepLoggedIn) {
+        localStorage.removeItem('everhealth_persistent_session');
+        return;
+      }
+      try {
+        const sessionData = {
+          role: role,
+          user: role === 'patient' ? (typeof userOrHospitalId === 'object' ? userOrHospitalId : state.currentUser) : null,
+          hospitalId: role === 'hospital' ? (typeof userOrHospitalId === 'string' ? userOrHospitalId : state.currentHospitalId) : null,
+          savedAt: Date.now()
+        };
+        localStorage.setItem('everhealth_persistent_session', JSON.stringify(sessionData));
+      } catch (e) {}
+    }
+
+    function checkPersistentSession() {
+      try {
+        const saved = localStorage.getItem('everhealth_persistent_session');
+        if (!saved) return false;
+        const session = JSON.parse(saved);
+        if (session.role === 'patient' && session.user) {
+          state.authRole = 'patient';
+          state.currentUser = session.user;
+          renderPatientProfileUI();
+          navigateTo('user-dashboard');
+          return true;
+        } else if (session.role === 'hospital' && (session.hospitalId || state.currentHospitalId)) {
+          state.authRole = 'hospital';
+          state.currentHospitalId = session.hospitalId || 'hosp-001';
+          navigateTo('hospital-dashboard');
+          return true;
+        }
+      } catch (e) {}
+      return false;
     }
 
     function openHospitalVerificationModal(hospitalId = 'hosp-001') {
@@ -2350,6 +2456,121 @@
       if (emerContactEl) {
         emerContactEl.innerHTML = `Emergency Contact: <strong>Primary Contact (${user.phoneNumber || '+91-98765-43210'})</strong>`;
       }
+    }
+
+    /* ========================================================
+       HEALTH RISK PREDICTOR & AI RECOMMENDATION ENGINE (CLIENT JS)
+       ======================================================== */
+    async function calculateHealthRecommendations() {
+      const hr = Number(document.getElementById('recHr').value) || 74;
+      const spo2 = Number(document.getElementById('recSpo2').value) || 98.5;
+      const stress = Number(document.getElementById('recStress').value) || 28;
+      const activity = Number(document.getElementById('recActivity').value) || 35;
+      const userId = state.currentUser ? state.currentUser.id : 'usr-101';
+
+      const outputBox = document.getElementById('healthRecommendationOutput');
+      if (outputBox) outputBox.style.display = 'block';
+
+      try {
+        const res = await fetch('/v1/health/predict-risk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, heartRate: hr, spo2, stressLevel: stress, activityMinutes: activity })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          renderHealthRecommendationResult(data);
+          return;
+        }
+      } catch (err) {
+        console.warn('Backend recommendation service unreachable, using local AI engine:', err);
+      }
+
+      // Local Fallback Evaluation Engine
+      const fallbackResult = generateLocalHealthPrediction(hr, spo2, stress, activity);
+      renderHealthRecommendationResult(fallbackResult);
+    }
+
+    function renderHealthRecommendationResult(data) {
+      const scoreEl = document.getElementById('resHealthScore');
+      const badgeEl = document.getElementById('resRiskBadge');
+      const summaryEl = document.getElementById('resStatusSummary');
+      const listEl = document.getElementById('resRecommendationsList');
+
+      if (scoreEl) scoreEl.innerText = `${data.healthScore} / 100`;
+
+      if (badgeEl) {
+        const r = data.riskLevel;
+        if (r === 'LOW') {
+          badgeEl.innerText = '🟢 LOW RISK';
+          badgeEl.className = 'price-tag tier-budget';
+          badgeEl.style.background = '#dcfce7'; badgeEl.style.color = '#166534';
+        } else if (r === 'MODERATE') {
+          badgeEl.innerText = '🟡 MODERATE RISK';
+          badgeEl.className = 'price-tag tier-mid';
+          badgeEl.style.background = '#fef3c7'; badgeEl.style.color = '#92400e';
+        } else if (r === 'HIGH') {
+          badgeEl.innerText = '🟠 HIGH RISK';
+          badgeEl.className = 'price-tag tier-premium';
+          badgeEl.style.background = '#ffedd5'; badgeEl.style.color = '#c2410c';
+        } else {
+          badgeEl.innerText = '🚨 CRITICAL RISK';
+          badgeEl.style.background = '#dc2626';
+          badgeEl.style.color = '#ffffff';
+        }
+      }
+
+      if (summaryEl) summaryEl.innerText = data.statusSummary;
+
+      if (listEl) {
+        listEl.innerHTML = (data.recommendations || []).map(item => {
+          let badgeColor = '#e8f5e9';
+          let textColor = '#1b5e20';
+          let borderCol = '#a5d6a7';
+
+          if (item.urgency === 'MODERATE') {
+            badgeColor = '#fef3c7'; textColor = '#92400e'; borderCol = '#fde68a';
+          } else if (item.urgency === 'URGENT' || item.urgency === 'EMERGENCY') {
+            badgeColor = '#fee2e2'; textColor = '#991b1b'; borderCol = '#fca5a5';
+          }
+
+          return `
+            <div style="background: #fafafa; border: 1px solid var(--color-sage-ash); border-left: 4px solid ${borderCol}; padding: 12px 14px; border-radius: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="font-size: 13px; color: var(--color-dark-forest);">${item.title}</strong>
+                <span class="price-tag" style="background: ${badgeColor}; color: ${textColor}; border: 1px solid ${borderCol}; font-size: 10px;">${item.category} • ${item.urgency}</span>
+              </div>
+              <p style="font-size: 12px; color: var(--text-main); margin: 0; line-height: 1.4;">${item.advice}</p>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function generateLocalHealthPrediction(hr, spo2, stress, activity) {
+      let score = 85;
+      if (spo2 < 95) score -= 20;
+      if (hr > 90 || hr < 55) score -= 15;
+      if (stress > 60) score -= 15;
+      if (activity < 30) score -= 10;
+      score = Math.max(10, Math.min(100, score));
+
+      let riskLevel = 'LOW';
+      if (score < 50 || spo2 < 90 || hr > 130) riskLevel = 'CRITICAL';
+      else if (score < 65 || spo2 < 93) riskLevel = 'HIGH';
+      else if (score < 80) riskLevel = 'MODERATE';
+
+      return {
+        healthScore: score,
+        riskLevel: riskLevel,
+        statusSummary: 'Physiological score evaluated based on live vitals, stress, and activity input.',
+        recommendations: [
+          { category: 'CARDIOVASCULAR', title: 'Heart Rate Protocol', advice: hr > 90 ? 'High HR detected. Reduce stimulants, drink 500ml water, and rest.' : 'Resting heart rate is within normal range.', urgency: hr > 90 ? 'MODERATE' : 'ROUTINE' },
+          { category: 'RESPIRATORY', title: 'Oxygenation Assessment', advice: spo2 < 94 ? 'Low SpO2 detected. Practice deep breathing exercises and sit upright.' : 'SpO2 level is healthy.', urgency: spo2 < 94 ? 'URGENT' : 'ROUTINE' },
+          { category: 'STRESS_MENTAL', title: 'Stress & Cortisol Management', advice: stress > 60 ? 'Take a 15-minute relaxation break and practice mindfulness.' : 'Stress level is optimal.', urgency: stress > 60 ? 'MODERATE' : 'ROUTINE' },
+          { category: 'ACTIVITY_FITNESS', title: 'Physical Movement Target', advice: activity < 30 ? 'Aim for 30+ daily active minutes to maintain metabolic resilience.' : 'Great active movement logged!', urgency: 'ROUTINE' }
+        ]
+      };
     }
 
     async function handleHospitalSignup(event) {
@@ -3541,7 +3762,10 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       syncUserBudget(40000);
-      navigateTo('login');
+      const isRestored = checkPersistentSession();
+      if (!isRestored) {
+        navigateTo('login');
+      }
     });
   </script>
 </body>

@@ -4,6 +4,7 @@ import { vitalsIngestionService } from './services/vitals_ingestion';
 import { alertService } from './services/alert_service';
 import { hospitalMatchingService } from './services/hospital_matching';
 import { bookingService } from './services/booking_service';
+import { healthRecommendationEngine } from './services/health_recommendation';
 import { VitalReading, UserProfile, Severity, Hospital, HospitalInventory } from './types';
 import { supabase } from './db/supabase_client';
 
@@ -328,6 +329,30 @@ app.get('/v1/vitals/history/:userId', (req: Request, res: Response) => {
     return res.status(200).json({ count: history.length, history });
   } catch (err: any) {
     return res.status(500).json({ error: 'Failed to fetch vitals history' });
+  }
+});
+
+/**
+ * Predict Health Risk & AI Recommendation Engine
+ * POST /v1/health/predict-risk
+ */
+app.post('/v1/health/predict-risk', (req: Request, res: Response) => {
+  try {
+    const { userId, heartRate, spo2, stressLevel, activityMinutes } = req.body;
+    const userProfile = usersDb.get(userId) || mockUser;
+
+    const result = healthRecommendationEngine.predictRiskAndRecommend({
+      heartRate: Number(heartRate),
+      spo2: Number(spo2),
+      stressLevel: Number(stressLevel),
+      activityMinutes: Number(activityMinutes),
+      userProfile
+    });
+
+    return res.status(200).json(result);
+  } catch (err: any) {
+    console.error('Error predicting health risk:', err);
+    return res.status(500).json({ error: 'Failed to evaluate health risk & recommendations' });
   }
 });
 
