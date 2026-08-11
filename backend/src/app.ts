@@ -222,10 +222,10 @@ app.post('/v1/auth/login', (req: Request, res: Response) => {
 });
 
 /**
- * Google Fit Smartwatch Integration Endpoint
- * POST /v1/integrations/google-fit/sync
+ * NoiseFit Smartwatch Integration Endpoint
+ * POST /v1/integrations/noisefit/sync
  */
-app.post('/v1/integrations/google-fit/sync', async (req: Request, res: Response) => {
+app.post(['/v1/integrations/noisefit/sync', '/v1/integrations/google-fit/sync'], async (req: Request, res: Response) => {
   try {
     const { userId, heartRate, spo2, deviceName } = req.body;
     const targetUserId = userId || mockUser.id;
@@ -241,7 +241,7 @@ app.post('/v1/integrations/google-fit/sync', async (req: Request, res: Response)
       heartRate: hrVal,
       spo2: spo2Val,
       fallDetected: isFallDetected,
-      sourceDevice: deviceName || 'Google Fit Wear OS Smartwatch'
+      sourceDevice: deviceName || 'NoiseFit ColorFit Smartwatch'
     };
 
     const result = await vitalsIngestionService.ingestReading(reading);
@@ -251,14 +251,14 @@ app.post('/v1/integrations/google-fit/sync', async (req: Request, res: Response)
       const alert = await alertService.triggerAlert(
         targetUserId,
         reading,
-        `[Google Fit Telemetry] ${result.detectionResult.reason}`,
+        `[NoiseFit Telemetry] ${result.detectionResult.reason}`,
         result.detectionResult.severity
       );
       syncEmergencyEventToSupabase(targetUserId, result.detectionResult.reason, result.detectionResult.severity);
 
       return res.status(200).json({
         status: 'ANOMALY_DETECTED',
-        source: 'Google Fit API',
+        source: 'NoiseFit Health API',
         reading,
         detection: result.detectionResult,
         alert
@@ -267,13 +267,13 @@ app.post('/v1/integrations/google-fit/sync', async (req: Request, res: Response)
 
     return res.status(200).json({
       status: 'OK',
-      source: 'Google Fit API',
+      source: 'NoiseFit Health API',
       reading,
       detection: result.detectionResult
     });
   } catch (err: any) {
-    console.error('Error syncing Google Fit telemetry:', err);
-    return res.status(500).json({ error: 'Failed to process Google Fit watch sync' });
+    console.error('Error syncing NoiseFit telemetry:', err);
+    return res.status(500).json({ error: 'Failed to process NoiseFit watch sync' });
   }
 });
 

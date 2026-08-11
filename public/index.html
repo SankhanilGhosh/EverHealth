@@ -1197,41 +1197,41 @@
           <div id="userVitalsOutput" style="margin-top: 12px; font-size: 13px;"></div>
         </section>
 
-        <!-- Google Fit Smartwatch Integration Card -->
-        <section class="card" style="border: 2px solid #4285F4; background: linear-gradient(135deg, #FFFFFF, #f8fafd);">
+        <!-- NoiseFit Smartwatch Integration Card -->
+        <section class="card" style="border: 2px solid #f97316; background: linear-gradient(135deg, #FFFFFF, #fff7ed);">
           <div class="card-title">
-            <span>🔵 Google Fit Watch Integration</span>
-            <span class="price-tag" id="googleFitStatusBadge" style="background: #e8f0fe; color: #1a73e8; border: 1px solid #aecbfa;">🔴 Disconnected</span>
+            <span>🟠 NoiseFit Smartwatch Integration</span>
+            <span class="price-tag" id="noiseFitStatusBadge" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;">🔴 Disconnected</span>
           </div>
 
           <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
-            Connect your Wear OS Smartwatch, Pixel Watch, Samsung Galaxy Watch, or Fitbit via Google Fit REST API to automatically stream heart rate & SpO2 health telemetry.
+            Connect your Noise Smartwatch (Noise ColorFit, Pulse, Evolve, Icon) via NoiseFit Health Ecosystem to automatically stream real-time Heart Rate & SpO2 health telemetry.
           </p>
 
-          <div id="googleFitConnectedPanel" style="display: none; background: #e8f0fe; border: 1.5px solid #1a73e8; padding: 14px; border-radius: 14px; margin-bottom: 14px;">
+          <div id="noiseFitConnectedPanel" style="display: none; background: #ffedd5; border: 1.5px solid #ea580c; padding: 14px; border-radius: 14px; margin-bottom: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <span style="font-size: 13px; font-weight: 800; color: #174ea6;">⌚ Google Fit Live Telemetry Stream</span>
-              <span class="price-tag" style="background: #ceead6; color: #0d652d;">🟢 Live Syncing (4s)</span>
+              <span style="font-size: 13px; font-weight: 800; color: #9a3412;">⌚ NoiseFit Live Telemetry Stream</span>
+              <span class="price-tag" style="background: #dcfce7; color: #166534;">🟢 Live Syncing (3s)</span>
             </div>
             <div style="display: flex; justify-content: space-around; font-size: 14px; text-align: center; margin-top: 8px;">
               <div>
-                <div style="font-size: 20px; font-weight: 800; color: #174ea6;" id="gFitHrVal">72 BPM</div>
-                <div style="font-size: 11px; color: #5f6368;">Heart Rate</div>
+                <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitHrVal">74 BPM</div>
+                <div style="font-size: 11px; color: #9a3412;">Heart Rate (Noise Sensor)</div>
               </div>
-              <div style="border-left: 1px solid #aecbfa;"></div>
+              <div style="border-left: 1px solid #fed7aa;"></div>
               <div>
-                <div style="font-size: 20px; font-weight: 800; color: #174ea6;" id="gFitSpo2Val">98.5%</div>
-                <div style="font-size: 11px; color: #5f6368;">SpO2 Oxygen</div>
+                <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitSpo2Val">98.6%</div>
+                <div style="font-size: 11px; color: #9a3412;">SpO2 Oxygen Saturation</div>
               </div>
             </div>
           </div>
 
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" class="btn" id="btnConnectGoogleFit" style="background: linear-gradient(135deg, #4285F4, #1a73e8); flex: 1;" onclick="toggleGoogleFitConnection()">
-              🔗 Connect Google Fit Watch (OAuth 2.0)
+            <button type="button" class="btn" id="btnConnectNoiseFit" style="background: linear-gradient(135deg, #f97316, #ea580c); flex: 1;" onclick="toggleNoiseFitConnection()">
+              🔗 Connect NoiseFit Watch (Noise Sync)
             </button>
-            <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="simulateGoogleFitAnomaly()">
-              🚨 Test Google Fit Emergency
+            <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="simulateNoiseFitAnomaly()">
+              🚨 Test NoiseFit Emergency
             </button>
           </div>
         </section>
@@ -2411,91 +2411,98 @@
     }
 
     /* ========================================================
-       GOOGLE FIT WATCH INTEGRATION & REAL-TIME AUTO-SYNC
+       NOISEFIT SMARTWATCH INTEGRATION & REAL-TIME AUTO-SYNC
        ======================================================== */
-    let googleFitSyncTimer = null;
+    let noiseFitSyncTimer = null;
+    let isNoiseFitConnected = false;
     let isGoogleFitConnected = false;
 
-    function toggleGoogleFitConnection() {
-      const btn = document.getElementById('btnConnectGoogleFit');
-      const badge = document.getElementById('googleFitStatusBadge');
-      const panel = document.getElementById('googleFitConnectedPanel');
+    function toggleNoiseFitConnection() {
+      const btn = document.getElementById('btnConnectNoiseFit');
+      const badge = document.getElementById('noiseFitStatusBadge');
+      const panel = document.getElementById('noiseFitConnectedPanel');
 
-      if (!isGoogleFitConnected) {
-        if (btn) { btn.innerText = '⌛ Authenticating Google Fit OAuth 2.0...'; btn.disabled = true; }
+      if (!isNoiseFitConnected) {
+        if (btn) { btn.innerText = '⌛ Connecting NoiseFit App Sync...'; btn.disabled = true; }
         
         setTimeout(() => {
+          isNoiseFitConnected = true;
           isGoogleFitConnected = true;
-          if (btn) { btn.innerText = '🔌 Disconnect Google Fit Watch'; btn.disabled = false; btn.style.background = '#d93025'; }
-          if (badge) { badge.innerText = '🟢 Connected (Wear OS)'; badge.style.background = '#ceead6'; badge.style.color = '#0d652d'; badge.style.borderColor = '#82c99b'; }
+          if (btn) { btn.innerText = '🔌 Disconnect NoiseFit Watch'; btn.disabled = false; btn.style.background = '#d97706'; }
+          if (badge) { badge.innerText = '🟢 Connected (Noise ColorFit)'; badge.style.background = '#dcfce7'; badge.style.color = '#166534'; badge.style.borderColor = '#86efac'; }
           if (panel) panel.style.display = 'block';
 
-          startGoogleFitAutoSync();
-          alert('✓ Google Fit Watch Connected Successfully!\n\nEverHealth is now automatically polling continuous heart rate and SpO2 telemetry from your smartwatch.');
+          startNoiseFitAutoSync();
+          alert('✓ NoiseFit Smartwatch Connected Successfully!\n\nEverHealth is now automatically syncing continuous Heart Rate and SpO2 health telemetry from your Noise watch.');
         }, 1200);
       } else {
+        isNoiseFitConnected = false;
         isGoogleFitConnected = false;
-        if (googleFitSyncTimer) clearInterval(googleFitSyncTimer);
-        if (btn) { btn.innerText = '🔗 Connect Google Fit Watch (OAuth 2.0)'; btn.style.background = 'linear-gradient(135deg, #4285F4, #1a73e8)'; }
-        if (badge) { badge.innerText = '🔴 Disconnected'; badge.style.background = '#e8f0fe'; badge.style.color = '#1a73e8'; badge.style.borderColor = '#aecbfa'; }
+        if (noiseFitSyncTimer) clearInterval(noiseFitSyncTimer);
+        if (btn) { btn.innerText = '🔗 Connect NoiseFit Watch (Noise Sync)'; btn.style.background = 'linear-gradient(135deg, #f97316, #ea580c)'; }
+        if (badge) { badge.innerText = '🔴 Disconnected'; badge.style.background = '#ffedd5'; badge.style.color = '#c2410c'; badge.style.borderColor = '#fed7aa'; }
         if (panel) panel.style.display = 'none';
-        alert('Google Fit Watch disconnected.');
+        alert('NoiseFit Smartwatch disconnected.');
       }
     }
 
-    function startGoogleFitAutoSync() {
-      if (googleFitSyncTimer) clearInterval(googleFitSyncTimer);
+    function toggleGoogleFitConnection() {
+      toggleNoiseFitConnection();
+    }
 
-      googleFitSyncTimer = setInterval(async () => {
-        if (!isGoogleFitConnected) return;
+    function startNoiseFitAutoSync() {
+      if (noiseFitSyncTimer) clearInterval(noiseFitSyncTimer);
 
-        const hr = Math.floor(68 + Math.random() * 12);
-        const spo2 = (97.5 + Math.random() * 2).toFixed(1);
+      noiseFitSyncTimer = setInterval(async () => {
+        if (!isNoiseFitConnected) return;
 
-        const hrEl = document.getElementById('gFitHrVal');
+        const hr = Math.floor(70 + Math.random() * 10);
+        const spo2 = (97.8 + Math.random() * 1.8).toFixed(1);
+
+        const hrEl = document.getElementById('nFitHrVal');
         if (hrEl) hrEl.innerText = `${hr} BPM`;
-        const spo2El = document.getElementById('gFitSpo2Val');
+        const spo2El = document.getElementById('nFitSpo2Val');
         if (spo2El) spo2El.innerText = `${spo2}%`;
 
         try {
-          await fetch('/v1/integrations/google-fit/sync', {
+          await fetch('/v1/integrations/noisefit/sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               userId: state.currentUser.id,
               heartRate: hr,
               spo2: Number(spo2),
-              deviceName: 'Google Fit Wear OS Watch'
+              deviceName: 'Noise ColorFit Smartwatch'
             })
           });
         } catch (err) {
-          console.warn('Google Fit telemetry sync note:', err);
+          console.warn('NoiseFit telemetry sync note:', err);
         }
-      }, 4000);
+      }, 3000);
     }
 
-    async function simulateGoogleFitAnomaly() {
-      if (!isGoogleFitConnected) {
-        toggleGoogleFitConnection();
+    async function simulateNoiseFitAnomaly() {
+      if (!isNoiseFitConnected) {
+        toggleNoiseFitConnection();
       }
 
       const hr = 168;
       const spo2 = 84.5;
 
-      const hrEl = document.getElementById('gFitHrVal');
+      const hrEl = document.getElementById('nFitHrVal');
       if (hrEl) hrEl.innerText = `${hr} BPM (CRITICAL)`;
-      const spo2El = document.getElementById('gFitSpo2Val');
+      const spo2El = document.getElementById('nFitSpo2Val');
       if (spo2El) spo2El.innerText = `${spo2}% (CRITICAL)`;
 
       try {
-        const res = await fetch('/v1/integrations/google-fit/sync', {
+        const res = await fetch('/v1/integrations/noisefit/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             userId: state.currentUser.id,
             heartRate: hr,
             spo2: spo2,
-            deviceName: 'Google Fit Wear OS Watch'
+            deviceName: 'Noise ColorFit Smartwatch'
           })
         });
 
@@ -2503,7 +2510,7 @@
         if (contentType.includes('application/json')) {
           const data = await res.json();
           if (data.status === 'ANOMALY_DETECTED') {
-            triggerPatientEmergencyBanner(data.detection.severity, `[Google Fit Telemetry] ${data.detection.reason}`, data.alert ? data.alert.id : null);
+            triggerPatientEmergencyBanner(data.detection.severity, `[NoiseFit Telemetry] ${data.detection.reason}`, data.alert ? data.alert.id : null);
             return;
           }
         }
