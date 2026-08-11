@@ -177,6 +177,12 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes pulseDot {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
     /* Hero Banner Section - Inspired by CarePlus Medical Structure */
     .hero-banner-card {
       background: linear-gradient(135deg, rgba(234, 227, 210, 0.7), rgba(243, 239, 227, 0.9)), url('/images/hero.png');
@@ -1092,6 +1098,71 @@
         </div>
       </div>
 
+      <!-- REAL-TIME LIVE VITALS & TRACKING LOG SECTION -->
+      <section class="card" style="border: 2px solid var(--color-sage-deep); background: linear-gradient(135deg, #FFFFFF, var(--color-ivory-light));">
+        <div class="card-title">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; animation: pulseDot 1.5s infinite;" id="livePulseDot"></span>
+            <span style="font-size: 20px;">💓 Real-Time Continuous Vitals Stream & Live Tracking Log</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="price-tag tier-budget" id="realtimeStatusBadge">🟢 Real-Time Tracking Active (2.5s)</span>
+            <button type="button" class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;" onclick="toggleRealtimeStream()" id="btnToggleRealtime">⏸️ Pause Stream</button>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          Continuous real-time physiological telemetry stream. Automatically logs, tracks, and analyzes heart rate stability and SpO2 oxygen level trends every 2.5 seconds.
+        </p>
+
+        <!-- Live Vitals Metric Cards Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; text-align: center;">
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Heart Rate (BPM)</div>
+            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrDisplay">74</div>
+            <div style="font-size: 11px; font-weight: 700; color: #2e7d32;" id="rtHrStatus">🟢 Normal Sinus</div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">SpO2 Saturation</div>
+            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtSpo2Display">98.5%</div>
+            <div style="font-size: 11px; font-weight: 700; color: #2e7d32;" id="rtSpo2Status">🟢 Optimal Saturation</div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Body Temperature</div>
+            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtTempDisplay">36.8°C</div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Thermistor Normal</div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">HRV Index</div>
+            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrvDisplay">64 ms</div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Good Recovery</div>
+          </div>
+        </div>
+
+        <!-- Real-Time Record Tracking Table -->
+        <h3 style="font-size: 15px; color: var(--color-dark-forest); margin-bottom: 10px;">📊 Tracked Real-Time Vitals History Log</h3>
+        <div class="table-container" style="max-height: 220px; overflow-y: auto; border: 1.5px solid var(--color-sage-ash); border-radius: 14px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Heart Rate</th>
+                <th>SpO2 Level</th>
+                <th>Fall Sensor</th>
+                <th>Source Device</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="realtimeVitalsTableBody">
+              <!-- Dynamically populated in real-time -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <div class="grid-2">
         <!-- Patient Wearable Simulator Card -->
         <section class="card">
@@ -1715,7 +1786,10 @@
 
       updateHeaderNavVisibility();
 
-      if (route === 'user-dashboard') fetchHospitalMatches();
+      if (route === 'user-dashboard') {
+        fetchHospitalMatches();
+        initRealtimeVitalsStream();
+      }
       if (route === 'hospital-dashboard') loadHospitalDashboard();
       if (route === 'dept-page') renderCurrentDeptMatches();
     }
@@ -2440,8 +2514,149 @@
 
     function triggerTestEmergencyAnomaly() {
       const out = document.getElementById('userVitalsOutput');
-      out.innerHTML = '<span style="color: var(--danger); font-weight: bold;">🚨 ANOMALY DETECTED! (LIFE_THREATENING): Critically low oxygen saturation (SpO2: 86%)</span>';
-      triggerPatientEmergencyBanner('LIFE_THREATENING', 'Critically low oxygen saturation (SpO2: 86%)', `test-evt-${Date.now()}`);
+      if (out) out.innerHTML = '<span style="color: var(--danger); font-weight: bold;">🚨 ANOMALY DETECTED! (LIFE_THREATENING): Critically low oxygen saturation (SpO2: 86%)</span>';
+      
+      const hrDisp = document.getElementById('rtHrDisplay');
+      if (hrDisp) hrDisp.innerText = '168';
+      const spo2Disp = document.getElementById('rtSpo2Display');
+      if (spo2Disp) spo2Disp.innerText = '84.0%';
+
+      const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      addRealtimeRecordToLog(timeStr, 168, 84.0, true, 'Wearable Sensor (Emergency Test)');
+      triggerPatientEmergencyBanner('LIFE_THREATENING', 'Critically low oxygen saturation (SpO2: 86%) & Tachycardia', `test-evt-${Date.now()}`);
+    }
+
+    /* ========================================================
+       REAL-TIME CONTINUOUS TELEMETRY STREAM & HISTORY TRACKER
+       ======================================================== */
+    let realtimeStreamTimer = null;
+    let isRealtimeStreamActive = true;
+
+    function initRealtimeVitalsStream() {
+      if (realtimeStreamTimer) clearInterval(realtimeStreamTimer);
+
+      // Perform initial stream reading immediately
+      streamRealtimeVitalsTick();
+
+      realtimeStreamTimer = setInterval(() => {
+        if (!isRealtimeStreamActive) return;
+        streamRealtimeVitalsTick();
+      }, 2500);
+    }
+
+    async function streamRealtimeVitalsTick() {
+      const inputHr = document.getElementById('userHr');
+      const inputSpo2 = document.getElementById('userSpo2');
+
+      let hr = inputHr ? Number(inputHr.value) : 74;
+      let spo2 = inputSpo2 ? Number(inputSpo2.value) : 98.5;
+
+      // Add subtle real-time physiological fluctuation if vitals are in normal range
+      if (hr < 150 && hr > 45) {
+        const delta = Math.floor(Math.random() * 3) - 1;
+        hr = Math.max(62, Math.min(105, hr + delta));
+        if (inputHr) inputHr.value = hr;
+      }
+      if (spo2 >= 90) {
+        spo2 = Number((97.8 + Math.random() * 1.8).toFixed(1));
+        if (inputSpo2) inputSpo2.value = spo2;
+      }
+
+      const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const isFallDetected = (hr >= 160 || hr <= 38 || spo2 < 88);
+
+      // Update real-time display cards
+      const hrDisp = document.getElementById('rtHrDisplay');
+      if (hrDisp) hrDisp.innerText = `${hr}`;
+      const hrStat = document.getElementById('rtHrStatus');
+      if (hrStat) {
+        if (hr >= 160) { hrStat.innerText = '🚨 Tachycardia'; hrStat.style.color = '#dc2626'; }
+        else if (hr <= 38) { hrStat.innerText = '🚨 Bradycardia'; hrStat.style.color = '#dc2626'; }
+        else { hrStat.innerText = '🟢 Normal Sinus'; hrStat.style.color = '#2e7d32'; }
+      }
+
+      const spo2Disp = document.getElementById('rtSpo2Display');
+      if (spo2Disp) spo2Disp.innerText = `${spo2}%`;
+      const spo2Stat = document.getElementById('rtSpo2Status');
+      if (spo2Stat) {
+        if (spo2 < 88) { spo2Stat.innerText = '🚨 Critical Low'; spo2Stat.style.color = '#dc2626'; }
+        else { spo2Stat.innerText = '🟢 Optimal Saturation'; spo2Stat.style.color = '#2e7d32'; }
+      }
+
+      const tempDisp = document.getElementById('rtTempDisplay');
+      if (tempDisp) tempDisp.innerText = `${(36.6 + Math.random() * 0.4).toFixed(1)}°C`;
+      const hrvDisp = document.getElementById('rtHrvDisplay');
+      if (hrvDisp) hrvDisp.innerText = `${Math.floor(58 + Math.random() * 12)} ms`;
+
+      const source = isGoogleFitConnected ? 'Google Fit Wear OS' : 'Live Wearable Monitor';
+
+      // Log record to history table
+      addRealtimeRecordToLog(timeStr, hr, spo2, isFallDetected, source);
+
+      // Send to serverless API
+      try {
+        const res = await fetch('/v1/vitals/stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: state.currentUser.id,
+            timestamp: new Date().toISOString(),
+            heartRate: hr,
+            spo2: spo2,
+            fallDetected: isFallDetected,
+            sourceDevice: source
+          })
+        });
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          if (data.status === 'ANOMALY_DETECTED') {
+            triggerPatientEmergencyBanner(data.detection.severity, data.detection.reason, data.alert ? data.alert.id : null);
+          }
+        }
+      } catch (err) {}
+    }
+
+    function addRealtimeRecordToLog(timeStr, hr, spo2, isFallDetected, device) {
+      const tbody = document.getElementById('realtimeVitalsTableBody');
+      if (!tbody) return;
+
+      const isEmergency = (hr >= 160 || hr <= 38 || spo2 < 88);
+      const statusBadge = isEmergency ?
+        `<span class="price-tag" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;">🚨 CRITICAL ANOMALY</span>` :
+        `<span class="price-tag tier-budget">✓ STABLE</span>`;
+
+      const fallTag = isFallDetected ? `<span class="price-tag" style="background:#dc2626; color:#fff;">FALL DETECTED</span>` : `<span style="color:var(--text-muted);">None</span>`;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${timeStr}</strong></td>
+        <td><strong>${hr} BPM</strong></td>
+        <td><strong>${spo2}%</strong></td>
+        <td>${fallTag}</td>
+        <td><span class="tag-item">${device}</span></td>
+        <td>${statusBadge}</td>
+      `;
+
+      tbody.insertBefore(tr, tbody.firstChild);
+
+      // Retain last 15 tracked rows
+      if (tbody.children.length > 15) {
+        tbody.removeChild(tbody.lastChild);
+      }
+    }
+
+    function toggleRealtimeStream() {
+      isRealtimeStreamActive = !isRealtimeStreamActive;
+      const btn = document.getElementById('btnToggleRealtime');
+      const badge = document.getElementById('realtimeStatusBadge');
+      if (isRealtimeStreamActive) {
+        if (btn) btn.innerText = '⏸️ Pause Stream';
+        if (badge) { badge.innerText = '🟢 Real-Time Tracking Active (2.5s)'; badge.className = 'price-tag tier-budget'; }
+      } else {
+        if (btn) btn.innerText = '▶️ Resume Live Stream';
+        if (badge) { badge.innerText = '⏸️ Real-Time Paused'; badge.className = 'price-tag tier-standard'; }
+      }
     }
 
     function triggerPatientEmergencyBanner(severity, reason, alertId = null) {

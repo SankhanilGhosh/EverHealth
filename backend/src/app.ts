@@ -316,6 +316,20 @@ app.post('/v1/vitals/stream', async (req: Request, res: Response) => {
 });
 
 /**
+ * Get Real-Time Vitals Tracking History for User
+ * GET /v1/vitals/history/:userId
+ */
+app.get('/v1/vitals/history/:userId', (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userId || mockUser.id;
+    const history = vitalsIngestionService.getRecentReadings(userId, 20);
+    return res.status(200).json({ count: history.length, history });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to fetch vitals history' });
+  }
+});
+
+/**
  * 2. Create emergency alert
  * POST /v1/emergency/alerts
  */
