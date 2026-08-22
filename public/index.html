@@ -773,9 +773,170 @@
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
-      padding: 32px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-      position: relative;
+    /* ========================================================
+       SIDEBAR DASHBOARD LAYOUT & NAVIGATION STYLES (MATCHING UI IMAGE)
+       ======================================================== */
+    .dashboard-layout {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      margin-top: 10px;
+    }
+    .sidebar-nav {
+      width: 270px;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      border: 1.5px solid var(--color-sage-ash);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .dashboard-main-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .sidebar-header-pill {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 12px 18px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.28);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .sidebar-header-pill:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.38);
+    }
+    .menu-group-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-top: 6px;
+      margin-bottom: 2px;
+      padding-left: 8px;
+    }
+    .sidebar-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .sidebar-nav-item .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-nav-item:hover {
+      background: #f1f5f9;
+      color: var(--color-dark-forest);
+    }
+    .sidebar-nav-item.active {
+      background: #e0e7ff;
+      color: #4338ca;
+      font-weight: 700;
+    }
+    .badge-tag {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .badge-new {
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+    .badge-count {
+      background: #ef4444;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 2px 8px;
+    }
+    .sidebar-user-card {
+      background: #f8fafc;
+      border: 1px solid var(--color-sage-ash);
+      border-radius: 16px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .sidebar-user-card:hover {
+      background: #f1f5f9;
+    }
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .user-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .user-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--color-dark-forest);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-role {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .dash-subtab-panel {
+      display: none;
+    }
+    .dash-subtab-panel.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-layout {
+        flex-direction: column;
+      }
+      .sidebar-nav {
+        width: 100%;
+        position: relative;
+        top: 0;
+      }
     }
   </style>
 </head>
@@ -1156,435 +1317,546 @@
           </form>
 
           <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
-            Already have an account? <a href="javascript:void(0)" onclick="navigateTo('login')" style="color: var(--primary); text-decoration: none; font-weight: 700;">Log in here</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ========================================== -->
+            Already have an account? <a href="javascript:void(0)" onclick="navigateTo('login')" style="color: var    <!-- ========================================== -->
     <!-- VIEW 3: PATIENT / USER DASHBOARD            -->
     <!-- ========================================== -->
     <div id="view-user-dashboard" class="view-page">
-
-      <!-- CAREPLUS STRUCTURE: HERO BANNER SECTION -->
-      <section class="hero-banner-card">
-        <div class="hero-content">
-          <h1 class="hero-title">Your Health, Our Priority</h1>
-          <p class="hero-subtitle">Compassionate emergency dispatch and instant hospital matching for you and your family.</p>
-        </div>
-
-        <!-- CAREPLUS STRUCTURE: FLOATING GLASSMORPHIC CONTROL BAR OVERLAY -->
-        <div class="hero-glass-bar">
-          <div>
-            <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
-              Max Hospital Budget Ceiling (₹)
-            </label>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <input type="range" id="dashBudgetRange" min="5000" max="150000" step="2500" value="40000" class="form-control" style="flex: 1;" oninput="syncUserBudget(this.value)">
-              <span style="font-weight: 800; font-size: 16px; color: var(--color-dark-forest); white-space: nowrap;">₹<span id="dashBuddisplay">40,000</span></span>
-            </div>
-          </div>
-
-          <div>
-            <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
-              Insurance Provider
-            </label>
-            <select id="dashInsurance" class="form-control" onchange="updateUserInsurance(this.value)">
-              <option value="BlueCross">BlueCross BlueShield</option>
-              <option value="UnitedHealth">UnitedHealth Group</option>
-              <option value="Kaiser">Kaiser Permanente</option>
-              <option value="Aetna">Aetna Care</option>
-              <option value="None">Self-Pay / None</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
-              Emergency Severity
-            </label>
-            <select id="dashSeverity" class="form-control" onchange="fetchHospitalMatches()">
-              <option value="SEVERE">SEVERE (Enforce Budget)</option>
-              <option value="LIFE_THREATENING">LIFE_THREATENING (Bypass Override)</option>
-              <option value="MODERATE">MODERATE</option>
-            </select>
-          </div>
-
-          <button type="button" id="btnRequeryMatches" class="btn" style="white-space: nowrap;" onclick="requeryHospitalMatches()">🔍 Search & Rank Now</button>
-        </div>
-      </section>
-
-      <!-- CAREPLUS STRUCTURE: OUR DEPARTMENTS & CARE UNITS GRID -->
-      <h2 class="section-title">Our Departments & Care Units</h2>
-      <div class="departments-grid">
-        <div class="department-card" onclick="openDepartmentPage('emergency')">
-          <span class="department-icon">🚑</span>
-          <div class="department-name">Emergency Care & ICU</div>
-          <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
-        </div>
-        <div class="department-card" onclick="openDepartmentPage('pediatric')">
-          <span class="department-icon">🧸</span>
-          <div class="department-name">Pediatric Department</div>
-          <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
-        </div>
-        <div class="department-card" onclick="openDepartmentPage('cardiology')">
-          <span class="department-icon">❤️</span>
-          <div class="department-name">Cardiology & Cardiac Unit</div>
-          <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
-        </div>
-      </div>
-
-      <!-- CAREPLUS STRUCTURE: FEATURED SERVICES SECTION -->
-      <h2 class="section-title">Featured Services</h2>
-      <div class="featured-grid">
-        <div class="featured-card">
-          <img src="/images/diagnostics.png" alt="Advanced Diagnostics" class="featured-img" />
-          <div class="featured-body">
-            <h3 class="featured-title">Advanced Diagnostics & Continuous Vitals</h3>
-            <p class="featured-desc">Real-time wearable bio-monitors continuously stream SpO2, heart rate, and fall detection metrics directly to response centers.</p>
-          </div>
-        </div>
-        <div class="featured-card">
-          <img src="/images/surgeries.png" alt="Specialized Surgeries" class="featured-img" />
-          <div class="featured-body">
-            <h3 class="featured-title">Specialized Emergency Surgeries</h3>
-            <p class="featured-desc">Instant bed availability matching for trauma operating rooms, intensive care units, and critical cardiac care wards.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live False Alarm Countdown Emergency Banner -->
-      <div id="patientAlertBanner" class="emergency-banner">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <span style="background: #dc2626; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;" id="pAlertTitle">🚨 VITAL ANOMALY TRIGGERED (LIFE_THREATENING)</span>
-          <span style="color: #ffffff; font-weight: bold; font-size: 18px; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 6px; border: 1px solid #ef4444;" id="pAlertCountdown">Auto-Dispatch SLA: 30s</span>
-        </div>
-        <div style="font-size: 15px; color: #fff; margin-bottom: 16px;" id="pAlertDetail">
-          Critical SpO2 drop detected (86%). Auto-executing hospital matching cascade...
-        </div>
-        <div style="display: flex; gap: 12px;">
-          <button type="button" class="btn btn-danger" style="background: linear-gradient(135deg, #dc2626, #991b1b); border: 1px solid #fca5a5; flex: 1; padding: 12px; font-weight: bold;" onclick="cancelEmergencyAlert()">✕ Cancel False Alert (Stop Dispatch)</button>
-        </div>
-      </div>
-
-      <!-- REAL-TIME LIVE VITALS & TRACKING LOG SECTION -->
-      <section class="card" style="border: 2px solid var(--color-sage-deep); background: linear-gradient(135deg, #FFFFFF, var(--color-ivory-light));">
-        <div class="card-title">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; animation: pulseDot 1.5s infinite;" id="livePulseDot"></span>
-            <span style="font-size: 20px;">💓 Real-Time Continuous Vitals Stream & Live Tracking Log</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="price-tag tier-budget" id="realtimeStatusBadge">🟢 Real-Time Tracking Active (2.5s)</span>
-            <button type="button" class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;" onclick="toggleRealtimeStream()" id="btnToggleRealtime">⏸️ Pause Stream</button>
-          </div>
-        </div>
-
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-          Continuous real-time physiological telemetry stream. Automatically logs, tracks, and analyzes heart rate stability and SpO2 oxygen level trends every 2.5 seconds.
-        </p>
-
-        <!-- Live Vitals Metric Cards Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; text-align: center;">
-          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
-            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Heart Rate (BPM)</div>
-            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrDisplay">74</div>
-            <div style="font-size: 11px; font-weight: 700; color: #2e7d32;" id="rtHrStatus">🟢 Normal Sinus</div>
-          </div>
-
-          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
-            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">SpO2 Saturation</div>
-            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtSpo2Display">98.5%</div>
-            <div style="font-size: 11px; font-weight: 700; color: #2e7d32;" id="rtSpo2Status">🟢 Optimal Saturation</div>
-          </div>
-
-          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
-            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Body Temperature</div>
-            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtTempDisplay">36.8°C</div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Thermistor Normal</div>
-          </div>
-
-          <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
-            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">HRV Index</div>
-            <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrvDisplay">64 ms</div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Good Recovery</div>
-          </div>
-        </div>
-
-        <!-- Real-Time Record Tracking Table -->
-        <h3 style="font-size: 15px; color: var(--color-dark-forest); margin-bottom: 10px;">📊 Tracked Real-Time Vitals History Log</h3>
-        <div class="table-container" style="max-height: 220px; overflow-y: auto; border: 1.5px solid var(--color-sage-ash); border-radius: 14px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Heart Rate</th>
-                <th>SpO2 Level</th>
-                <th>Fall Sensor</th>
-                <th>Source Device</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="realtimeVitalsTableBody">
-              <!-- Dynamically populated in real-time -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <div class="grid-2">
-        <!-- Automatic Watch Sensor & Health Condition Monitor Card -->
-        <section class="card">
-          <h2 class="card-title">🤖 Automatic Watch & Health Condition Sensor</h2>
-          <div class="card" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-sage-deep); padding: 14px; margin-bottom: 16px;">
-            <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); display: flex; align-items: center; justify-content: space-between;">
-              <span>Autonomous Fall & Vital Anomaly Sensor</span>
-              <span class="price-tag tier-budget" id="autoSensorBadge">🟢 Auto-Monitoring</span>
-            </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5;">
-              EverHealth automatically tracks your heart rate and SpO2 in real-time directly from your NoiseFit smartwatch or wearable sensor without requiring manual input.
-            </p>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button type="button" class="btn btn-secondary" style="width: 100%; font-size: 13px;" onclick="triggerTestEmergencyAnomaly()">
-              ⚡ Test Emergency Response Dispatch (30s SLA Safety Test)
-            </button>
-          </div>
-          <div id="userVitalsOutput" style="margin-top: 12px; font-size: 13px;"></div>
-        </section>
-
-        <!-- NoiseFit Smartwatch Integration Card -->
-        <section class="card" style="border: 2px solid #f97316; background: linear-gradient(135deg, #FFFFFF, #fff7ed);">
-          <div class="card-title">
-            <span>🟠 NoiseFit Smartwatch Integration</span>
-            <span class="price-tag" id="noiseFitStatusBadge" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;">🔴 Disconnected</span>
-          </div>
-
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
-            Connect your Noise Smartwatch (Noise ColorFit, Pulse, Evolve, Icon) via NoiseFit Health Ecosystem to automatically stream real-time Heart Rate & SpO2 health telemetry.
-          </p>
-
-          <div id="noiseFitConnectedPanel" style="display: none; background: #ffedd5; border: 1.5px solid #ea580c; padding: 14px; border-radius: 14px; margin-bottom: 14px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <span style="font-size: 13px; font-weight: 800; color: #9a3412;">⌚ NoiseFit Live Telemetry Stream</span>
-              <span class="price-tag" style="background: #dcfce7; color: #166534;">🟢 Live Syncing (3s)</span>
-            </div>
-            <div style="display: flex; justify-content: space-around; font-size: 14px; text-align: center; margin-top: 8px;">
-              <div>
-                <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitHrVal">74 BPM</div>
-                <div style="font-size: 11px; color: #9a3412;">Heart Rate (Noise Sensor)</div>
-              </div>
-              <div style="border-left: 1px solid #fed7aa;"></div>
-              <div>
-                <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitSpo2Val">98.6%</div>
-                <div style="font-size: 11px; color: #9a3412;">SpO2 Oxygen Saturation</div>
-              </div>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" class="btn" id="btnConnectNoiseFit" style="background: linear-gradient(135deg, #f97316, #ea580c); flex: 1;" onclick="toggleNoiseFitConnection()">
-              🔗 Connect NoiseFit Watch (Noise Sync)
-            </button>
-            <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="simulateNoiseFitAnomaly()">
-              🚨 Test NoiseFit Emergency
-            </button>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2 class="card-title">👤 Patient Health Profile & Household Medical History</h2>
-          <div style="font-size: 14px; line-height: 1.6;">
-            <p id="patientWelcomeText">Logged in as: <strong>Jane Doe</strong> (ID: usr-101)</p>
-            <p style="margin-top: 6px;" id="patientBloodTypeEl">Blood Group: <strong>O+</strong></p>
-            <p style="margin-top: 4px;" id="patientAllergiesEl">Allergies: <span class="price-tag" style="background:#fee2e2; color:#b91c1c;">Penicillin</span></p>
-            
-            <div style="margin-top: 12px; padding-top: 10px; border-top: 1.5px solid var(--color-sage-ash);">
-              <div style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 6px;">
-                📋 Pre-existing Household Medical History:
-              </div>
-              <div id="patientMedicalHistoryList" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
-                <div style="color: var(--text-muted);">None declared during signup.</div>
-              </div>
-            </div>
-
-            <p style="margin-top: 12px; color: var(--text-muted); font-size: 13px;" id="patientEmerContactEl">
-              Emergency Contact: <strong>Primary Contact Registered at Signup (+91-98765-43210)</strong>
-            </p>
-          </div>
-        </section>
-      </div>
-
-      <!-- ======================================================= -->
-      <!-- DEDICATED SECTION: DAILY GOALS, AI RISK PREDICTOR & RECOVERY PLAN -->
-      <!-- ======================================================= -->
-      <section class="card" style="border: 2.5px solid var(--primary); background: linear-gradient(135deg, #FFFFFF, #f8fafc); margin-top: 24px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); padding: 26px;">
+      <div class="dashboard-layout">
         
-        <!-- Section Header Bar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash);">
-          <div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 26px;">🎯</span>
-              <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
-                Daily Health Goals & Personal Recovery Plan
-              </h2>
-            </div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px; margin-left: 36px; line-height: 1.4;">
-              AI Risk Predictor continuously evaluates your physiological parameters to dynamically adjust daily fitness targets and provide a personalized recovery plan.
-            </p>
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <span class="price-tag tier-premium" style="font-size: 12px; padding: 6px 12px;">🔮 AI Risk Predictor</span>
-            <span class="price-tag" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 12px; padding: 6px 12px;">⚡ Adaptive Fitness Goals</span>
-          </div>
-        </div>
-
-        <!-- Vitals Input & AI Risk Assessment Card -->
-        <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 18px; margin-bottom: 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
-            <h3 style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin: 0;">
-              🩺 1. Input Physiological Telemetry & Evaluate Risk Level
-            </h3>
-            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('optimal')">🟢 Preset: Optimal Vitals</button>
-              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('moderate')">🟡 Preset: Moderate Stress</button>
-              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('high')">🟠 Preset: High Risk HR/SpO2</button>
-              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('critical')">🚨 Preset: Critical Anomaly</button>
-            </div>
+        <!-- LEFT SIDEBAR NAVIGATION (MATCHING ATTACHED IMAGE) -->
+        <aside class="sidebar-nav">
+          <div class="sidebar-header-pill" onclick="switchPatientTab('home')">
+            <span style="font-size: 18px;">🏠</span>
+            <span>Dashboard</span>
           </div>
 
-          <!-- Input Controls -->
-          <div class="grid-4" style="margin-bottom: 14px;">
-            <div class="form-group">
-              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Heart Rate (BPM)</label>
-              <input type="number" id="recHr" value="74" min="30" max="220" class="form-control" style="font-size: 13px;">
-            </div>
-            <div class="form-group">
-              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">SpO2 Oxygen (%)</label>
-              <input type="number" id="recSpo2" value="98.5" min="70" max="100" step="0.1" class="form-control" style="font-size: 13px;">
-            </div>
-            <div class="form-group">
-              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Stress Level (1-100)</label>
-              <input type="number" id="recStress" value="28" min="1" max="100" class="form-control" style="font-size: 13px;">
-            </div>
-            <div class="form-group">
-              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Daily Activity (Mins)</label>
-              <input type="number" id="recActivity" value="35" min="0" max="300" class="form-control" style="font-size: 13px;">
-            </div>
+          <div class="sidebar-menu-list">
+            <div class="menu-group-label">MAIN</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item active" id="pSideTab-home" onclick="switchPatientTab('home')">
+              <span class="nav-left"><span style="font-size: 16px;">🏠</span> Home</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-tasks" onclick="switchPatientTab('tasks')">
+              <span class="nav-left"><span style="font-size: 16px;">🎯</span> Daily Tasks</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-profile" onclick="switchPatientTab('profile')">
+              <span class="nav-left"><span style="font-size: 16px;">👤</span> Profile</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-hospitals" onclick="switchPatientTab('home')">
+              <span class="nav-left"><span style="font-size: 16px;">🏥</span> Hospital Matching</span>
+            </a>
+
+            <div class="menu-group-label">CLINICAL & DEPARTMENTS</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchPatientTab('home')">
+              <span class="nav-left"><span style="font-size: 16px;">🔬</span> Live Bio-Telemetry</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="openDepartmentPage('emergency')">
+              <span class="nav-left"><span style="font-size: 16px;">🚑</span> Emergency Care</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="openDepartmentPage('pediatric')">
+              <span class="nav-left"><span style="font-size: 16px;">🧸</span> Pediatric Unit</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="openDepartmentPage('cardiology')">
+              <span class="nav-left"><span style="font-size: 16px;">❤️</span> Cardiology Ward</span>
+            </a>
+
+            <div class="menu-group-label">INSIGHTS</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchPatientTab('tasks')">
+              <span class="nav-left"><span style="font-size: 16px;">🔮</span> AI Risk Predictor</span>
+              <span class="badge-tag badge-new">New</span>
+            </a>
+
+            <div class="menu-group-label">SYSTEM</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="alert('System Notifications: 12 live monitoring telemetry logs recorded.')">
+              <span class="nav-left"><span style="font-size: 16px;">🔔</span> Notifications</span>
+              <span class="badge-tag badge-count">12</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchPatientTab('profile')">
+              <span class="nav-left"><span style="font-size: 16px;">⚙️</span> Settings</span>
+            </a>
           </div>
 
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" class="btn" style="flex: 2; font-weight: 700; font-size: 13px;" onclick="calculateHealthRecommendations()">
-              🔮 Calculate AI Health Score & Adjust Daily Goals
-            </button>
-            <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="syncNoiseFitToPredictor()">
-              ⌚ Sync Smartwatch Vitals
-            </button>
+          <!-- Bottom User Profile Card -->
+          <div class="sidebar-user-card" onclick="switchPatientTab('profile')">
+            <div class="user-avatar" id="sidePatientAvatar">J</div>
+            <div class="user-info">
+              <div class="user-name" id="sidePatientName">Jane Doe</div>
+              <div class="user-role" id="sidePatientRole">Patient Mode</div>
+            </div>
+            <span style="font-size: 12px; color: var(--text-muted);">⌄</span>
           </div>
-        </div>
+        </aside>
 
-        <!-- Prediction Result Output Container -->
-        <div id="healthRecommendationOutput" style="display: block;">
-          
-          <!-- Health Score & Risk Level Header -->
-          <div style="background: linear-gradient(135deg, var(--color-dark-forest), #1c3b2b); border-radius: 16px; padding: 20px; color: #ffffff; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-            <div>
-              <div style="font-size: 11px; text-transform: uppercase; color: #a7f3d0; font-weight: 700; letter-spacing: 0.5px;">
-                PREDICTED HEALTH SCORE
+        <!-- MAIN DASHBOARD CONTENT AREA -->
+        <main class="dashboard-main-content">
+
+          <!-- 1. HOME TAB PANEL -->
+          <div id="pTabPanel-home" class="dash-subtab-panel active">
+            <!-- CAREPLUS STRUCTURE: HERO BANNER SECTION -->
+            <section class="hero-banner-card">
+              <div class="hero-content">
+                <h1 class="hero-title">Your Health, Our Priority</h1>
+                <p class="hero-subtitle">Compassionate emergency dispatch and instant hospital matching for you and your family.</p>
               </div>
-              <div style="font-size: 38px; font-weight: 900; line-height: 1.1; margin-top: 4px;" id="resHealthScore">
-                88 / 100
+
+              <!-- CAREPLUS STRUCTURE: FLOATING GLASSMORPHIC CONTROL BAR OVERLAY -->
+              <div class="hero-glass-bar">
+                <div>
+                  <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+                    Max Hospital Budget Ceiling (₹)
+                  </label>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="range" id="dashBudgetRange" min="5000" max="150000" step="2500" value="40000" class="form-control" style="flex: 1;" oninput="syncUserBudget(this.value)">
+                    <span style="font-weight: 800; font-size: 16px; color: var(--color-dark-forest); white-space: nowrap;">₹<span id="dashBuddisplay">40,000</span></span>
+                  </div>
+                </div>
+
+                <div>
+                  <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+                    Insurance Provider
+                  </label>
+                  <select id="dashInsurance" class="form-control" onchange="updateUserInsurance(this.value)">
+                    <option value="BlueCross">BlueCross BlueShield</option>
+                    <option value="UnitedHealth">UnitedHealth Group</option>
+                    <option value="Kaiser">Kaiser Permanente</option>
+                    <option value="Aetna">Aetna Care</option>
+                    <option value="None">Self-Pay / None</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+                    Emergency Severity
+                  </label>
+                  <select id="dashSeverity" class="form-control" onchange="fetchHospitalMatches()">
+                    <option value="SEVERE">SEVERE (Enforce Budget)</option>
+                    <option value="LIFE_THREATENING">LIFE_THREATENING (Bypass Override)</option>
+                    <option value="MODERATE">MODERATE</option>
+                  </select>
+                </div>
+
+                <button type="button" id="btnRequeryMatches" class="btn" style="white-space: nowrap;" onclick="requeryHospitalMatches()">🔍 Search & Rank Now</button>
               </div>
-              <p style="font-size: 12px; color: #e2e8f0; margin-top: 6px; max-width: 460px; line-height: 1.4;" id="resStatusSummary">
-                Optimal physiological baseline. Vitals, stress, and activity parameters are balanced.
-              </p>
+            </section>
+
+            <!-- Live False Alarm Countdown Emergency Banner -->
+            <div id="patientAlertBanner" class="emergency-banner">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="background: #dc2626; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;" id="pAlertTitle">🚨 VITAL ANOMALY TRIGGERED (LIFE_THREATENING)</span>
+                <span style="color: #ffffff; font-weight: bold; font-size: 18px; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 6px; border: 1px solid #ef4444;" id="pAlertCountdown">Auto-Dispatch SLA: 30s</span>
+              </div>
+              <div style="font-size: 15px; color: #fff; margin-bottom: 16px;" id="pAlertDetail">
+                Critical SpO2 drop detected (86%). Auto-executing hospital matching cascade...
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <button type="button" class="btn btn-danger" style="background: linear-gradient(135deg, #dc2626, #991b1b); border: 1px solid #fca5a5; flex: 1; padding: 12px; font-weight: bold;" onclick="cancelEmergencyAlert()">✕ Cancel False Alert (Stop Dispatch)</button>
+              </div>
             </div>
 
-            <div style="text-align: right;">
-              <div style="font-size: 11px; text-transform: uppercase; color: #cbd5e1; font-weight: 700; margin-bottom: 6px;">
-                RISK CLASSIFICATION
+            <!-- REAL-TIME LIVE VITALS & TRACKING LOG SECTION -->
+            <section class="card" style="border: 2px solid var(--color-sage-deep); background: linear-gradient(135deg, #FFFFFF, var(--color-ivory-light));">
+              <div class="card-title">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; animation: pulseDot 1.5s infinite;" id="livePulseDot"></span>
+                  <span style="font-size: 20px;">💓 Real-Time Continuous Vitals Stream & Live Tracking Log</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="price-tag tier-budget" id="realtimeStatusBadge">🟢 Real-Time Tracking Active (2.5s)</span>
+                  <button type="button" class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;" onclick="toggleRealtimeStream()" id="btnToggleRealtime">⏸️ Pause Stream</button>
+                </div>
               </div>
-              <span class="price-tag tier-budget" style="font-size: 15px; padding: 8px 16px; font-weight: 800;" id="resRiskBadge">
-                🟢 LOW RISK
-              </span>
-              <div style="font-size: 11px; color: #94a3b8; margin-top: 8px; font-weight: 600;" id="resModeLabel">
-                ⚡ Peak Performance Mode
+
+              <!-- Live Vitals Metric Cards Grid -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; text-align: center;">
+                <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                  <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Heart Rate (BPM)</div>
+                  <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrDisplay">74</div>
+                  <div style="font-size: 11px; font-weight: 700; color: #2e7d32;" id="rtHrStatus">🟢 Normal Sinus</div>
+                </div>
+
+                <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                  <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">SpO2 Saturation</div>
+                  <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtSpo2Display">98.5%</div>
+                  <div style="font-size: 11px; font-weight: 700; color: #2e7d32;" id="rtSpo2Status">🟢 Optimal Saturation</div>
+                </div>
+
+                <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                  <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Body Temperature</div>
+                  <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtTempDisplay">36.8°C</div>
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Thermistor Normal</div>
+                </div>
+
+                <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                  <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">HRV Index</div>
+                  <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrvDisplay">64 ms</div>
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Good Recovery</div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Goal Adjustment Reason Callout -->
-          <div id="goalAdjustmentAlert" style="background: #eff6ff; border: 1.5px solid #60a5fa; border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: flex-start; gap: 12px;">
-            <div style="font-size: 22px;">⚙️</div>
-            <div>
-              <div style="font-size: 13px; font-weight: 700; color: #1e40af;">
-                Daily Fitness Targets Automatically Adjusted
+              <!-- Real-Time Record Tracking Table -->
+              <h3 style="font-size: 15px; color: var(--color-dark-forest); margin-bottom: 10px;">📊 Tracked Real-Time Vitals History Log</h3>
+              <div class="table-container" style="max-height: 220px; overflow-y: auto; border: 1.5px solid var(--color-sage-ash); border-radius: 14px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Timestamp</th>
+                      <th>Heart Rate</th>
+                      <th>SpO2 Level</th>
+                      <th>Fall Sensor</th>
+                      <th>Source Device</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="realtimeVitalsTableBody">
+                    <!-- Dynamically populated in real-time -->
+                  </tbody>
+                </table>
               </div>
-              <div style="font-size: 12px; color: #1e3a8a; margin-top: 2px;" id="resAdjustmentReason">
-                Optimal health score (80+). Full capacity active targets assigned to build cardiovascular resilience.
-              </div>
-            </div>
-          </div>
+            </section>
 
-          <!-- 2. DYNAMIC DAILY FITNESS TARGETS GRID -->
-          <div style="margin-bottom: 24px;">
-            <h3 style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-              🏃 2. Adjusted Daily Fitness Targets
-            </h3>
+            <div class="grid-2">
+              <!-- Automatic Watch Sensor & Health Condition Monitor Card -->
+              <section class="card">
+                <h2 class="card-title">🤖 Automatic Watch & Health Condition Sensor</h2>
+                <div class="card" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-sage-deep); padding: 14px; margin-bottom: 16px;">
+                  <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); display: flex; align-items: center; justify-content: space-between;">
+                    <span>Autonomous Fall & Vital Anomaly Sensor</span>
+                    <span class="price-tag tier-budget" id="autoSensorBadge">🟢 Auto-Monitoring</span>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5;">
+                    EverHealth automatically tracks your heart rate and SpO2 in real-time directly from your NoiseFit smartwatch or wearable sensor without requiring manual input.
+                  </p>
+                </div>
 
-            <div class="grid-4" id="fitnessTargetsGrid">
-              <!-- Dynamically populated via JS -->
-            </div>
-          </div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <button type="button" class="btn btn-secondary" style="width: 100%; font-size: 13px;" onclick="triggerTestEmergencyAnomaly()">
+                    ⚡ Test Emergency Response Dispatch (30s SLA Safety Test)
+                  </button>
+                </div>
+                <div id="userVitalsOutput" style="margin-top: 12px; font-size: 13px;"></div>
+              </section>
 
-          <!-- 3. PERSONALIZED RECOVERY PLAN & DAILY CHECKLIST -->
-          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 20px; margin-bottom: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--color-sage-ash);">
-              <div>
-                <h3 style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin: 0;" id="recoveryPlanTitle">
-                  📋 3. Personal Daily Recovery & Action Plan
-                </h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="recoveryPlanSummary">
-                  Tailored recovery roadmap calibrated to your risk rating and predicted Health Score.
+              <!-- NoiseFit Smartwatch Integration Card -->
+              <section class="card" style="border: 2px solid #f97316; background: linear-gradient(135deg, #FFFFFF, #fff7ed);">
+                <div class="card-title">
+                  <span>🟠 NoiseFit Smartwatch Integration</span>
+                  <span class="price-tag" id="noiseFitStatusBadge" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;">🔴 Disconnected</span>
+                </div>
+
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
+                  Connect your Noise Smartwatch (Noise ColorFit, Pulse, Evolve, Icon) via NoiseFit Health Ecosystem to automatically stream real-time Heart Rate & SpO2 health telemetry.
                 </p>
+
+                <div id="noiseFitConnectedPanel" style="display: none; background: #ffedd5; border: 1.5px solid #ea580c; padding: 14px; border-radius: 14px; margin-bottom: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 13px; font-weight: 800; color: #9a3412;">⌚ NoiseFit Live Telemetry Stream</span>
+                    <span class="price-tag" style="background: #dcfce7; color: #166534;">🟢 Live Syncing (3s)</span>
+                  </div>
+                  <div style="display: flex; justify-around; font-size: 14px; text-align: center; margin-top: 8px;">
+                    <div>
+                      <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitHrVal">74 BPM</div>
+                      <div style="font-size: 11px; color: #9a3412;">Heart Rate (Noise Sensor)</div>
+                    </div>
+                    <div style="border-left: 1px solid #fed7aa;"></div>
+                    <div>
+                      <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitSpo2Val">98.6%</div>
+                      <div style="font-size: 11px; color: #9a3412;">SpO2 Oxygen Saturation</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button type="button" class="btn" id="btnConnectNoiseFit" style="background: linear-gradient(135deg, #f97316, #ea580c); flex: 1;" onclick="toggleNoiseFitConnection()">
+                    🔗 Connect NoiseFit Watch (Noise Sync)
+                  </button>
+                  <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="simulateNoiseFitAnomaly()">
+                    🚨 Test NoiseFit Emergency
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <!-- CAREPLUS STRUCTURE: OUR DEPARTMENTS & CARE UNITS GRID -->
+            <h2 class="section-title">Our Departments & Care Units</h2>
+            <div class="departments-grid">
+              <div class="department-card" onclick="openDepartmentPage('emergency')">
+                <span class="department-icon">🚑</span>
+                <div class="department-name">Emergency Care & ICU</div>
+                <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
+              </div>
+              <div class="department-card" onclick="openDepartmentPage('pediatric')">
+                <span class="department-icon">🧸</span>
+                <div class="department-name">Pediatric Department</div>
+                <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
+              </div>
+              <div class="department-card" onclick="openDepartmentPage('cardiology')">
+                <span class="department-icon">❤️</span>
+                <div class="department-name">Cardiology & Cardiac Unit</div>
+                <div style="font-size: 12px; color: var(--color-sage-deep); font-weight: 700; margin-top: 6px;">Select Hospitals & View Department →</div>
+              </div>
+            </div>
+
+            <!-- Suggested Hospital Matching Grid -->
+            <section class="card" style="margin-top: 24px;">
+              <h2 class="card-title">
+                <span>🏥 Budget-Aware Recommended Hospitals (Prices in ₹)</span>
+                <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);" id="matchCountText">Finding nearby facilities...</span>
+              </h2>
+
+              <div class="grid-3" id="hospitalMatchesGrid">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </section>
+          </div>
+
+          <!-- 2. DAILY TASKS TAB PANEL (DAILY HEALTH GOALS & PERSONAL RECOVERY PLAN) -->
+          <div id="pTabPanel-tasks" class="dash-subtab-panel">
+            <!-- DEDICATED SECTION: DAILY GOALS, AI RISK PREDICTOR & RECOVERY PLAN -->
+            <section class="card" style="border: 2.5px solid var(--primary); background: linear-gradient(135deg, #FFFFFF, #f8fafc); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); padding: 26px;">
+              
+              <!-- Section Header Bar -->
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash);">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">🎯</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Daily Health Goals & Personal Recovery Plan
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px; margin-left: 36px; line-height: 1.4;">
+                    AI Risk Predictor continuously evaluates your physiological parameters to dynamically adjust daily fitness targets and provide a personalized recovery plan.
+                  </p>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <span class="price-tag tier-premium" style="font-size: 12px; padding: 6px 12px;">🔮 AI Risk Predictor</span>
+                  <span class="price-tag" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 12px; padding: 6px 12px;">⚡ Adaptive Fitness Goals</span>
+                </div>
               </div>
 
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="text-align: right;">
-                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);" id="recoveryProgressText">0 / 4 Completed</div>
-                  <div style="width: 140px; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 4px;">
-                    <div id="recoveryProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); transition: width 0.3s ease;"></div>
+              <!-- Vitals Input & AI Risk Assessment Card -->
+              <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 18px; margin-bottom: 22px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                  <h3 style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin: 0;">
+                    🩺 1. Input Physiological Telemetry & Evaluate Risk Level
+                  </h3>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('optimal')">🟢 Preset: Optimal Vitals</button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('moderate')">🟡 Preset: Moderate Stress</button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('high')">🟠 Preset: High Risk HR/SpO2</button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('critical')">🚨 Preset: Critical Anomaly</button>
+                  </div>
+                </div>
+
+                <!-- Input Controls -->
+                <div class="grid-4" style="margin-bottom: 14px;">
+                  <div class="form-group">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Heart Rate (BPM)</label>
+                    <input type="number" id="recHr" value="74" min="30" max="220" class="form-control" style="font-size: 13px;">
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">SpO2 Oxygen (%)</label>
+                    <input type="number" id="recSpo2" value="98.5" min="70" max="100" step="0.1" class="form-control" style="font-size: 13px;">
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Stress Level (1-100)</label>
+                    <input type="number" id="recStress" value="28" min="1" max="100" class="form-control" style="font-size: 13px;">
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Daily Activity (Mins)</label>
+                    <input type="number" id="recActivity" value="35" min="0" max="300" class="form-control" style="font-size: 13px;">
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button type="button" class="btn" style="flex: 2; font-weight: 700; font-size: 13px;" onclick="calculateHealthRecommendations()">
+                    🔮 Calculate AI Health Score & Adjust Daily Goals
+                  </button>
+                  <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="syncNoiseFitToPredictor()">
+                    ⌚ Sync Smartwatch Vitals
+                  </button>
+                </div>
+              </div>
+
+              <!-- Prediction Result Output Container -->
+              <div id="healthRecommendationOutput" style="display: block;">
+                
+                <!-- Health Score & Risk Level Header -->
+                <div style="background: linear-gradient(135deg, var(--color-dark-forest), #1c3b2b); border-radius: 16px; padding: 20px; color: #ffffff; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                  <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: #a7f3d0; font-weight: 700; letter-spacing: 0.5px;">
+                      PREDICTED HEALTH SCORE
+                    </div>
+                    <div style="font-size: 38px; font-weight: 900; line-height: 1.1; margin-top: 4px;" id="resHealthScore">
+                      88 / 100
+                    </div>
+                    <p style="font-size: 12px; color: #e2e8f0; margin-top: 6px; max-width: 460px; line-height: 1.4;" id="resStatusSummary">
+                      Optimal physiological baseline. Vitals, stress, and activity parameters are balanced.
+                    </p>
+                  </div>
+
+                  <div style="text-align: right;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: #cbd5e1; font-weight: 700; margin-bottom: 6px;">
+                      RISK CLASSIFICATION
+                    </div>
+                    <span class="price-tag tier-budget" style="font-size: 15px; padding: 8px 16px; font-weight: 800;" id="resRiskBadge">
+                      🟢 LOW RISK
+                    </span>
+                    <div style="font-size: 11px; color: #94a3b8; margin-top: 8px; font-weight: 600;" id="resModeLabel">
+                      ⚡ Peak Performance Mode
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Goal Adjustment Reason Callout -->
+                <div id="goalAdjustmentAlert" style="background: #eff6ff; border: 1.5px solid #60a5fa; border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: flex-start; gap: 12px;">
+                  <div style="font-size: 22px;">⚙️</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700; color: #1e40af;">
+                      Daily Fitness Targets Automatically Adjusted
+                    </div>
+                    <div style="font-size: 12px; color: #1e3a8a; margin-top: 2px;" id="resAdjustmentReason">
+                      Optimal health score (80+). Full capacity active targets assigned to build cardiovascular resilience.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. DYNAMIC DAILY FITNESS TARGETS GRID -->
+                <div style="margin-bottom: 24px;">
+                  <h3 style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    🏃 2. Adjusted Daily Fitness Targets
+                  </h3>
+
+                  <div class="grid-4" id="fitnessTargetsGrid">
+                    <!-- Dynamically populated via JS -->
+                  </div>
+                </div>
+
+                <!-- 3. PERSONALIZED RECOVERY PLAN & DAILY CHECKLIST -->
+                <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--color-sage-ash);">
+                    <div>
+                      <h3 style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin: 0;" id="recoveryPlanTitle">
+                        📋 3. Personal Daily Recovery & Action Plan
+                      </h3>
+                      <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="recoveryPlanSummary">
+                        Tailored recovery roadmap calibrated to your risk rating and predicted Health Score.
+                      </p>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="text-align: right;">
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);" id="recoveryProgressText">0 / 4 Completed</div>
+                        <div style="width: 140px; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 4px;">
+                          <div id="recoveryProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); transition: width 0.3s ease;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Recovery Plan Steps Checklist -->
+                  <div id="recoveryStepsList" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Dynamically populated checklist items -->
+                  </div>
+                </div>
+
+                <!-- 4. TAILORED AI RECOMMENDATIONS LIST -->
+                <div>
+                  <h3 style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">
+                    💡 4. Tailored AI Medical & Lifestyle Recommendations
+                  </h3>
+                  <div id="resRecommendationsList" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Dynamically populated recommendations -->
+                  </div>
+                </div>
+
+              </div>
+            </section>
+          </div>
+
+          <!-- 3. PROFILE TAB PANEL (FULL USER SIGNUP DETAILS) -->
+          <div id="pTabPanel-profile" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--color-sage-deep); background: #ffffff;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div style="width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center;" id="pProfAvatarLarge">J</div>
+                  <div>
+                    <h2 style="font-size: 22px; color: var(--color-dark-forest); margin: 0; font-weight: 800;" id="pProfFullName">Jane Doe</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">User Account ID: <strong id="pProfUserId">usr-101</strong></p>
+                  </div>
+                </div>
+                <span class="price-tag tier-budget" style="font-size: 13px; padding: 6px 14px;">🟢 Verified Patient Account</span>
+              </div>
+
+              <!-- Personal Information Grid -->
+              <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">👤 Personal Identification & Contact Info</h3>
+                <div class="grid-2" style="gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Email Address</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-top: 2px;" id="pProfEmail">jane.doe@example.com</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Phone Number</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-top: 2px;" id="pProfPhone">+91 98765 43210</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Primary Emergency Contact</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-top: 2px;" id="pProfEmerContact">Primary Contact (+91-98765-43210)</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Registered Address</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-top: 2px;">San Francisco, CA (Default Region)</div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Recovery Plan Steps Checklist -->
-            <div id="recoveryStepsList" style="display: flex; flex-direction: column; gap: 10px;">
-              <!-- Dynamically populated checklist items -->
-            </div>
+              <!-- Medical Declaration Grid -->
+              <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">🩸 Physiological & Allergy Baseline</h3>
+                <div class="grid-2" style="gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Blood Group</div>
+                    <div style="font-size: 18px; font-weight: 800; color: #dc2626; margin-top: 2px;" id="pProfBloodType">O+</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Known Allergies</div>
+                    <div style="margin-top: 4px;" id="pProfAllergies">
+                      <span class="price-tag" style="background:#fee2e2; color:#b91c1c;">Penicillin</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Household Pre-existing Medical Conditions History -->
+              <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 8px;">
+                  📋 Pre-existing Household Medical History (Declared at Signup)
+                </h3>
+                <div id="pProfMedicalHistoryList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                  <!-- Dynamically populated medical history -->
+                </div>
+              </div>
+
+              <!-- Financial & Insurance Settings -->
+              <div>
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">💰 Financial & Insurance Settings</h3>
+                <div class="grid-2" style="gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Max Hospital Budget Ceiling</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;" id="pProfBudget">₹40,000</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Insurance Provider</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-top: 2px;" id="pProfInsurance">BlueCross BlueShield</div>
+                  </div>
+                </div>
+              </div>
+
+            </section>
           </div>
 
-          <!-- 4. TAILORED AI RECOMMENDATIONS LIST -->
-          <div>
-            <h3 style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">
-              💡 4. Tailored AI Medical & Lifestyle Recommendations
-            </h3>
-            <div id="resRecommendationsList" style="display: flex; flex-direction: column; gap: 10px;">
-              <!-- Dynamically populated recommendations -->
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- Suggested Hospital Matching Grid -->
-      <section class="card">
-        <h2 class="card-title">
-          <span>🏥 Budget-Aware Recommended Hospitals (Prices in ₹)</span>
-          <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);" id="matchCountText">Finding nearby facilities...</span>
+        </main>
+      </div>
+    </div>-weight: normal; color: var(--text-muted);" id="matchCountText">Finding nearby facilities...</span>
         </h2>
 
         <div class="grid-3" id="hospitalMatchesGrid">
@@ -1818,187 +2090,361 @@
     <!-- VIEW 4: HOSPITAL MANAGEMENT DASHBOARD       -->
     <!-- ========================================== -->
     <div id="view-hospital-dashboard" class="view-page">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <h1 style="font-size: 26px; color: var(--text-main);">Hospital Inventory & Fleet Management Center</h1>
-            <span class="role-badge badge-hospital" id="hospitalVerifiedBadge">✓ Verified & Accredited Facility</span>
-          </div>
-          <p style="color: var(--text-muted); font-size: 14px;" id="hospitalWelcomeText">
-            Update live bed counts, services offered, and ambulance availability
-          </p>
-        </div>
+      <div class="dashboard-layout">
 
-        <div style="display: flex; gap: 12px; align-items: center;">
-          <label style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Active Managed Hospital:</label>
-          <select id="hospitalSelector" class="form-control" style="width: auto; min-width: 220px;" onchange="switchManagedHospital(this.value)">
-            <option value="hosp-001">St. Jude Trauma Center</option>
-            <option value="hosp-002">Mercy Regional Emergency</option>
-          </select>
-          <button type="button" class="btn btn-secondary" onclick="handleLogout()">Logout</button>
-        </div>
+        <!-- LEFT SIDEBAR NAVIGATION FOR HOSPITAL -->
+        <aside class="sidebar-nav">
+          <div class="sidebar-header-pill" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="switchHospitalTab('home')">
+            <span style="font-size: 18px;">🏥</span>
+            <span>Hospital Portal</span>
+          </div>
+
+          <div class="sidebar-menu-list">
+            <div class="menu-group-label">MAIN</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item active" id="hSideTab-home" onclick="switchHospitalTab('home')">
+              <span class="nav-left"><span style="font-size: 16px;">🏠</span> Home</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="hSideTab-tasks" onclick="switchHospitalTab('tasks')">
+              <span class="nav-left"><span style="font-size: 16px;">🎯</span> Daily Operations</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="hSideTab-profile" onclick="switchHospitalTab('profile')">
+              <span class="nav-left"><span style="font-size: 16px;">👤</span> Facility Profile</span>
+            </a>
+
+            <div class="menu-group-label">OPERATIONS & BEDS</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchHospitalTab('home')">
+              <span class="nav-left"><span style="font-size: 16px;">🛏️</span> Ward Bed Capacity</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchHospitalTab('home')">
+              <span class="nav-left"><span style="font-size: 16px;">🚑</span> Fleet Dispatch</span>
+            </a>
+
+            <div class="menu-group-label">SYSTEM</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchHospitalTab('profile')">
+              <span class="nav-left"><span style="font-size: 16px;">⚙️</span> Facility Settings</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="handleLogout()">
+              <span class="nav-left"><span style="font-size: 16px;">🚪</span> Logout</span>
+            </a>
+          </div>
+
+          <!-- Bottom Hospital User Profile Card -->
+          <div class="sidebar-user-card" onclick="switchHospitalTab('profile')">
+            <div class="user-avatar" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">🏥</div>
+            <div class="user-info">
+              <div class="user-name" id="sideHospName">St. Jude Trauma</div>
+              <div class="user-role">Hospital Admin</div>
+            </div>
+            <span style="font-size: 12px; color: var(--text-muted);">⌄</span>
+          </div>
+        </aside>
+
+        <!-- MAIN DASHBOARD CONTENT AREA -->
+        <main class="dashboard-main-content">
+
+          <!-- 1. HOSPITAL HOME TAB PANEL -->
+          <div id="hTabPanel-home" class="dash-subtab-panel active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <h1 style="font-size: 26px; color: var(--text-main); margin: 0;">Hospital Inventory & Fleet Management Center</h1>
+                  <span class="role-badge badge-hospital" id="hospitalVerifiedBadge">✓ Verified Facility</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;" id="hospitalWelcomeText">
+                  Update live bed counts, services offered, and ambulance availability
+                </p>
+              </div>
+
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <label style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Managed Hospital:</label>
+                <select id="hospitalSelector" class="form-control" style="width: auto; min-width: 200px;" onchange="switchManagedHospital(this.value)">
+                  <option value="hosp-001">St. Jude Trauma Center</option>
+                  <option value="hosp-002">Mercy Regional Emergency</option>
+                </select>
+                <button type="button" class="btn btn-secondary" onclick="handleLogout()">Logout</button>
+              </div>
+            </div>
+
+            <!-- Live Emergency Dispatch Banner -->
+            <div id="hospitalDispatchBanner" class="emergency-banner">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                <span style="background: #dc2626; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;" id="hDispatchSeverity">🚨 INCOMING EMERGENCY DISPATCH</span>
+                <span style="color: #fca5a5; font-weight: bold; font-size: 16px;" id="hDispatchSla">SLA Countdown: 25s</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h3 style="font-size: 20px; color: #fff; margin-bottom: 4px;" id="hDispatchPatient">Jane Doe</h3>
+                  <p style="color: #fecaca; font-size: 14px;" id="hDispatchCond">Condition: Low SpO2 (86%) & Tachycardia</p>
+                  <p style="color: #fecaca; font-size: 13px;">Blood: O+ | Allergies: Penicillin</p>
+                </div>
+                <div style="background: #7f1d1d; padding: 10px 18px; border-radius: 8px; text-align: center;">
+                  <span style="font-size: 22px; font-weight: bold; color: #fff; display: block;" id="hDispatchEta">6 MINS</span>
+                  <span style="font-size: 10px; color: #fca5a5; font-weight: bold;">ESTIMATED ETA</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <button type="button" class="btn btn-success" style="flex: 1;" onclick="acceptHospitalDispatch()">✓ ACCEPT BOOKING & DISPATCH AMBULANCE</button>
+                <button type="button" class="btn btn-danger" style="flex: 1;" onclick="rejectHospitalDispatch()">✕ REJECT / CASCADE TO NEXT HOSPITAL</button>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <!-- Hospital Inventory & Capacity Management -->
+              <section class="card">
+                <h2 class="card-title">
+                  <span>🏥 Live Bed & Fleet Counter Control</span>
+                  <span class="role-badge badge-hospital">Live Telemetry Sync</span>
+                </h2>
+
+                <div class="inv-control-row">
+                  <div>
+                    <span style="font-weight: 600;">ICU Beds Available</span>
+                    <span class="price-tag tier-budget" style="margin-left: 8px;">CRITICAL</span>
+                  </div>
+                  <div class="inv-counter-btns">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', -1)">-</button>
+                    <span class="counter-val" id="cntIcu">4</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', 1)">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row">
+                  <div>
+                    <span style="font-weight: 600;">Cardiac Ward Beds</span>
+                  </div>
+                  <div class="inv-counter-btns">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', -1)">-</button>
+                    <span class="counter-val" id="cntCardiac">2</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', 1)">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row">
+                  <div>
+                    <span style="font-weight: 600;">Trauma Unit Beds</span>
+                  </div>
+                  <div class="inv-counter-btns">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', -1)">-</button>
+                    <span class="counter-val" id="cntTrauma">3</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', 1)">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row">
+                  <div>
+                    <span style="font-weight: 600;">General Ward Beds</span>
+                  </div>
+                  <div class="inv-counter-btns">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', -1)">-</button>
+                    <span class="counter-val" id="cntGeneral">12</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', 1)">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row">
+                  <div>
+                    <span style="font-weight: 600;">Available Ambulances</span>
+                    <span class="price-tag tier-standard" style="margin-left: 8px;" id="fleetTotalLabel">Fleet: 5</span>
+                  </div>
+                  <div class="inv-counter-btns">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', -1)">-</button>
+                    <span class="counter-val" id="cntAmb">3</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', 1)">+</button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Hospital Services Management -->
+              <section class="card">
+                <h2 class="card-title">
+                  <span>🩺 Medical Services Provided</span>
+                  <span class="role-badge badge-hospital">Capacity Tagging</span>
+                </h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                  Toggle specialized medical departments. Patient matching filters will match patients with these service tags.
+                </p>
+
+                <div class="services-tag-manager" id="hospitalServicesBox">
+                  <!-- Dynamically populated via JS -->
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                  <input type="text" id="newServiceInput" class="form-control" placeholder="Add custom service (e.g. Stroke Center)..." style="flex: 1;">
+                  <button type="button" class="btn btn-secondary" onclick="addCustomService()">+ Add Tag</button>
+                </div>
+
+                <button type="button" class="btn btn-success" style="width: 100%;" onclick="saveHospitalSettings()">💾 Save Bed Counters & Services to API</button>
+              </section>
+            </div>
+
+            <!-- Emergency Dispatches History -->
+            <section class="card" style="margin-top: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 class="card-title" style="margin-bottom: 0;">📋 Live Dispatch Desk & Incident History</h2>
+                <button type="button" class="btn btn-secondary" onclick="triggerSimulatedDispatch()">⚡ Simulate Test Emergency Dispatch</button>
+              </div>
+
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Booking ID</th>
+                      <th>Patient Name</th>
+                      <th>Condition</th>
+                      <th>Severity</th>
+                      <th>ETA</th>
+                      <th>Ambulance</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dispatchesTableBody">
+                    <tr>
+                      <td>bk-9012</td>
+                      <td><strong>Robert Chen</strong></td>
+                      <td>SpO2 drop (86%) & Tachycardia</td>
+                      <td><span class="price-tag" style="background: #ef4444; color: #fff;">LIFE_THREATENING</span></td>
+                      <td>8 mins</td>
+                      <td>AMB-104</td>
+                      <td><span class="price-tag tier-standard">EN_ROUTE</span></td>
+                    </tr>
+                    <tr>
+                      <td>bk-8991</td>
+                      <td><strong>Maria Garcia</strong></td>
+                      <td>Hard impact fall detected</td>
+                      <td><span class="price-tag" style="background: #f59e0b; color: #fff;">SEVERE</span></td>
+                      <td>0 mins</td>
+                      <td>AMB-102</td>
+                      <td><span class="price-tag tier-budget">ARRIVED</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <!-- 2. HOSPITAL DAILY OPERATIONS TASKS TAB PANEL -->
+          <div id="hTabPanel-tasks" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--color-sage-deep);">
+              <h2 class="card-title">🎯 Hospital Daily Operations & Ward Rounds Checklist</h2>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                Shift operational tasks for emergency triage staff, bed coordinators, and ambulance drivers.
+              </p>
+
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--color-sage-ash); font-size: 13px; font-weight: 600; cursor: pointer;">
+                  <input type="checkbox" checked style="width: 18px; height: 18px;">
+                  <span>🚑 Audit Ambulance Fleet Fuel & Oxygen Tank Levels (Completed at 07:00 AM)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--color-sage-ash); font-size: 13px; font-weight: 600; cursor: pointer;">
+                  <input type="checkbox" checked style="width: 18px; height: 18px;">
+                  <span>🛏️ Verify ICU & CCU Bed Discharge Log with Central Triage Desk</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--color-sage-ash); font-size: 13px; font-weight: 600; cursor: pointer;">
+                  <input type="checkbox" style="width: 18px; height: 18px;">
+                  <span>⚡ 30-Second Emergency Response SLA Performance Audit</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--color-sage-ash); font-size: 13px; font-weight: 600; cursor: pointer;">
+                  <input type="checkbox" style="width: 18px; height: 18px;">
+                  <span>🩺 Synchronize On-Call Specialist Doctors Roster with Emergency Desk</span>
+                </label>
+              </div>
+            </section>
+          </div>
+
+          <!-- 3. HOSPITAL FACILITY PROFILE TAB PANEL -->
+          <div id="hTabPanel-profile" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--color-sage-deep); background: #ffffff;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div style="width: 56px; height: 56px; border-radius: 18px; background: var(--color-cream-warm); font-size: 32px; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--color-sage-ash);">🏥</div>
+                  <div>
+                    <h2 style="font-size: 22px; color: var(--color-dark-forest); margin: 0; font-weight: 800;" id="hProfName">St. Jude Emergency Center</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">Facility ID: <strong id="hProfId">hosp-001</strong></p>
+                  </div>
+                </div>
+                <span class="role-badge badge-hospital" style="font-size: 13px; padding: 6px 14px;" id="hProfStatusBadge">✓ Verified State Emergency Facility</span>
+              </div>
+
+              <!-- Facility Identification & Licensing -->
+              <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">🛡️ State Licensing & Verification Credentials</h3>
+                <div class="grid-2" style="gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Medical Board License ID</div>
+                    <div style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;" id="hProfLicense">LIC-CA-94812</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">State Accreditation Code</div>
+                    <div style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;" id="hProfAccred">SMC-88921-X</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Facility Location & Geolocation -->
+              <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">📍 Location & Emergency Dispatch GPS Coordinates</h3>
+                <div class="grid-2" style="gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Street Address</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-top: 2px;" id="hProfAddress">500 Medical Plaza, San Francisco, CA</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">GPS Geo-Coordinates</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-top: 2px;" id="hProfGeo">Lat: 37.7749, Lng: -122.4194</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pricing Tier & Fleet Infrastructure -->
+              <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">💰 Pricing Tier & Fleet Infrastructure</h3>
+                <div class="grid-2" style="gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Registered Hospital Pricing Tier</div>
+                    <div style="font-size: 15px; font-weight: 800; color: #1b5e20; margin-top: 2px;" id="hProfTier">Tier 2: Standard (~₹35,000 per incident)</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Active Ambulance Fleet</div>
+                    <div style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;" id="hProfFleet">3 Available / 5 Fleet Units</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Specialized Medical Services Tags -->
+              <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 8px;">🩺 Active Specialized Care Departments</h3>
+                <div class="services-tag-manager" id="hProfServicesTags" style="margin-top: 8px;">
+                  <span class="service-chip active">✓ CARDIAC Care</span>
+                  <span class="service-chip active">✓ TRAUMA Center</span>
+                  <span class="service-chip active">✓ ICU Ward</span>
+                  <span class="service-chip active">✓ PEDIATRIC Unit</span>
+                </div>
+              </div>
+
+              <!-- Accepted Insurances & Emergency Contact -->
+              <div>
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">📞 Hotline & In-Network Insurance Providers</h3>
+                <div class="grid-2" style="gap: 12px;">
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Direct Emergency Dispatch Hotline</div>
+                    <div style="font-size: 16px; font-weight: 800; color: #dc2626; margin-top: 2px;" id="hProfPhone">+1-555-0190</div>
+                  </div>
+                  <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">In-Network Insurances</div>
+                    <div style="margin-top: 4px;" id="hProfInsuranceList">
+                      <span class="price-tag tier-budget">✓ BlueCross</span>
+                      <span class="price-tag tier-budget">✓ UnitedHealth</span>
+                      <span class="price-tag tier-budget">✓ Kaiser</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </section>
+          </div>
+
+        </main>
       </div>
-
-      <!-- Live Emergency Dispatch Banner -->
-      <div id="hospitalDispatchBanner" class="emergency-banner">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-          <span style="background: #dc2626; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;" id="hDispatchSeverity">🚨 INCOMING EMERGENCY DISPATCH</span>
-          <span style="color: #fca5a5; font-weight: bold; font-size: 16px;" id="hDispatchSla">SLA Countdown: 25s</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <div>
-            <h3 style="font-size: 20px; color: #fff; margin-bottom: 4px;" id="hDispatchPatient">Jane Doe</h3>
-            <p style="color: #fecaca; font-size: 14px;" id="hDispatchCond">Condition: Low SpO2 (86%) & Tachycardia</p>
-            <p style="color: #fecaca; font-size: 13px;">Blood: O+ | Allergies: Penicillin</p>
-          </div>
-          <div style="background: #7f1d1d; padding: 10px 18px; border-radius: 8px; text-align: center;">
-            <span style="font-size: 22px; font-weight: bold; color: #fff; display: block;" id="hDispatchEta">6 MINS</span>
-            <span style="font-size: 10px; color: #fca5a5; font-weight: bold;">ESTIMATED ETA</span>
-          </div>
-        </div>
-        <div style="display: flex; gap: 12px;">
-          <button type="button" class="btn btn-success" style="flex: 1;" onclick="acceptHospitalDispatch()">✓ ACCEPT BOOKING & DISPATCH AMBULANCE</button>
-          <button type="button" class="btn btn-danger" style="flex: 1;" onclick="rejectHospitalDispatch()">✕ REJECT / CASCADE TO NEXT HOSPITAL</button>
-        </div>
-      </div>
-
-      <div class="grid-2">
-
-        <!-- Hospital Inventory & Capacity Management (Requirement 3) -->
-        <section class="card">
-          <h2 class="card-title">
-            <span>🏥 Live Bed & Fleet Counter Control</span>
-            <span class="role-badge badge-hospital">Requirement #3</span>
-          </h2>
-
-          <div class="inv-control-row">
-            <div>
-              <span style="font-weight: 600;">ICU Beds Available</span>
-              <span class="price-tag tier-budget" style="margin-left: 8px;">CRITICAL</span>
-            </div>
-            <div class="inv-counter-btns">
-              <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', -1)">-</button>
-              <span class="counter-val" id="cntIcu">4</span>
-              <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', 1)">+</button>
-            </div>
-          </div>
-
-          <div class="inv-control-row">
-            <div>
-              <span style="font-weight: 600;">Cardiac Ward Beds</span>
-            </div>
-            <div class="inv-counter-btns">
-              <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', -1)">-</button>
-              <span class="counter-val" id="cntCardiac">2</span>
-              <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', 1)">+</button>
-            </div>
-          </div>
-
-          <div class="inv-control-row">
-            <div>
-              <span style="font-weight: 600;">Trauma Unit Beds</span>
-            </div>
-            <div class="inv-counter-btns">
-              <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', -1)">-</button>
-              <span class="counter-val" id="cntTrauma">3</span>
-              <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', 1)">+</button>
-            </div>
-          </div>
-
-          <div class="inv-control-row">
-            <div>
-              <span style="font-weight: 600;">General Ward Beds</span>
-            </div>
-            <div class="inv-counter-btns">
-              <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', -1)">-</button>
-              <span class="counter-val" id="cntGeneral">12</span>
-              <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', 1)">+</button>
-            </div>
-          </div>
-
-          <div class="inv-control-row">
-            <div>
-              <span style="font-weight: 600;">Available Ambulances</span>
-              <span class="price-tag tier-standard" style="margin-left: 8px;" id="fleetTotalLabel">Fleet: 5</span>
-            </div>
-            <div class="inv-counter-btns">
-              <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', -1)">-</button>
-              <span class="counter-val" id="cntAmb">3</span>
-              <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', 1)">+</button>
-            </div>
-          </div>
-
-        </section>
-
-
-        <!-- Hospital Services Management (Requirement 3) -->
-        <section class="card">
-          <h2 class="card-title">
-            <span>🩺 Medical Services Provided</span>
-            <span class="role-badge badge-hospital">Requirement #3</span>
-          </h2>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-            Toggle specialized medical departments. Patient matching filters will match patients with these service tags.
-          </p>
-
-          <div class="services-tag-manager" id="hospitalServicesBox">
-            <!-- Dynamically populated via JS -->
-          </div>
-
-          <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-            <input type="text" id="newServiceInput" class="form-control" placeholder="Add custom service (e.g. Stroke Center)..." style="flex: 1;">
-            <button type="button" class="btn btn-secondary" onclick="addCustomService()">+ Add Tag</button>
-          </div>
-
-          <button type="button" class="btn btn-success" style="width: 100%;" onclick="saveHospitalSettings()">💾 Save Bed Counters & Services to API</button>
-        </section>
-
-      </div>
-
-      <!-- Emergency Dispatches History -->
-      <section class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h2 class="card-title" style="margin-bottom: 0;">📋 Live Dispatch Desk & Incident History</h2>
-          <button type="button" class="btn btn-secondary" onclick="triggerSimulatedDispatch()">⚡ Simulate Test Emergency Dispatch</button>
-        </div>
-
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Booking ID</th>
-                <th>Patient Name</th>
-                <th>Condition</th>
-                <th>Severity</th>
-                <th>ETA</th>
-                <th>Ambulance</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="dispatchesTableBody">
-              <tr>
-                <td>bk-9012</td>
-                <td><strong>Robert Chen</strong></td>
-                <td>SpO2 drop (86%) & Tachycardia</td>
-                <td><span class="price-tag" style="background: #ef4444; color: #fff;">LIFE_THREATENING</span></td>
-                <td>8 mins</td>
-                <td>AMB-104</td>
-                <td><span class="price-tag tier-standard">EN_ROUTE</span></td>
-              </tr>
-              <tr>
-                <td>bk-8991</td>
-                <td><strong>Maria Garcia</strong></td>
-                <td>Hard impact fall detected</td>
-                <td><span class="price-tag" style="background: #f59e0b; color: #fff;">SEVERE</span></td>
-                <td>0 mins</td>
-                <td>AMB-102</td>
-                <td><span class="price-tag tier-budget">ARRIVED</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
     </div>
 
   </main>
@@ -2123,9 +2569,159 @@
         fetchHospitalMatches();
         initRealtimeVitalsStream();
         calculateHealthRecommendations();
+        switchPatientTab('home');
       }
-      if (route === 'hospital-dashboard') loadHospitalDashboard();
+      if (route === 'hospital-dashboard') {
+        loadHospitalDashboard();
+        switchHospitalTab('home');
+      }
       if (route === 'dept-page') renderCurrentDeptMatches();
+    }
+
+    /* ========================================================
+       SIDEBAR TAB NAVIGATION & DYNAMIC PROFILE RENDERERS
+       ======================================================== */
+    function switchPatientTab(tabName) {
+      document.querySelectorAll('#view-user-dashboard .sidebar-nav-item').forEach(el => el.classList.remove('active'));
+      const activeTabBtn = document.getElementById(`pSideTab-${tabName}`);
+      if (activeTabBtn) activeTabBtn.classList.add('active');
+
+      document.querySelectorAll('#view-user-dashboard .dash-subtab-panel').forEach(el => el.classList.remove('active'));
+      const activePanel = document.getElementById(`pTabPanel-${tabName}`);
+      if (activePanel) activePanel.classList.add('active');
+
+      if (tabName === 'profile') {
+        renderPatientProfileTab();
+      }
+      if (tabName === 'tasks') {
+        calculateHealthRecommendations();
+      }
+    }
+
+    function switchHospitalTab(tabName) {
+      document.querySelectorAll('#view-hospital-dashboard .sidebar-nav-item').forEach(el => el.classList.remove('active'));
+      const activeTabBtn = document.getElementById(`hSideTab-${tabName}`);
+      if (activeTabBtn) activeTabBtn.classList.add('active');
+
+      document.querySelectorAll('#view-hospital-dashboard .dash-subtab-panel').forEach(el => el.classList.remove('active'));
+      const activePanel = document.getElementById(`hTabPanel-${tabName}`);
+      if (activePanel) activePanel.classList.add('active');
+
+      if (tabName === 'profile') {
+        renderHospitalProfileTab();
+      }
+    }
+
+    function renderPatientProfileTab() {
+      const user = state.currentUser || {};
+      
+      const nameEl = document.getElementById('pProfFullName');
+      const idEl = document.getElementById('pProfUserId');
+      const emailEl = document.getElementById('pProfEmail');
+      const phoneEl = document.getElementById('pProfPhone');
+      const emerEl = document.getElementById('pProfEmerContact');
+      const bloodEl = document.getElementById('pProfBloodType');
+      const allergiesEl = document.getElementById('pProfAllergies');
+      const budgetEl = document.getElementById('pProfBudget');
+      const insuranceEl = document.getElementById('pProfInsurance');
+      const historyList = document.getElementById('pProfMedicalHistoryList');
+
+      if (nameEl) nameEl.innerText = user.fullName || 'Jane Doe';
+      if (idEl) idEl.innerText = user.id || 'usr-101';
+      if (emailEl) emailEl.innerText = user.email || 'jane.doe@example.com';
+      if (phoneEl) phoneEl.innerText = user.phoneNumber || '+91 98765 43210';
+      if (emerEl) emerEl.innerText = user.emergencyContact || `Primary Contact (${user.phoneNumber || '+91-98765-43210'})`;
+      if (bloodEl) bloodEl.innerText = user.bloodType || 'O+';
+      
+      if (allergiesEl) {
+        const list = Array.isArray(user.allergies) ? user.allergies : (user.allergies ? [user.allergies] : ['Penicillin']);
+        allergiesEl.innerHTML = list.map(a => `<span class="price-tag" style="background:#fee2e2; color:#b91c1c;">${a}</span>`).join(' ');
+      }
+
+      if (budgetEl) budgetEl.innerText = `₹${(user.budgetCeiling || 40000).toLocaleString()}`;
+      if (insuranceEl) insuranceEl.innerText = user.insuranceProvider || 'BlueCross BlueShield';
+
+      if (historyList) {
+        const details = user.medicalHistoryDetails || [];
+        if (details.length === 0 && (!user.medicalConditions || user.medicalConditions.length === 0)) {
+          historyList.innerHTML = `<div style="color: var(--text-muted); font-size: 13px;">No pre-existing conditions declared during signup. Active health baseline intact.</div>`;
+        } else if (details.length > 0) {
+          historyList.innerHTML = details.map(item => `
+            <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="font-size: 13px; color: var(--color-dark-forest);">🩺 ${item.conditionName}</strong>
+                ${item.durationYears ? `<span class="price-tag" style="background:#f1f5f9; color:#475569;">Diagnosed: ${item.durationYears}</span>` : ''}
+              </div>
+              ${item.medications ? `<div style="color: #1b5e20; font-size: 12px; margin-top: 4px;">💊 Active Medications: <strong>${item.medications}</strong></div>` : ''}
+              ${item.notes ? `<div style="color: var(--text-muted); font-size: 11px; margin-top: 2px;">📝 Doctor Notes: ${item.notes}</div>` : ''}
+            </div>
+          `).join('');
+        } else {
+          historyList.innerHTML = user.medicalConditions.map(c => `
+            <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); padding: 8px 12px; border-radius: 10px; color: var(--color-dark-forest); font-size: 13px; font-weight: bold;">
+              🩺 ${c}
+            </div>
+          `).join('');
+        }
+      }
+
+      // Update sidebar user card info
+      const sideName = document.getElementById('sidePatientName');
+      const sideAvatar = document.getElementById('sidePatientAvatar');
+      if (sideName) sideName.innerText = user.fullName || 'Jane Doe';
+      if (sideAvatar) sideAvatar.innerText = (user.fullName || 'J').charAt(0).toUpperCase();
+    }
+
+    function renderHospitalProfileTab() {
+      const hosp = state.hospitalsMap[state.currentHospitalId] || {
+        id: 'hosp-001',
+        name: 'St. Jude Emergency Center',
+        licenseId: 'LIC-CA-94812',
+        address: '500 Medical Plaza, San Francisco, CA',
+        latitude: 37.7749,
+        longitude: -122.4194,
+        pricingTier: 2,
+        serviceTags: ['cardiac', 'trauma', 'icu', 'pediatric'],
+        acceptedInsurance: ['BlueCross', 'UnitedHealth'],
+        phoneNumber: '+1-555-0190',
+        isActive: true
+      };
+
+      const nameEl = document.getElementById('hProfName');
+      const idEl = document.getElementById('hProfId');
+      const licenseEl = document.getElementById('hProfLicense');
+      const accredEl = document.getElementById('hProfAccred');
+      const addressEl = document.getElementById('hProfAddress');
+      const geoEl = document.getElementById('hProfGeo');
+      const tierEl = document.getElementById('hProfTier');
+      const fleetEl = document.getElementById('hProfFleet');
+      const phoneEl = document.getElementById('hProfPhone');
+      const tagsEl = document.getElementById('hProfServicesTags');
+      const insEl = document.getElementById('hProfInsuranceList');
+
+      if (nameEl) nameEl.innerText = hosp.name;
+      if (idEl) idEl.innerText = hosp.id;
+      if (licenseEl) licenseEl.innerText = hosp.licenseId || 'LIC-CA-94812';
+      if (accredEl) accredEl.innerText = hosp.accreditationCode || 'SMC-88921-X';
+      if (addressEl) addressEl.innerText = hosp.address;
+      if (geoEl) geoEl.innerText = `Lat: ${hosp.latitude || 37.7749}, Lng: ${hosp.longitude || -122.4194}`;
+      if (tierEl) tierEl.innerText = hosp.pricingTier === 1 ? 'Tier 1: Budget (~₹15,000)' : hosp.pricingTier === 3 ? 'Tier 3: Premium (~₹60,000)' : 'Tier 2: Standard (~₹35,000)';
+      if (fleetEl) fleetEl.innerText = `${state.hospitalInventory.ambulancesAvailable} Available / ${state.hospitalInventory.totalAmbulanceFleet} Fleet Units`;
+      if (phoneEl) phoneEl.innerText = hosp.phoneNumber || '+1-555-0190';
+
+      if (tagsEl) {
+        const services = hosp.serviceTags || state.hospitalServices || ['cardiac', 'trauma', 'icu'];
+        tagsEl.innerHTML = services.map(s => `<span class="service-chip active">✓ ${s.toUpperCase()} Care</span>`).join(' ');
+      }
+
+      if (insEl) {
+        const ins = hosp.acceptedInsurance || ['BlueCross', 'UnitedHealth'];
+        insEl.innerHTML = ins.map(i => `<span class="price-tag tier-budget" style="margin-right: 6px;">✓ ${i}</span>`).join(' ');
+      }
+
+      // Update sidebar hospital user card info
+      const sideHosp = document.getElementById('sideHospName');
+      if (sideHosp) sideHosp.innerText = hosp.name;
     }
 
     function updateHeaderNavVisibility() {
