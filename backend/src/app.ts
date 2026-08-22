@@ -339,7 +339,7 @@ app.post(['/v1/integrations/health-connect/sync', '/v1/integrations/healthconnec
     const { userId, heartRate, spo2, deviceName } = req.body;
     const targetUserId = userId || mockUser.id;
 
-    const hrVal = Number(heartRate !== undefined ? heartRate : 72);
+    const hrVal = Number(heartRate !== undefined ? heartRate : 82);
     const spo2Val = Number(spo2 !== undefined ? spo2 : 98.2);
 
     const isFallDetected = (hrVal >= 160 || hrVal <= 38 || spo2Val < 88);

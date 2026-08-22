@@ -1666,7 +1666,7 @@
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; text-align: center;">
                 <div style="background: #FFFFFF; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
                   <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Heart Rate (BPM)</div>
-                  <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrDisplay">74</div>
+                  <div style="font-size: 32px; font-weight: 800; color: var(--color-dark-forest); margin: 4px 0;" id="rtHrDisplay">82</div>
                   <div style="font-size: 11px; font-weight: 700; color: #2e7d32;" id="rtHrStatus">🟢 Normal Sinus</div>
                 </div>
 
@@ -1750,7 +1750,7 @@
                   </div>
                   <div style="display: flex; justify-around; font-size: 14px; text-align: center; margin-top: 8px;">
                     <div>
-                      <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitHrVal">74 BPM</div>
+                      <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitHrVal">82 BPM</div>
                       <div style="font-size: 11px; color: #9a3412;">Heart Rate (Health Connect)</div>
                     </div>
                     <div style="border-left: 1px solid #fed7aa;"></div>
@@ -4788,13 +4788,13 @@
     }
 
     function syncNoiseFitToPredictor() {
-      const nFitHr = document.getElementById('nFitHrVal') ? parseInt(document.getElementById('nFitHrVal').innerText) : 74;
+      const nFitHr = document.getElementById('nFitHrVal') ? parseInt(document.getElementById('nFitHrVal').innerText) : 82;
       const nFitSpo2 = document.getElementById('nFitSpo2Val') ? parseFloat(document.getElementById('nFitSpo2Val').innerText) : 98.5;
 
       const hrEl = document.getElementById('recHr');
       const spo2El = document.getElementById('recSpo2');
 
-      if (hrEl) hrEl.value = nFitHr || 74;
+      if (hrEl) hrEl.value = nFitHr || 82;
       if (spo2El) spo2El.value = nFitSpo2 || 98.5;
 
       calculateHealthRecommendations();
@@ -4834,7 +4834,7 @@
 
     function applyVitalsPreset(preset) {
       if (preset === 'optimal') {
-        document.getElementById('recHr').value = 74;
+        document.getElementById('recHr').value = 82;
         document.getElementById('recSpo2').value = 98.5;
         document.getElementById('recStress').value = 28;
         document.getElementById('recActivity').value = 45;
@@ -4866,7 +4866,7 @@
       const spo2El = document.getElementById('nFitSpo2Val');
 
       if (hrEl && spo2El) {
-        const hr = parseInt(hrEl.innerText) || 74;
+        const hr = parseInt(hrEl.innerText) || 82;
         const spo2 = parseFloat(spo2El.innerText) || 98.6;
         document.getElementById('recHr').value = hr;
         document.getElementById('recSpo2').value = spo2;
@@ -5469,7 +5469,7 @@
       noiseFitSyncTimer = setInterval(async () => {
         if (!isNoiseFitConnected) return;
 
-        const hr = Math.floor(70 + Math.random() * 10);
+        const hr = Math.floor(80 + Math.random() * 6);
         const spo2 = (97.8 + Math.random() * 1.8).toFixed(1);
 
         const hrEl = document.getElementById('nFitHrVal');
@@ -5570,13 +5570,13 @@
       }, 2500);
     }
 
-    let currentBaseHr = 74;
+    let currentBaseHr = 82;
     let currentBaseSpo2 = 98.6;
 
     async function streamRealtimeVitalsTick() {
-      // Natural physiological heart rate and SpO2 variations
+      // Natural physiological heart rate and SpO2 variations (Strictly 80 - 85 BPM)
       const deltaHr = Math.floor(Math.random() * 3) - 1;
-      currentBaseHr = Math.max(66, Math.min(84, currentBaseHr + deltaHr));
+      currentBaseHr = Math.max(80, Math.min(85, currentBaseHr + deltaHr));
       currentBaseSpo2 = Number((98.0 + Math.random() * 1.5).toFixed(1));
 
       const hr = currentBaseHr;
