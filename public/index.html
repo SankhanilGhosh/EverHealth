@@ -3173,14 +3173,12 @@
     };
 
     function navigateTo(route) {
-      if (route === 'user-dashboard') {
+      if (route === 'login' || route === 'signup') {
+        state.authRole = 'guest';
+      } else if (route === 'user-dashboard' || route === 'dept-page' || route === 'hospital-profile') {
         state.authRole = 'patient';
-      }
-      if (route === 'hospital-dashboard') {
+      } else if (route === 'hospital-dashboard') {
         state.authRole = 'hospital';
-      }
-      if (route === 'dept-page' || route === 'hospital-profile') {
-        state.authRole = 'patient';
       }
 
       state.activeRoute = route;
@@ -4001,16 +3999,30 @@
     }
 
     function setLoginRole(role) {
-      document.getElementById('loginRolePatient').classList.toggle('active', role === 'patient');
-      document.getElementById('loginRoleHospital').classList.toggle('active', role === 'hospital');
-      document.getElementById('loginIdLabel').innerText = role === 'patient' ? 'Patient Email / Phone' : 'Hospital License ID / Admin Email';
+      const pBtn = document.getElementById('loginRolePatient');
+      const hBtn = document.getElementById('loginRoleHospital');
+      const label = document.getElementById('loginIdLabel');
+      const input = document.getElementById('loginId');
+
+      if (pBtn) pBtn.classList.toggle('active', role === 'patient');
+      if (hBtn) hBtn.classList.toggle('active', role === 'hospital');
+      if (label) label.innerText = role === 'patient' ? 'Patient Email / Phone' : 'Hospital License ID / Admin Email';
+      if (input) {
+        input.placeholder = role === 'patient' ? 'jane.doe@example.com' : 'LIC-CA-94812';
+        input.value = role === 'patient' ? 'jane.doe@example.com' : 'LIC-CA-94812';
+      }
     }
 
     function setSignupRole(role) {
-      document.getElementById('signupRolePatient').classList.toggle('active', role === 'patient');
-      document.getElementById('signupRoleHospital').classList.toggle('active', role === 'hospital');
-      document.getElementById('signupPatientForm').style.display = role === 'patient' ? 'block' : 'none';
-      document.getElementById('signupHospitalForm').style.display = role === 'hospital' ? 'block' : 'none';
+      const pBtn = document.getElementById('signupRolePatient');
+      const hBtn = document.getElementById('signupRoleHospital');
+      const pForm = document.getElementById('signupPatientForm');
+      const hForm = document.getElementById('signupHospitalForm');
+
+      if (pBtn) pBtn.classList.toggle('active', role === 'patient');
+      if (hBtn) hBtn.classList.toggle('active', role === 'hospital');
+      if (pForm) pForm.style.display = role === 'patient' ? 'block' : 'none';
+      if (hForm) hForm.style.display = role === 'hospital' ? 'block' : 'none';
     }
 
     function toggleChip(element, tag) {
@@ -6081,11 +6093,10 @@
         }
       } catch (e) {}
 
-      // Default to Patient Dashboard mode so AI Assistant and patient features load immediately
-      state.authRole = 'patient';
-      renderPatientProfileUI();
-      navigateTo('user-dashboard');
-      return true;
+      // Guest Mode: Navigate to login page so Login & Signup forms are 100% active
+      state.authRole = 'guest';
+      navigateTo('login');
+      return false;
     }
 
     window.addEventListener('DOMContentLoaded', () => {
