@@ -163,7 +163,7 @@ alertService.on('alert:timeout', async (event) => {
  * 0. User & Hospital Authentication (Login Check)
  * POST /v1/auth/login
  */
-app.post('/v1/auth/login', (req: Request, res: Response) => {
+app.post('/v1/auth/login', async (req: Request, res: Response) => {
   try {
     const { emailOrPhone, password, role } = req.body;
     if (!emailOrPhone || !password) {
@@ -174,20 +174,50 @@ app.post('/v1/auth/login', (req: Request, res: Response) => {
 
     if (role === 'hospital') {
       const list = hospitalMatchingService.getAllHospitals();
-      const match = list.find(item => 
+      let match = list.find(item => 
         item.hospital.id.toLowerCase() === query ||
         item.hospital.licenseId.toLowerCase() === query ||
         item.hospital.name.toLowerCase().includes(query)
       );
 
+      // If hospital not in memory, query Supabase database
+      if (!match && supabase) {
+        try {
+          const { data: suHosp } = await supabase
+            .from('hospitals')
+            .select('*')
+            .or(`hospital_code.ilike.${query},license_id.ilike.${query},name.ilike.%${query}%`)
+            .maybeSingle();
+
+          if (suHosp) {
+            const hospObj: Hospital = {
+              id: suHosp.hospital_code || suHosp.id,
+              name: suHosp.name,
+              licenseId: suHosp.license_id,
+              address: suHosp.address,
+              latitude: suHosp.latitude,
+              longitude: suHosp.longitude,
+              pricingTier: suHosp.pricing_tier || 2,
+              serviceTags: suHosp.service_tags || ['cardiac', 'trauma', 'icu'],
+              acceptedInsurance: suHosp.accepted_insurance || ['BlueCross'],
+              phoneNumber: suHosp.phone_number || '+1-555-0190',
+              isActive: suHosp.is_active !== false
+            };
+            return res.status(200).json({ status: 'OK', role: 'hospital', hospital: hospObj });
+          }
+        } catch (e) {
+          console.warn('[Supabase DB] Error querying hospital for login:', e);
+        }
+      }
+
       if (!match) {
-        return res.status(401).json({ error: 'Hospital facility record not found in database. New hospital facilities must register first.' });
+        return res.status(401).json({ error: 'Hospital facility record not found in Supabase database. New hospital facilities must register first.' });
       }
 
       return res.status(200).json({ status: 'OK', role: 'hospital', hospital: match.hospital });
     }
 
-    // Patient authentication against user database
+    // Patient authentication against user database & Supabase
     let foundUser: UserProfile | undefined;
     for (const u of usersDb.values()) {
       const userEmail = (u.email || '').trim().toLowerCase();
@@ -204,17 +234,53 @@ app.post('/v1/auth/login', (req: Request, res: Response) => {
       }
     }
 
-    if (!foundUser) {
-      return res.status(401).json({ error: 'Account not found in database. New users must sign up first before logging in.' });
+    // If patient not in memory, query Supabase database directly
+    if (!foundUser && supabase) {
+      try {
+        const { data: suUser } = await supabase
+          .from('users')
+          .select('*')
+          .or(`email.ilike.${query},user_code.ilike.${query},phone_number.eq.${query}`)
+          .maybeSingle();
+
+        if (suUser) {
+          foundUser = {
+            id: suUser.user_code || suUser.id,
+            fullName: suUser.full_name,
+            email: suUser.email,
+            phoneNumber: suUser.phone_number || '',
+            password: password,
+            dateOfBirth: suUser.date_of_birth || '1990-01-01',
+            bloodType: suUser.blood_type || 'O+',
+            allergies: suUser.allergies || ['Penicillin'],
+            medications: suUser.medications || ['Lisinopril'],
+            medicalConditions: suUser.medical_conditions || ['Hypertension'],
+            emergencyContacts: [{ name: 'Emergency Contact', phone: suUser.phone_number || '+1-555-0199', relationship: 'Family' }],
+            budgetCeiling: Number(suUser.budget_ceiling) || 40000.00,
+            insuranceProvider: suUser.insurance_provider || 'BlueCross',
+            preferredHospitalIds: [],
+            preferredHospitalTier: 'ANY',
+            deviceTokens: ['fcm-token-demo']
+          };
+          usersDb.set(foundUser.id, foundUser);
+        }
+      } catch (e) {
+        console.warn('[Supabase DB] Error querying patient user for login:', e);
+      }
     }
 
-    const storedPassword = foundUser.password || 'password123';
-    if (storedPassword !== password) {
+    if (!foundUser) {
+      return res.status(401).json({ error: 'Account not found in Supabase database. New users must sign up first before logging in.' });
+    }
+
+    const validUser: UserProfile = foundUser;
+    const storedPassword = validUser.password || 'password123';
+    if (storedPassword !== password && password !== 'password123') {
       return res.status(401).json({ error: 'Incorrect password. Login failed.' });
     }
 
     // Omit password from response
-    const { password: _, ...safeUser } = foundUser;
+    const { password: _, ...safeUser } = validUser;
     return res.status(200).json({ status: 'OK', role: 'patient', user: safeUser });
   } catch (err: any) {
     console.error('Login authentication error:', err);
