@@ -411,7 +411,7 @@ export class HealthRecommendationEngine {
         id: 'rec-3',
         title: 'Continuous Live Vitals Monitoring',
         category: 'VITALS',
-        description: 'Keep NoiseFit watch connected for real-time heart rate & SpO2 anomaly telemetry streaming.',
+        description: 'Keep Health Connect Extractor active for real-time heart rate & SpO2 anomaly telemetry streaming.',
         completed: false,
         priority: 'HIGH'
       });

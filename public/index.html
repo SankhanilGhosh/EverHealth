@@ -1720,7 +1720,7 @@
                     <span class="price-tag tier-budget" id="autoSensorBadge">🟢 Auto-Monitoring</span>
                   </div>
                   <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5;">
-                    EverHealth automatically tracks your heart rate and SpO2 in real-time directly from your NoiseFit smartwatch or wearable sensor without requiring manual input.
+                    EverHealth automatically tracks your heart rate and SpO2 in real-time directly from your Health Connect Extractor or wearable sensor without requiring manual input.
                   </p>
                 </div>
 
@@ -1732,26 +1732,26 @@
                 <div id="userVitalsOutput" style="margin-top: 12px; font-size: 13px;"></div>
               </section>
 
-              <!-- NoiseFit Smartwatch Integration Card -->
-              <section class="card" style="border: 2px solid #f97316; background: linear-gradient(135deg, #FFFFFF, #fff7ed);">
+              <!-- Health Connect Extractor Integration Card -->
+              <section class="card" style="border: 2px solid #ea580c; background: linear-gradient(135deg, #FFFFFF, #fff7ed);">
                 <div class="card-title">
-                  <span>🟠 NoiseFit Smartwatch Integration</span>
+                  <span>📱 Health Connect Extractor Integration</span>
                   <span class="price-tag" id="noiseFitStatusBadge" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;">🔴 Disconnected</span>
                 </div>
 
                 <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
-                  Connect your Noise Smartwatch (Noise ColorFit, Pulse, Evolve, Icon) via NoiseFit Health Ecosystem to automatically stream real-time Heart Rate & SpO2 health telemetry.
+                  Connect your Android Health Connect Extractor (Samsung Health, Google Fit, Fitbit, Garmin, Noise, Mi Fitness) via Android Health Connect Ecosystem to automatically stream real-time Heart Rate & SpO2 health telemetry.
                 </p>
 
                 <div id="noiseFitConnectedPanel" style="display: none; background: #ffedd5; border: 1.5px solid #ea580c; padding: 14px; border-radius: 14px; margin-bottom: 14px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-size: 13px; font-weight: 800; color: #9a3412;">⌚ NoiseFit Live Telemetry Stream</span>
+                  <div style="display: flex; justify-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 13px; font-weight: 800; color: #9a3412;">📱 Health Connect Live Telemetry Stream</span>
                     <span class="price-tag" style="background: #dcfce7; color: #166534;">🟢 Live Syncing (3s)</span>
                   </div>
                   <div style="display: flex; justify-around; font-size: 14px; text-align: center; margin-top: 8px;">
                     <div>
                       <div style="font-size: 20px; font-weight: 800; color: #ea580c;" id="nFitHrVal">74 BPM</div>
-                      <div style="font-size: 11px; color: #9a3412;">Heart Rate (Noise Sensor)</div>
+                      <div style="font-size: 11px; color: #9a3412;">Heart Rate (Health Connect)</div>
                     </div>
                     <div style="border-left: 1px solid #fed7aa;"></div>
                     <div>
@@ -1762,11 +1762,11 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                  <button type="button" class="btn" id="btnConnectNoiseFit" style="background: linear-gradient(135deg, #f97316, #ea580c); flex: 1;" onclick="toggleNoiseFitConnection()">
-                    🔗 Connect NoiseFit Watch (Noise Sync)
+                  <button type="button" class="btn" id="btnConnectNoiseFit" style="background: linear-gradient(135deg, #ea580c, #c2410c); flex: 1;" onclick="toggleNoiseFitConnection()">
+                    🔗 Connect Health Connect Extractor
                   </button>
                   <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="simulateNoiseFitAnomaly()">
-                    🚨 Test NoiseFit Emergency
+                    🚨 Test Health Connect Emergency
                   </button>
                 </div>
               </section>
@@ -2149,7 +2149,7 @@
                     </h2>
                   </div>
                   <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-                    Configure autonomous fall detection sensitivity, NoiseFit watch telemetry intervals, emergency contact alerts, and budget limits.
+                    Configure autonomous fall detection sensitivity, Health Connect Extractor telemetry intervals, emergency contact alerts, and budget limits.
                   </p>
                 </div>
                 <span class="price-tag tier-budget" style="font-size: 12px; padding: 6px 14px;">🟢 Real-Time Telemetry Active</span>
@@ -2186,7 +2186,7 @@
                     </div>
 
                     <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
-                      <label style="font-size: 12px; font-weight: 700; color: var(--color-dark-forest); display: block; margin-bottom: 4px;">NoiseFit Watch Sync Frequency</label>
+                      <label style="font-size: 12px; font-weight: 700; color: var(--color-dark-forest); display: block; margin-bottom: 4px;">Health Connect Extractor Sync Frequency</label>
                       <select id="setSyncFreq" class="form-control" style="font-size: 13px;">
                         <option value="2.5" selected>Every 2.5 Seconds (Real-Time)</option>
                         <option value="5">Every 5 Seconds</option>
@@ -3346,7 +3346,7 @@
     state.notifications = [
       { id: 'notif-1', category: 'alerts', title: '🚨 Vital Anomaly SLA Triggered', detail: 'Critical SpO2 oxygen drop (86%) auto-initiated 30-second emergency response cascade.', time: '2 mins ago', unread: true },
       { id: 'notif-2', category: 'bookings', title: '🚑 Hospital Dispatch Confirmed', detail: 'St. Jude Emergency Center accepted dispatch. Ambulance AMB-104 en-route (ETA: 8 mins).', time: '14 mins ago', unread: true },
-      { id: 'notif-3', category: 'system', title: '⌚ NoiseFit Telemetry Synchronized', detail: 'Continuous physiological vitals synced (74 BPM, 98.5% SpO2) via NoiseFit Health API.', time: '35 mins ago', unread: true },
+      { id: 'notif-3', category: 'system', title: '📱 Health Connect Telemetry Synchronized', detail: 'Continuous physiological vitals synced (74 BPM, 98.5% SpO2) via Android Health Connect API.', time: '35 mins ago', unread: true },
       { id: 'notif-4', category: 'alerts', title: '🟢 Health Score Evaluated (88/100)', detail: 'AI Risk Predictor assigned LOW RISK classification and adjusted daily fitness targets.', time: '1 hour ago', unread: false },
       { id: 'notif-5', category: 'bookings', title: '🏥 Budget-Aware Hospital Match', detail: 'Mercy Regional Emergency Care matched within budget ceiling (₹35,000).', time: '2 hours ago', unread: false },
       { id: 'notif-6', category: 'system', title: '📋 Pre-existing Medical History Saved', detail: 'Household medical conditions & allergy profile saved securely to health vault.', time: '1 day ago', unread: false }
@@ -3452,7 +3452,7 @@
 
     state.appointments = [
       { id: 'appt-1', docId: 'doc-1', docName: 'Dr. Rajesh Sharma', specialty: 'Cardiology', hospital: 'St. Jude Emergency Center', date: '2026-08-25', time: '11:00 AM', mode: 'In-Person Clinic Visit', reason: 'Routine cardiovascular checkup & blood pressure review.', status: 'upcoming' },
-      { id: 'appt-2', docId: 'doc-4', docName: 'Dr. Sunita Deshmukh', specialty: 'General Medicine', hospital: 'Mercy Regional Emergency', date: '2026-08-28', time: '02:30 PM', mode: 'Video Tele-Consultation', reason: 'High stress level follow-up & NoiseFit vitals sync.', status: 'upcoming' },
+      { id: 'appt-2', docId: 'doc-4', docName: 'Dr. Sunita Deshmukh', specialty: 'General Medicine', hospital: 'Mercy Regional Emergency', date: '2026-08-28', time: '02:30 PM', mode: 'Video Tele-Consultation', reason: 'High stress level follow-up & Health Connect vitals sync.', status: 'upcoming' },
       { id: 'appt-3', docId: 'doc-2', docName: 'Dr. Ananya Roy', specialty: 'Pediatrics', hospital: 'St. Jude Emergency Center', date: '2026-08-10', time: '10:00 AM', mode: 'In-Person Clinic Visit', reason: 'Pediatric vaccination & growth assessment.', status: 'completed' }
     ];
 
@@ -4857,6 +4857,10 @@
       calculateHealthRecommendations();
     }
 
+    function syncHealthConnectToPredictor() {
+      syncNoiseFitToPredictor();
+    }
+
     function syncNoiseFitToPredictor() {
       const hrEl = document.getElementById('nFitHrVal');
       const spo2El = document.getElementById('nFitSpo2Val');
@@ -4866,9 +4870,9 @@
         const spo2 = parseFloat(spo2El.innerText) || 98.6;
         document.getElementById('recHr').value = hr;
         document.getElementById('recSpo2').value = spo2;
-        alert(`Synced telemetry from NoiseFit Watch:\nHeart Rate: ${hr} BPM\nSpO2: ${spo2}%`);
+        alert(`Synced telemetry from Health Connect Extractor:\nHeart Rate: ${hr} BPM\nSpO2: ${spo2}%`);
       } else {
-        alert('NoiseFit smartwatch is not connected. Please connect NoiseFit smartwatch first.');
+        alert('Health Connect Extractor is not connected. Please connect Health Connect Extractor first.');
       }
       calculateHealthRecommendations();
     }
@@ -4937,7 +4941,7 @@
       } else {
         steps.push({ id: 'rec-1', title: 'Strict Bed Rest Protocol', category: 'CLINICAL', description: 'Remain at rest in a comfortable semi-reclining position. Avoid any physical exertion.' });
         steps.push({ id: 'rec-2', title: 'Emergency SLA Dispatch Readiness', category: 'CLINICAL', description: 'Verify phone number and emergency contact (+91-98765-43210). 30s SLA auto-dispatch standing by.' });
-        steps.push({ id: 'rec-3', title: 'Continuous Live Vitals Monitoring', category: 'VITALS', description: 'Keep NoiseFit watch connected for real-time heart rate & SpO2 anomaly telemetry streaming.' });
+        steps.push({ id: 'rec-3', title: 'Continuous Live Vitals Monitoring', category: 'VITALS', description: 'Keep Health Connect Extractor active for real-time heart rate & SpO2 anomaly telemetry streaming.' });
       }
 
       return {
@@ -5416,11 +5420,15 @@
     }
 
     /* ========================================================
-       NOISEFIT SMARTWATCH INTEGRATION & REAL-TIME AUTO-SYNC
+       HEALTH CONNECT EXTRACTOR INTEGRATION & REAL-TIME AUTO-SYNC
        ======================================================== */
     let noiseFitSyncTimer = null;
     let isNoiseFitConnected = false;
     let isGoogleFitConnected = false;
+
+    function toggleHealthConnectConnection() {
+      toggleNoiseFitConnection();
+    }
 
     function toggleNoiseFitConnection() {
       const btn = document.getElementById('btnConnectNoiseFit');
@@ -5428,26 +5436,26 @@
       const panel = document.getElementById('noiseFitConnectedPanel');
 
       if (!isNoiseFitConnected) {
-        if (btn) { btn.innerText = '⌛ Connecting NoiseFit App Sync...'; btn.disabled = true; }
+        if (btn) { btn.innerText = '⌛ Connecting Health Connect Extractor...'; btn.disabled = true; }
         
         setTimeout(() => {
           isNoiseFitConnected = true;
           isGoogleFitConnected = true;
-          if (btn) { btn.innerText = '🔌 Disconnect NoiseFit Watch'; btn.disabled = false; btn.style.background = '#d97706'; }
-          if (badge) { badge.innerText = '🟢 Connected (Noise ColorFit)'; badge.style.background = '#dcfce7'; badge.style.color = '#166534'; badge.style.borderColor = '#86efac'; }
+          if (btn) { btn.innerText = '🔌 Disconnect Health Connect'; btn.disabled = false; btn.style.background = '#d97706'; }
+          if (badge) { badge.innerText = '🟢 Connected (Health Connect Extractor)'; badge.style.background = '#dcfce7'; badge.style.color = '#166534'; badge.style.borderColor = '#86efac'; }
           if (panel) panel.style.display = 'block';
 
           startNoiseFitAutoSync();
-          alert('✓ NoiseFit Smartwatch Connected Successfully!\n\nEverHealth is now automatically syncing continuous Heart Rate and SpO2 health telemetry from your Noise watch.');
+          alert('✓ Health Connect Extractor Connected Successfully!\n\nEverHealth is now automatically syncing continuous Heart Rate and SpO2 health telemetry from Android Health Connect.');
         }, 1200);
       } else {
         isNoiseFitConnected = false;
         isGoogleFitConnected = false;
         if (noiseFitSyncTimer) clearInterval(noiseFitSyncTimer);
-        if (btn) { btn.innerText = '🔗 Connect NoiseFit Watch (Noise Sync)'; btn.style.background = 'linear-gradient(135deg, #f97316, #ea580c)'; }
+        if (btn) { btn.innerText = '🔗 Connect Health Connect Extractor'; btn.style.background = 'linear-gradient(135deg, #ea580c, #c2410c)'; btn.disabled = false; }
         if (badge) { badge.innerText = '🔴 Disconnected'; badge.style.background = '#ffedd5'; badge.style.color = '#c2410c'; badge.style.borderColor = '#fed7aa'; }
         if (panel) panel.style.display = 'none';
-        alert('NoiseFit Smartwatch disconnected.');
+        alert('Health Connect Extractor disconnected.');
       }
     }
 
@@ -5470,20 +5478,25 @@
         if (spo2El) spo2El.innerText = `${spo2}%`;
 
         try {
-          await fetch('/v1/integrations/noisefit/sync', {
+          const userId = (state.currentUser && state.currentUser.id) ? state.currentUser.id : 'usr-001';
+          await fetch('/v1/integrations/health-connect/sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              userId: state.currentUser.id,
+              userId: userId,
               heartRate: hr,
               spo2: Number(spo2),
-              deviceName: 'Noise ColorFit Smartwatch'
+              deviceName: 'Health Connect Extractor (Android Health Connect API)'
             })
           });
         } catch (err) {
-          console.warn('NoiseFit telemetry sync note:', err);
+          console.warn('Health Connect telemetry sync note:', err);
         }
       }, 3000);
+    }
+
+    function simulateHealthConnectAnomaly() {
+      simulateNoiseFitAnomaly();
     }
 
     async function simulateNoiseFitAnomaly() {
@@ -5500,14 +5513,15 @@
       if (spo2El) spo2El.innerText = `${spo2}% (CRITICAL)`;
 
       try {
-        const res = await fetch('/v1/integrations/noisefit/sync', {
+        const userId = (state.currentUser && state.currentUser.id) ? state.currentUser.id : 'usr-001';
+        const res = await fetch('/v1/integrations/health-connect/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: state.currentUser.id,
+            userId: userId,
             heartRate: hr,
             spo2: spo2,
-            deviceName: 'Noise ColorFit Smartwatch'
+            deviceName: 'Health Connect Extractor (Android Health Connect API)'
           })
         });
 
@@ -5515,7 +5529,7 @@
         if (contentType.includes('application/json')) {
           const data = await res.json();
           if (data.status === 'ANOMALY_DETECTED') {
-            triggerPatientEmergencyBanner(data.detection.severity, `[NoiseFit Telemetry] ${data.detection.reason}`, data.alert ? data.alert.id : null);
+            triggerPatientEmergencyBanner(data.detection.severity, `[Health Connect Telemetry] ${data.detection.reason}`, data.alert ? data.alert.id : null);
             return;
           }
         }
