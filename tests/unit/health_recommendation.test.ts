@@ -27,4 +27,37 @@ describe('Health Recommendation Engine Unit Test', () => {
     expect(result.riskLevel).toMatch(/HIGH|CRITICAL/);
     expect(result.recommendations.some(r => r.urgency === 'URGENT' || r.urgency === 'EMERGENCY')).toBe(true);
   });
+
+  it('should adjust daily fitness targets based on risk level', () => {
+    const lowRiskResult = healthRecommendationEngine.predictRiskAndRecommend({
+      heartRate: 70,
+      spo2: 99.0,
+      stressLevel: 20,
+      activityMinutes: 45
+    });
+
+    const highRiskResult = healthRecommendationEngine.predictRiskAndRecommend({
+      heartRate: 115,
+      spo2: 91.0,
+      stressLevel: 80,
+      activityMinutes: 10
+    });
+
+    expect(lowRiskResult.fitnessTargets.stepTarget).toBeGreaterThan(highRiskResult.fitnessTargets.stepTarget);
+    expect(lowRiskResult.fitnessTargets.activeMinutesTarget).toBeGreaterThan(highRiskResult.fitnessTargets.activeMinutesTarget);
+    expect(highRiskResult.fitnessTargets.sleepHours).toBeGreaterThanOrEqual(lowRiskResult.fitnessTargets.sleepHours);
+  });
+
+  it('should generate a tailored recovery plan with action steps', () => {
+    const result = healthRecommendationEngine.predictRiskAndRecommend({
+      heartRate: 88,
+      spo2: 95.0,
+      stressLevel: 65,
+      activityMinutes: 20
+    });
+
+    expect(result.recoveryPlan).toBeDefined();
+    expect(result.recoveryPlan.steps.length).toBeGreaterThan(0);
+    expect(result.recoveryPlan.title).toContain('Plan');
+  });
 });

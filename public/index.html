@@ -1417,62 +1417,166 @@
         </section>
       </div>
 
-      <!-- HEALTH RISK PREDICTOR & AI RECOMMENDATION SYSTEM -->
-      <section class="card" style="border: 2px solid var(--primary); background: linear-gradient(135deg, #FFFFFF, var(--color-cream-light)); margin-top: 24px;">
-        <div class="card-title">
-          <span>🔮 AI Health Risk Predictor & Recommendation Engine</span>
-          <span class="price-tag tier-premium">Health Score Model</span>
-        </div>
-
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-          Provide your physiological parameters below (Heart Rate, SpO2 Oxygen, Stress Level, Daily Activity Minutes) to calculate your predicted Health Score (0-100), classify Risk Level, and receive personalized medical & lifestyle recommendations.
-        </p>
-
-        <!-- Input Parameters Form -->
-        <div class="grid-4" style="margin-bottom: 16px;">
-          <div class="form-group">
-            <label style="font-size: 12px; font-weight: 700;">Heart Rate (BPM)</label>
-            <input type="number" id="recHr" value="74" min="30" max="220" class="form-control" placeholder="74">
+      <!-- ======================================================= -->
+      <!-- DEDICATED SECTION: DAILY GOALS, AI RISK PREDICTOR & RECOVERY PLAN -->
+      <!-- ======================================================= -->
+      <section class="card" style="border: 2.5px solid var(--primary); background: linear-gradient(135deg, #FFFFFF, #f8fafc); margin-top: 24px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); padding: 26px;">
+        
+        <!-- Section Header Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 26px;">🎯</span>
+              <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                Daily Health Goals & Personal Recovery Plan
+              </h2>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px; margin-left: 36px; line-height: 1.4;">
+              AI Risk Predictor continuously evaluates your physiological parameters to dynamically adjust daily fitness targets and provide a personalized recovery plan.
+            </p>
           </div>
-          <div class="form-group">
-            <label style="font-size: 12px; font-weight: 700;">SpO2 Oxygen (%)</label>
-            <input type="number" id="recSpo2" value="98.5" min="70" max="100" step="0.1" class="form-control" placeholder="98.5">
-          </div>
-          <div class="form-group">
-            <label style="font-size: 12px; font-weight: 700;">Stress Level (1-100)</label>
-            <input type="number" id="recStress" value="28" min="1" max="100" class="form-control" placeholder="28">
-          </div>
-          <div class="form-group">
-            <label style="font-size: 12px; font-weight: 700;">Daily Activity (Mins)</label>
-            <input type="number" id="recActivity" value="35" min="0" max="300" class="form-control" placeholder="35">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="price-tag tier-premium" style="font-size: 12px; padding: 6px 12px;">🔮 AI Risk Predictor</span>
+            <span class="price-tag" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 12px; padding: 6px 12px;">⚡ Adaptive Fitness Goals</span>
           </div>
         </div>
 
-        <button type="button" class="btn" style="width: 100%; margin-bottom: 16px;" onclick="calculateHealthRecommendations()">
-          🔮 Evaluate Risk Level & Generate Health Recommendations
-        </button>
+        <!-- Vitals Input & AI Risk Assessment Card -->
+        <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 18px; margin-bottom: 22px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin: 0;">
+              🩺 1. Input Physiological Telemetry & Evaluate Risk Level
+            </h3>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('optimal')">🟢 Preset: Optimal Vitals</button>
+              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('moderate')">🟡 Preset: Moderate Stress</button>
+              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('high')">🟠 Preset: High Risk HR/SpO2</button>
+              <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="applyVitalsPreset('critical')">🚨 Preset: Critical Anomaly</button>
+            </div>
+          </div>
+
+          <!-- Input Controls -->
+          <div class="grid-4" style="margin-bottom: 14px;">
+            <div class="form-group">
+              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Heart Rate (BPM)</label>
+              <input type="number" id="recHr" value="74" min="30" max="220" class="form-control" style="font-size: 13px;">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">SpO2 Oxygen (%)</label>
+              <input type="number" id="recSpo2" value="98.5" min="70" max="100" step="0.1" class="form-control" style="font-size: 13px;">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Stress Level (1-100)</label>
+              <input type="number" id="recStress" value="28" min="1" max="100" class="form-control" style="font-size: 13px;">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Daily Activity (Mins)</label>
+              <input type="number" id="recActivity" value="35" min="0" max="300" class="form-control" style="font-size: 13px;">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn" style="flex: 2; font-weight: 700; font-size: 13px;" onclick="calculateHealthRecommendations()">
+              🔮 Calculate AI Health Score & Adjust Daily Goals
+            </button>
+            <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="syncNoiseFitToPredictor()">
+              ⌚ Sync Smartwatch Vitals
+            </button>
+          </div>
+        </div>
 
         <!-- Prediction Result Output Container -->
-        <div id="healthRecommendationOutput" style="display: none; background: #FFFFFF; border: 1.5px solid var(--color-sage-deep); border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash);">
+        <div id="healthRecommendationOutput" style="display: block;">
+          
+          <!-- Health Score & Risk Level Header -->
+          <div style="background: linear-gradient(135deg, var(--color-dark-forest), #1c3b2b); border-radius: 16px; padding: 20px; color: #ffffff; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
             <div>
-              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">PREDICTED HEALTH SCORE</div>
-              <div style="font-size: 36px; font-weight: 800; color: var(--color-dark-forest);" id="resHealthScore">88 / 100</div>
+              <div style="font-size: 11px; text-transform: uppercase; color: #a7f3d0; font-weight: 700; letter-spacing: 0.5px;">
+                PREDICTED HEALTH SCORE
+              </div>
+              <div style="font-size: 38px; font-weight: 900; line-height: 1.1; margin-top: 4px;" id="resHealthScore">
+                88 / 100
+              </div>
+              <p style="font-size: 12px; color: #e2e8f0; margin-top: 6px; max-width: 460px; line-height: 1.4;" id="resStatusSummary">
+                Optimal physiological baseline. Vitals, stress, and activity parameters are balanced.
+              </p>
             </div>
+
             <div style="text-align: right;">
-              <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;">RISK CLASSIFICATION</div>
-              <span class="price-tag tier-budget" style="font-size: 16px; padding: 6px 14px;" id="resRiskBadge">🟢 LOW RISK</span>
+              <div style="font-size: 11px; text-transform: uppercase; color: #cbd5e1; font-weight: 700; margin-bottom: 6px;">
+                RISK CLASSIFICATION
+              </div>
+              <span class="price-tag tier-budget" style="font-size: 15px; padding: 8px 16px; font-weight: 800;" id="resRiskBadge">
+                🟢 LOW RISK
+              </span>
+              <div style="font-size: 11px; color: #94a3b8; margin-top: 8px; font-weight: 600;" id="resModeLabel">
+                ⚡ Peak Performance Mode
+              </div>
             </div>
           </div>
 
-          <p style="font-size: 13px; color: var(--text-main); line-height: 1.5; margin-bottom: 16px;" id="resStatusSummary">
-            Optimal physiological baseline. Vitals, stress, and activity parameters are balanced.
-          </p>
-
-          <h4 style="font-size: 14px; color: var(--color-dark-forest); margin-bottom: 10px;">📋 Tailored AI Health Recommendations:</h4>
-          <div id="resRecommendationsList" style="display: flex; flex-direction: column; gap: 10px;">
-            <!-- Dynamically populated recommendations -->
+          <!-- Goal Adjustment Reason Callout -->
+          <div id="goalAdjustmentAlert" style="background: #eff6ff; border: 1.5px solid #60a5fa; border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: flex-start; gap: 12px;">
+            <div style="font-size: 22px;">⚙️</div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: #1e40af;">
+                Daily Fitness Targets Automatically Adjusted
+              </div>
+              <div style="font-size: 12px; color: #1e3a8a; margin-top: 2px;" id="resAdjustmentReason">
+                Optimal health score (80+). Full capacity active targets assigned to build cardiovascular resilience.
+              </div>
+            </div>
           </div>
+
+          <!-- 2. DYNAMIC DAILY FITNESS TARGETS GRID -->
+          <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+              🏃 2. Adjusted Daily Fitness Targets
+            </h3>
+
+            <div class="grid-4" id="fitnessTargetsGrid">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+          <!-- 3. PERSONALIZED RECOVERY PLAN & DAILY CHECKLIST -->
+          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--color-sage-ash);">
+              <div>
+                <h3 style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin: 0;" id="recoveryPlanTitle">
+                  📋 3. Personal Daily Recovery & Action Plan
+                </h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="recoveryPlanSummary">
+                  Tailored recovery roadmap calibrated to your risk rating and predicted Health Score.
+                </p>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="text-align: right;">
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);" id="recoveryProgressText">0 / 4 Completed</div>
+                  <div style="width: 140px; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 4px;">
+                    <div id="recoveryProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); transition: width 0.3s ease;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recovery Plan Steps Checklist -->
+            <div id="recoveryStepsList" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Dynamically populated checklist items -->
+            </div>
+          </div>
+
+          <!-- 4. TAILORED AI RECOMMENDATIONS LIST -->
+          <div>
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">
+              💡 4. Tailored AI Medical & Lifestyle Recommendations
+            </h3>
+            <div id="resRecommendationsList" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Dynamically populated recommendations -->
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -2018,6 +2122,7 @@
       if (route === 'user-dashboard') {
         fetchHospitalMatches();
         initRealtimeVitalsStream();
+        calculateHealthRecommendations();
       }
       if (route === 'hospital-dashboard') loadHospitalDashboard();
       if (route === 'dept-page') renderCurrentDeptMatches();
@@ -2459,8 +2564,10 @@
     }
 
     /* ========================================================
-       HEALTH RISK PREDICTOR & AI RECOMMENDATION ENGINE (CLIENT JS)
+       HEALTH RISK PREDICTOR, ADJUSTED DAILY GOALS & RECOVERY PLAN JS
        ======================================================== */
+    state.dailyGoalsCompleted = state.dailyGoalsCompleted || {};
+
     async function calculateHealthRecommendations() {
       const hr = Number(document.getElementById('recHr').value) || 74;
       const spo2 = Number(document.getElementById('recSpo2').value) || 98.5;
@@ -2495,7 +2602,13 @@
       const scoreEl = document.getElementById('resHealthScore');
       const badgeEl = document.getElementById('resRiskBadge');
       const summaryEl = document.getElementById('resStatusSummary');
+      const modeEl = document.getElementById('resModeLabel');
+      const reasonEl = document.getElementById('resAdjustmentReason');
       const listEl = document.getElementById('resRecommendationsList');
+      const targetsGrid = document.getElementById('fitnessTargetsGrid');
+      const planTitle = document.getElementById('recoveryPlanTitle');
+      const planSummary = document.getElementById('recoveryPlanSummary');
+      const stepsList = document.getElementById('recoveryStepsList');
 
       if (scoreEl) scoreEl.innerText = `${data.healthScore} / 100`;
 
@@ -2515,13 +2628,79 @@
           badgeEl.style.background = '#ffedd5'; badgeEl.style.color = '#c2410c';
         } else {
           badgeEl.innerText = '🚨 CRITICAL RISK';
-          badgeEl.style.background = '#dc2626';
-          badgeEl.style.color = '#ffffff';
+          badgeEl.style.background = '#dc2626'; badgeEl.style.color = '#ffffff';
         }
       }
 
       if (summaryEl) summaryEl.innerText = data.statusSummary;
 
+      const targets = data.fitnessTargets || generateLocalFitnessTargets(data.healthScore, data.riskLevel);
+      if (modeEl) modeEl.innerText = targets.modeLabel;
+      if (reasonEl) reasonEl.innerText = targets.adjustmentReason;
+
+      // Render Fitness Target Cards
+      if (targetsGrid) {
+        targetsGrid.innerHTML = `
+          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+            <div style="font-size: 24px; margin-bottom: 4px;">🏃</div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Step Target</div>
+            <div style="font-size: 19px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;">${targets.stepTarget.toLocaleString()} steps</div>
+            <span class="price-tag" style="font-size: 10px; margin-top: 6px; background: #e0f2fe; color: #0369a1;">Adjusted Target</span>
+          </div>
+
+          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+            <div style="font-size: 24px; margin-bottom: 4px;">⏱️</div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Movement</div>
+            <div style="font-size: 19px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;">${targets.activeMinutesTarget} Mins</div>
+            <span class="price-tag" style="font-size: 10px; margin-top: 6px; background: #fef3c7; color: #92400e;">Daily Active</span>
+          </div>
+
+          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+            <div style="font-size: 24px; margin-bottom: 4px;">💧</div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Hydration Goal</div>
+            <div style="font-size: 19px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;">${targets.hydrationLiters} Liters</div>
+            <span class="price-tag" style="font-size: 10px; margin-top: 6px; background: #dcfce7; color: #166534;">Fluid Intake</span>
+          </div>
+
+          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+            <div style="font-size: 24px; margin-bottom: 4px;">😴</div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Sleep & Rest</div>
+            <div style="font-size: 19px; font-weight: 800; color: var(--color-dark-forest); margin-top: 2px;">${targets.sleepHours} Hours</div>
+            <span class="price-tag" style="font-size: 10px; margin-top: 6px; background: #f3e8ff; color: #6b21a8;">Rest Target</span>
+          </div>
+        `;
+      }
+
+      // Render Recovery Plan
+      const plan = data.recoveryPlan || generateLocalRecoveryPlan(data.riskLevel, data.healthScore, state.currentUser);
+      if (planTitle) planTitle.innerHTML = `📋 3. ${plan.title}`;
+      if (planSummary) planSummary.innerText = plan.summary;
+
+      state.currentRecoverySteps = plan.steps || [];
+
+      if (stepsList) {
+        stepsList.innerHTML = state.currentRecoverySteps.map((step) => {
+          const isChecked = !!state.dailyGoalsCompleted[step.id];
+          return `
+            <div id="step-container-${step.id}" style="background: ${isChecked ? '#f0fdf4' : '#fafafa'}; border: 1.5px solid ${isChecked ? '#86efac' : 'var(--color-sage-ash)'}; border-radius: 12px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; transition: all 0.2s ease;">
+              <input type="checkbox" id="chk-${step.id}" ${isChecked ? 'checked' : ''} onchange="toggleRecoveryGoalStep('${step.id}')" style="width: 18px; height: 18px; margin-top: 2px; cursor: pointer; accent-color: #166534;">
+              <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                  <label for="chk-${step.id}" id="lbl-${step.id}" style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest); cursor: pointer; text-decoration: ${isChecked ? 'line-through' : 'none'};">
+                    ${step.title}
+                  </label>
+                  <span class="price-tag" style="font-size: 10px; background: #f1f5f9; color: #475569;">${step.category}</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-main); margin: 0; line-height: 1.4;">${step.description}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        updateRecoveryProgressBar();
+      }
+
+      // Render Recommendations List
       if (listEl) {
         listEl.innerHTML = (data.recommendations || []).map(item => {
           let badgeColor = '#e8f5e9';
@@ -2545,6 +2724,156 @@
           `;
         }).join('');
       }
+    }
+
+    function toggleRecoveryGoalStep(stepId) {
+      state.dailyGoalsCompleted[stepId] = !state.dailyGoalsCompleted[stepId];
+      const isChecked = state.dailyGoalsCompleted[stepId];
+
+      const container = document.getElementById(`step-container-${stepId}`);
+      const label = document.getElementById(`lbl-${stepId}`);
+
+      if (container) {
+        container.style.background = isChecked ? '#f0fdf4' : '#fafafa';
+        container.style.borderColor = isChecked ? '#86efac' : 'var(--color-sage-ash)';
+      }
+      if (label) {
+        label.style.textDecoration = isChecked ? 'line-through' : 'none';
+      }
+
+      updateRecoveryProgressBar();
+    }
+
+    function updateRecoveryProgressBar() {
+      const steps = state.currentRecoverySteps || [];
+      if (steps.length === 0) return;
+
+      const completedCount = steps.filter(s => !!state.dailyGoalsCompleted[s.id]).length;
+      const pct = Math.round((completedCount / steps.length) * 100);
+
+      const txt = document.getElementById('recoveryProgressText');
+      const bar = document.getElementById('recoveryProgressBar');
+
+      if (txt) txt.innerText = `${completedCount} / ${steps.length} Completed (${pct}%)`;
+      if (bar) bar.style.width = `${pct}%`;
+    }
+
+    function applyVitalsPreset(preset) {
+      if (preset === 'optimal') {
+        document.getElementById('recHr').value = 74;
+        document.getElementById('recSpo2').value = 98.5;
+        document.getElementById('recStress').value = 28;
+        document.getElementById('recActivity').value = 45;
+      } else if (preset === 'moderate') {
+        document.getElementById('recHr').value = 88;
+        document.getElementById('recSpo2').value = 95.0;
+        document.getElementById('recStress').value = 65;
+        document.getElementById('recActivity').value = 20;
+      } else if (preset === 'high') {
+        document.getElementById('recHr').value = 115;
+        document.getElementById('recSpo2').value = 91.5;
+        document.getElementById('recStress').value = 82;
+        document.getElementById('recActivity').value = 10;
+      } else if (preset === 'critical') {
+        document.getElementById('recHr').value = 138;
+        document.getElementById('recSpo2').value = 88.0;
+        document.getElementById('recStress').value = 92;
+        document.getElementById('recActivity').value = 0;
+      }
+      calculateHealthRecommendations();
+    }
+
+    function syncNoiseFitToPredictor() {
+      const hrEl = document.getElementById('nFitHrVal');
+      const spo2El = document.getElementById('nFitSpo2Val');
+
+      if (hrEl && spo2El) {
+        const hr = parseInt(hrEl.innerText) || 74;
+        const spo2 = parseFloat(spo2El.innerText) || 98.6;
+        document.getElementById('recHr').value = hr;
+        document.getElementById('recSpo2').value = spo2;
+        alert(`Synced telemetry from NoiseFit Watch:\nHeart Rate: ${hr} BPM\nSpO2: ${spo2}%`);
+      } else {
+        alert('NoiseFit smartwatch is not connected. Please connect NoiseFit smartwatch first.');
+      }
+      calculateHealthRecommendations();
+    }
+
+    function generateLocalFitnessTargets(score, riskLevel) {
+      if (riskLevel === 'LOW') {
+        return {
+          stepTarget: 10000,
+          activeMinutesTarget: 45,
+          hydrationLiters: 3.0,
+          sleepHours: 8.0,
+          targetHrZone: '110-140 BPM (Moderate Aerobic Target)',
+          adjustmentReason: 'Optimal health score (80+). Full capacity active targets assigned to build cardiovascular resilience.',
+          modeLabel: '⚡ Peak Performance Mode'
+        };
+      } else if (riskLevel === 'MODERATE') {
+        return {
+          stepTarget: 6000,
+          activeMinutesTarget: 30,
+          hydrationLiters: 3.2,
+          sleepHours: 8.5,
+          targetHrZone: '95-115 BPM (Light Aerobic & Mobility Target)',
+          adjustmentReason: 'Moderate risk level. Activity intensity reduced by 33% and hydration increased to prevent fatigue and support recovery.',
+          modeLabel: '🟡 Moderate Adaptation Mode'
+        };
+      } else if (riskLevel === 'HIGH') {
+        return {
+          stepTarget: 3000,
+          activeMinutesTarget: 15,
+          hydrationLiters: 3.5,
+          sleepHours: 9.0,
+          targetHrZone: 'Resting < 90 BPM (Gentle Movement Only)',
+          adjustmentReason: 'High risk level detected! Physical load reduced by 70% and sleep allocation increased to stabilize vitals.',
+          modeLabel: '🟠 Light Recovery & Rest Mode'
+        };
+      } else {
+        return {
+          stepTarget: 1000,
+          activeMinutesTarget: 0,
+          hydrationLiters: 3.5,
+          sleepHours: 10.0,
+          targetHrZone: 'Absolute Rest (< 80 BPM)',
+          adjustmentReason: 'Critical health risk! All strenuous activity paused. Full clinical bed rest & monitoring active.',
+          modeLabel: '🚨 Strict Clinical Rest Mode'
+        };
+      }
+    }
+
+    function generateLocalRecoveryPlan(riskLevel, score, userProfile) {
+      const steps = [];
+      if (riskLevel === 'LOW') {
+        steps.push({ id: 'rec-1', title: 'Aerobic Exercise Session', category: 'MOBILITY', description: 'Complete 45 minutes of brisk walking, jogging, or cycling keeping HR in 110-140 BPM range.' });
+        steps.push({ id: 'rec-2', title: 'Optimal Hydration Routine', category: 'NUTRITION', description: 'Drink 3.0 Liters of water evenly spread across morning, afternoon, and post-workout.' });
+        steps.push({ id: 'rec-3', title: 'Post-Workout Mobility Stretch', category: 'MOBILITY', description: '10 minutes of hamstrings, hip flexors, and spinal decompression stretching.' });
+        steps.push({ id: 'rec-4', title: 'Circadian Sleep Hygiene', category: 'REST', description: 'Dim lights 30 minutes before bed; maintain a cool room (68°F/20°C) for 8 hours of sleep.' });
+      } else if (riskLevel === 'MODERATE') {
+        steps.push({ id: 'rec-1', title: 'Low-Impact Active Recovery Walk', category: 'MOBILITY', description: 'Take a 30-minute light walking session; avoid high-intensity sprinting or heavy lifting.' });
+        steps.push({ id: 'rec-2', title: 'Vagus Nerve Diaphragmatic Breathing', category: 'REST', description: 'Perform 10 minutes of 4-7-8 breathing (4s inhale, 7s hold, 8s exhale) to calm nervous system.' });
+        steps.push({ id: 'rec-3', title: 'Electrolyte Replenishment', category: 'NUTRITION', description: 'Consume 3.2L fluid intake including 1 glass of coconut water or sodium-potassium electrolyte.' });
+        steps.push({ id: 'rec-4', title: 'Extended Evening Wind-Down', category: 'REST', description: 'Disconnect from work screens 1 hour before sleep; aim for 8.5 hours rest.' });
+      } else if (riskLevel === 'HIGH') {
+        steps.push({ id: 'rec-1', title: 'Vitals & Oxygenation Pacing', category: 'VITALS', description: 'Sit upright in an air-ventilated room. Measure SpO2 every 2 hours using smartwatch telemetry.' });
+        steps.push({ id: 'rec-2', title: 'Gentle Indoor Mobility & Breathing', category: 'MOBILITY', description: '15 minutes of slow pacing indoors or seated chest-opening stretches.' });
+        steps.push({ id: 'rec-3', title: 'High-Hydration & Cellular Recovery', category: 'NUTRITION', description: 'Sip 3.5L fluids with ORS (Oral Rehydration Solution) to maintain vascular volume.' });
+        steps.push({ id: 'rec-4', title: 'Mandatory Rest & Sleep Extension', category: 'REST', description: 'Take two 30-minute daytime rest breaks and ensure 9 full hours of sleep tonight.' });
+      } else {
+        steps.push({ id: 'rec-1', title: 'Strict Bed Rest Protocol', category: 'CLINICAL', description: 'Remain at rest in a comfortable semi-reclining position. Avoid any physical exertion.' });
+        steps.push({ id: 'rec-2', title: 'Emergency SLA Dispatch Readiness', category: 'CLINICAL', description: 'Verify phone number and emergency contact (+91-98765-43210). 30s SLA auto-dispatch standing by.' });
+        steps.push({ id: 'rec-3', title: 'Continuous Live Vitals Monitoring', category: 'VITALS', description: 'Keep NoiseFit watch connected for real-time heart rate & SpO2 anomaly telemetry streaming.' });
+      }
+
+      return {
+        title: riskLevel === 'LOW' ? 'Peak Performance & Endurance Plan'
+          : riskLevel === 'MODERATE' ? 'Active Recovery & Stress Mitigation Plan'
+          : riskLevel === 'HIGH' ? 'Vitals Stabilization & Recovery Plan'
+          : 'Urgent Clinical Rest & Emergency Protocol',
+        summary: `Tailored recovery roadmap calibrated to your ${riskLevel} risk rating and predicted Health Score of ${score}/100.`,
+        steps
+      };
     }
 
     function generateLocalHealthPrediction(hr, spo2, stress, activity) {
