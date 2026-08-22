@@ -1353,7 +1353,7 @@
             <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-profile" onclick="switchPatientTab('profile')">
               <span class="nav-left"><span style="font-size: 16px;">👤</span> Profile</span>
             </a>
-            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-hospitals" onclick="switchPatientTab('home')">
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-hospitals" onclick="switchPatientTab('hospitals')">
               <span class="nav-left"><span style="font-size: 16px;">🏥</span> Hospital Matching</span>
             </a>
 
@@ -1378,11 +1378,11 @@
             </a>
 
             <div class="menu-group-label">SYSTEM</div>
-            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="alert('System Notifications: 12 live monitoring telemetry logs recorded.')">
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-notifications" onclick="openNotificationsModal()">
               <span class="nav-left"><span style="font-size: 16px;">🔔</span> Notifications</span>
-              <span class="badge-tag badge-count">12</span>
+              <span class="badge-tag badge-count" id="notifBadgeCount">12</span>
             </a>
-            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchPatientTab('profile')">
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-settings" onclick="switchPatientTab('settings')">
               <span class="nav-left"><span style="font-size: 16px;">⚙️</span> Settings</span>
             </a>
           </div>
@@ -1866,15 +1866,192 @@
             </section>
           </div>
 
+          <!-- 4. HOSPITAL MATCHING TAB PANEL -->
+          <div id="pTabPanel-hospitals" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--primary); background: linear-gradient(135deg, #FFFFFF, #f8fafc); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">🏥</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Emergency Hospital Matching & Spatial Ranker
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                    Budget-aware spatial matching engine filters nearby accredited hospitals by financial ceiling, emergency severity, and insurance network status.
+                  </p>
+                </div>
+                <span class="price-tag tier-premium" style="font-size: 12px; padding: 6px 14px;">⚡ Real-Time SLA Ranker</span>
+              </div>
+
+              <!-- Matching Control Panel -->
+              <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 18px; margin-bottom: 22px;">
+                <div class="grid-3" style="gap: 14px; margin-bottom: 14px;">
+                  <div>
+                    <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; display: block; margin-bottom: 4px;">
+                      Max Hospital Budget Ceiling (₹)
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <input type="range" id="matchTabBudgetRange" min="5000" max="150000" step="2500" value="40000" class="form-control" style="flex: 1;" oninput="syncUserBudget(this.value)">
+                      <span style="font-weight: 800; font-size: 15px; color: var(--color-dark-forest); white-space: nowrap;">₹<span id="matchTabBuddisplay">40,000</span></span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; display: block; margin-bottom: 4px;">
+                      Insurance Provider
+                    </label>
+                    <select id="matchTabInsurance" class="form-control" onchange="updateUserInsurance(this.value)">
+                      <option value="BlueCross">BlueCross BlueShield</option>
+                      <option value="UnitedHealth">UnitedHealth Group</option>
+                      <option value="Kaiser">Kaiser Permanente</option>
+                      <option value="Aetna">Aetna Care</option>
+                      <option value="None">Self-Pay / None</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style="font-size: 11px; font-weight: 800; color: var(--color-dark-forest); text-transform: uppercase; display: block; margin-bottom: 4px;">
+                      Emergency Severity Mode
+                    </label>
+                    <select id="matchTabSeverity" class="form-control" onchange="fetchHospitalMatches('hospitalsTabGrid')">
+                      <option value="SEVERE">SEVERE (Enforce Budget)</option>
+                      <option value="LIFE_THREATENING">LIFE_THREATENING (Bypass Override)</option>
+                      <option value="MODERATE">MODERATE</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="button" class="btn" style="width: 100%; font-weight: 700; font-size: 14px;" onclick="requeryHospitalMatches()">
+                  🔍 Search & Rank Nearby Emergency Hospitals Now
+                </button>
+              </div>
+
+              <!-- Hospital Matches Grid -->
+              <div>
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--color-dark-forest); margin-bottom: 14px;">
+                  🏥 Ranked Accredited Hospitals Matching Your Profile
+                </h3>
+                <div class="grid-3" id="hospitalsTabGrid">
+                  <!-- Dynamically populated via JS -->
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- 5. SETTINGS TAB PANEL -->
+          <div id="pTabPanel-settings" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--color-sage-deep); background: #ffffff; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">⚙️</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Account & Emergency Monitoring Settings
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                    Configure autonomous fall detection sensitivity, NoiseFit watch telemetry intervals, emergency contact alerts, and budget limits.
+                  </p>
+                </div>
+                <span class="price-tag tier-budget" style="font-size: 12px; padding: 6px 14px;">🟢 Real-Time Telemetry Active</span>
+              </div>
+
+              <form onsubmit="saveUserSettings(event)">
+                <!-- 1. TELEMETRY & SENSOR PREFERENCES -->
+                <div style="margin-bottom: 24px;">
+                  <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">🤖 Autonomous Health Sensor & Watch Settings</h3>
+                  <div class="grid-2" style="gap: 14px;">
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; color: var(--color-dark-forest); cursor: pointer;">
+                        <span>Autonomous Vital Anomaly Monitoring</span>
+                        <input type="checkbox" id="setAutoSensor" checked style="width: 20px; height: 20px; accent-color: #10b981;">
+                      </label>
+                      <p style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Automatically evaluates SpO2 and Heart Rate telemetry every 2.5s.</p>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; color: var(--color-dark-forest); cursor: pointer;">
+                        <span>Autonomous Fall Detection Sensor</span>
+                        <input type="checkbox" id="setFallSensor" checked style="width: 20px; height: 20px; accent-color: #10b981;">
+                      </label>
+                      <p style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Triggers emergency dispatch if hard body impact fall is detected.</p>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="font-size: 12px; font-weight: 700; color: var(--color-dark-forest); display: block; margin-bottom: 4px;">SLA Auto-Dispatch Countdown Timer</label>
+                      <select id="setSlaDuration" class="form-control" style="font-size: 13px;">
+                        <option value="15">15 Seconds (Express Dispatch)</option>
+                        <option value="30" selected>30 Seconds (Recommended)</option>
+                        <option value="60">60 Seconds (Extended Evaluation)</option>
+                      </select>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="font-size: 12px; font-weight: 700; color: var(--color-dark-forest); display: block; margin-bottom: 4px;">NoiseFit Watch Sync Frequency</label>
+                      <select id="setSyncFreq" class="form-control" style="font-size: 13px;">
+                        <option value="2.5" selected>Every 2.5 Seconds (Real-Time)</option>
+                        <option value="5">Every 5 Seconds</option>
+                        <option value="10">Every 10 Seconds</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. EMERGENCY ALERTS & NOTIFICATION PREFERENCES -->
+                <div style="margin-bottom: 24px;">
+                  <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">🔔 Emergency Dispatch & Notification Preferences</h3>
+                  <div class="grid-2" style="gap: 14px;">
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; color: var(--color-dark-forest); cursor: pointer;">
+                        <span>Audio Siren Alert on Vital Anomaly</span>
+                        <input type="checkbox" id="setAudioChime" checked style="width: 20px; height: 20px; accent-color: #10b981;">
+                      </label>
+                      <p style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Plays audible alarm chime during 30s SLA countdown.</p>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; color: var(--color-dark-forest); cursor: pointer;">
+                        <span>Auto-SMS Emergency Contact Dispatch</span>
+                        <input type="checkbox" id="setAutoSms" checked style="width: 20px; height: 20px; accent-color: #10b981;">
+                      </label>
+                      <p style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Sends instant SMS alert with live GPS coordinates to primary emergency contact.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. FINANCIAL & INSURANCE PREFERENCES -->
+                <div style="margin-bottom: 24px;">
+                  <h3 style="font-size: 15px; font-weight: 700; color: var(--color-dark-forest); margin-bottom: 12px;">💰 Financial Budget & Network Insurance Settings</h3>
+                  <div class="grid-2" style="gap: 14px;">
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="font-size: 12px; font-weight: 700; color: var(--color-dark-forest); display: block; margin-bottom: 4px;">Default Hospital Budget Ceiling (₹)</label>
+                      <input type="number" id="setBudgetInput" class="form-control" value="40000" min="5000" max="150000" step="1000" onchange="syncUserBudget(this.value)">
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid var(--color-sage-ash); padding: 14px; border-radius: 14px;">
+                      <label style="font-size: 12px; font-weight: 700; color: var(--color-dark-forest); display: block; margin-bottom: 4px;">Primary Health Insurance Network</label>
+                      <select id="setInsuranceSelect" class="form-control" onchange="updateUserInsurance(this.value)">
+                        <option value="BlueCross">BlueCross BlueShield</option>
+                        <option value="UnitedHealth">UnitedHealth Group</option>
+                        <option value="Kaiser">Kaiser Permanente</option>
+                        <option value="Aetna">Aetna Care</option>
+                        <option value="None">Self-Pay / None</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                  <button type="submit" class="btn btn-success" style="flex: 2; padding: 12px; font-size: 14px;">💾 Save Preferences & Settings</button>
+                  <button type="button" class="btn btn-secondary" style="flex: 1; padding: 12px; font-size: 13px;" onclick="resetUserSettings()">Reset Defaults</button>
+                </div>
+              </form>
+            </section>
+          </div>
+
         </main>
       </div>
-    </div>-weight: normal; color: var(--text-muted);" id="matchCountText">Finding nearby facilities...</span>
-        </h2>
-
-        <div class="grid-3" id="hospitalMatchesGrid">
-          <!-- Dynamically populated via JS -->
-        </div>
-      </section>
     </div>
 
 
@@ -2524,6 +2701,44 @@
   </div>
 
 
+  <!-- ========================================== -->
+  <!-- SYSTEM NOTIFICATIONS DRAWER / MODAL        -->
+  <!-- ========================================== -->
+  <div id="notificationsModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 620px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-sage-ash); padding-bottom: 14px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">🔔</span>
+          <div>
+            <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">Emergency Notifications & Live Logs</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Real-time bio-telemetry, anomaly dispatches, and hospital responses.</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeNotificationsModal()" style="background: var(--color-cream-warm); border: 1px solid var(--color-sage-ash); border-radius: 50%; width: 34px; height: 34px; font-size: 16px; cursor: pointer; color: var(--color-dark-forest); font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
+      </div>
+
+      <!-- Notification Category Tabs -->
+      <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+        <button class="btn btn-secondary active" style="font-size: 11px; padding: 4px 10px;" id="notifFilter-all" onclick="filterNotifications('all')">All (12)</button>
+        <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" id="notifFilter-alerts" onclick="filterNotifications('alerts')">🚨 Alerts (4)</button>
+        <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" id="notifFilter-bookings" onclick="filterNotifications('bookings')">🚑 Dispatches (5)</button>
+        <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" id="notifFilter-system" onclick="filterNotifications('system')">⚙️ System (3)</button>
+      </div>
+
+      <!-- Notification Items List -->
+      <div id="notificationsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+        <!-- Dynamically populated notification logs -->
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1.5px solid var(--color-sage-ash);">
+        <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="markAllNotificationsRead()">✓ Mark All Read</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="clearNotifications()">🗑️ Clear History</button>
+        <button type="button" class="btn" style="flex: 1; font-size: 12px;" onclick="closeNotificationsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     // Global Application State & Authentication Role
     const state = {
@@ -2608,6 +2823,123 @@
       if (tabName === 'tasks') {
         calculateHealthRecommendations();
       }
+      if (tabName === 'hospitals') {
+        fetchHospitalMatches('hospitalsTabGrid');
+      }
+      if (tabName === 'settings') {
+        renderPatientSettingsTab();
+      }
+    }
+
+    /* ========================================================
+       NOTIFICATIONS MODAL & LIVE LOG ENGINE
+       ======================================================== */
+    state.notifications = [
+      { id: 'notif-1', category: 'alerts', title: '🚨 Vital Anomaly SLA Triggered', detail: 'Critical SpO2 oxygen drop (86%) auto-initiated 30-second emergency response cascade.', time: '2 mins ago', unread: true },
+      { id: 'notif-2', category: 'bookings', title: '🚑 Hospital Dispatch Confirmed', detail: 'St. Jude Emergency Center accepted dispatch. Ambulance AMB-104 en-route (ETA: 8 mins).', time: '14 mins ago', unread: true },
+      { id: 'notif-3', category: 'system', title: '⌚ NoiseFit Telemetry Synchronized', detail: 'Continuous physiological vitals synced (74 BPM, 98.5% SpO2) via NoiseFit Health API.', time: '35 mins ago', unread: true },
+      { id: 'notif-4', category: 'alerts', title: '🟢 Health Score Evaluated (88/100)', detail: 'AI Risk Predictor assigned LOW RISK classification and adjusted daily fitness targets.', time: '1 hour ago', unread: false },
+      { id: 'notif-5', category: 'bookings', title: '🏥 Budget-Aware Hospital Match', detail: 'Mercy Regional Emergency Care matched within budget ceiling (₹35,000).', time: '2 hours ago', unread: false },
+      { id: 'notif-6', category: 'system', title: '📋 Pre-existing Medical History Saved', detail: 'Household medical conditions & allergy profile saved securely to health vault.', time: '1 day ago', unread: false }
+    ];
+
+    function openNotificationsModal() {
+      renderNotificationsList('all');
+      const modal = document.getElementById('notificationsModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeNotificationsModal() {
+      const modal = document.getElementById('notificationsModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function filterNotifications(category) {
+      document.querySelectorAll('#notificationsModal .btn-secondary').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`notifFilter-${category}`);
+      if (activeBtn) activeBtn.classList.add('active');
+      renderNotificationsList(category);
+    }
+
+    function renderNotificationsList(filterCategory = 'all') {
+      const container = document.getElementById('notificationsList');
+      if (!container) return;
+
+      const items = filterCategory === 'all' 
+        ? state.notifications 
+        : state.notifications.filter(n => n.category === filterCategory);
+
+      const unreadCount = state.notifications.filter(n => n.unread).length;
+      const badgeCountEl = document.getElementById('notifBadgeCount');
+      if (badgeCountEl) badgeCountEl.innerText = unreadCount;
+
+      if (items.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No notifications found for this category.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(n => `
+        <div style="background: ${n.unread ? '#f0fdf4' : '#f8fafc'}; border: 1.5px solid ${n.unread ? '#86efac' : 'var(--color-sage-ash)'}; border-radius: 12px; padding: 12px 14px; position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <strong style="font-size: 13px; color: var(--color-dark-forest);">${n.title}</strong>
+            <span style="font-size: 11px; color: var(--text-muted);">${n.time}</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">${n.detail}</p>
+        </div>
+      `).join('');
+    }
+
+    function markAllNotificationsRead() {
+      state.notifications.forEach(n => n.unread = false);
+      const badgeCountEl = document.getElementById('notifBadgeCount');
+      if (badgeCountEl) badgeCountEl.innerText = '0';
+      renderNotificationsList('all');
+    }
+
+    function clearNotifications() {
+      state.notifications = [];
+      const badgeCountEl = document.getElementById('notifBadgeCount');
+      if (badgeCountEl) badgeCountEl.innerText = '0';
+      renderNotificationsList('all');
+    }
+
+    /* ========================================================
+       PATIENT SETTINGS & PREFERENCES ENGINE
+       ======================================================== */
+    function renderPatientSettingsTab() {
+      const user = state.currentUser || {};
+      const setBudgetInput = document.getElementById('setBudgetInput');
+      const setInsuranceSelect = document.getElementById('setInsuranceSelect');
+
+      if (setBudgetInput) setBudgetInput.value = user.budgetCeiling || 40000;
+      if (setInsuranceSelect) setInsuranceSelect.value = user.insuranceProvider || 'BlueCross';
+    }
+
+    function saveUserSettings(e) {
+      if (e) e.preventDefault();
+      const budgetVal = Number(document.getElementById('setBudgetInput').value);
+      const insuranceVal = document.getElementById('setInsuranceSelect').value;
+
+      state.currentUser.budgetCeiling = budgetVal;
+      state.currentUser.insuranceProvider = insuranceVal;
+
+      syncUserBudget(budgetVal);
+      updateUserInsurance(insuranceVal);
+
+      alert('✓ Settings & Preferences Saved Successfully!\n\nAll emergency monitoring thresholds, smartwatch sync frequencies, and budget ceilings have been updated.');
+    }
+
+    function resetUserSettings() {
+      document.getElementById('setBudgetInput').value = 40000;
+      document.getElementById('setInsuranceSelect').value = 'BlueCross';
+      document.getElementById('setAutoSensor').checked = true;
+      document.getElementById('setFallSensor').checked = true;
+      document.getElementById('setSlaDuration').value = '30';
+      document.getElementById('setSyncFreq').value = '2.5';
+      document.getElementById('setAudioChime').checked = true;
+      document.getElementById('setAutoSms').checked = true;
+
+      saveUserSettings();
     }
 
     function switchHospitalTab(tabName) {
