@@ -3656,10 +3656,10 @@
       const logoutBtn = document.getElementById('navLogout');
       const badge = document.getElementById('roleBadgeDisplay');
 
-      // Toggle Floating AI Assistant Widget for Patient Role Only
+      // Toggle Floating AI Assistant Widget (Active for Patients & Guest Viewers)
       const aiWidget = document.getElementById('aiAssistantFloatingWidget');
       if (aiWidget) {
-        aiWidget.style.display = (state.authRole === 'patient') ? 'block' : 'none';
+        aiWidget.style.display = (state.authRole === 'hospital') ? 'none' : 'block';
       }
 
       if (!loginBtn || !signupBtn || !logoutBtn || !badge) return;
