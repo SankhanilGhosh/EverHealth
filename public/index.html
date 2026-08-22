@@ -1378,7 +1378,7 @@
             </a>
 
             <div class="menu-group-label">SYSTEM</div>
-            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-notifications" onclick="openNotificationsModal()">
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-notifications" onclick="switchPatientTab('notifications'); openNotificationsModal();">
               <span class="nav-left"><span style="font-size: 16px;">🔔</span> Notifications</span>
               <span class="badge-tag badge-count" id="notifBadgeCount">12</span>
             </a>
@@ -2050,6 +2050,46 @@
             </section>
           </div>
 
+          <!-- 6. NOTIFICATIONS TAB PANEL -->
+          <div id="pTabPanel-notifications" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--primary); background: #ffffff; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">🔔</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Emergency Notifications & Real-Time Incident History
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                    Real-time physiological telemetry alerts, SLA emergency response countdowns, and hospital bed bookings.
+                  </p>
+                </div>
+                <button type="button" class="btn" style="font-size: 12px; padding: 6px 14px;" onclick="openNotificationsModal()">
+                  🔍 Open Fullscreen Drawer Modal
+                </button>
+              </div>
+
+              <!-- Filter Buttons -->
+              <div style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+                <button class="btn btn-secondary active" style="font-size: 12px; padding: 6px 14px;" id="notifFilterTab-all" onclick="filterNotifications('all')">All Notifications (12)</button>
+                <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;" id="notifFilterTab-alerts" onclick="filterNotifications('alerts')">🚨 Vitals & SLA Alerts (4)</button>
+                <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;" id="notifFilterTab-bookings" onclick="filterNotifications('bookings')">🚑 Hospital Dispatches (5)</button>
+                <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;" id="notifFilterTab-system" onclick="filterNotifications('system')">⚙️ System Logs (3)</button>
+              </div>
+
+              <!-- Notifications List Container -->
+              <div id="notificationsTabList" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                <!-- Populated dynamically via JS -->
+              </div>
+
+              <div style="display: flex; gap: 12px; padding-top: 14px; border-top: 1.5px solid var(--color-sage-ash);">
+                <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="markAllNotificationsRead()">✓ Mark All Read</button>
+                <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="clearNotifications()">🗑️ Clear History</button>
+              </div>
+            </section>
+          </div>
+
         </main>
       </div>
     </div>
@@ -2301,10 +2341,10 @@
             </a>
 
             <div class="menu-group-label">OPERATIONS & BEDS</div>
-            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchHospitalTab('home')">
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="hSideTab-ward" onclick="switchHospitalTab('ward')">
               <span class="nav-left"><span style="font-size: 16px;">🛏️</span> Ward Bed Capacity</span>
             </a>
-            <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchHospitalTab('home')">
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="hSideTab-fleet" onclick="switchHospitalTab('fleet')">
               <span class="nav-left"><span style="font-size: 16px;">🚑</span> Fleet Dispatch</span>
             </a>
 
@@ -2632,6 +2672,136 @@
             </section>
           </div>
 
+          <!-- 4. HOSPITAL WARD BED CAPACITY TAB PANEL -->
+          <div id="hTabPanel-ward" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--primary); background: #ffffff; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">🛏️</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Ward Bed Capacity & Real-Time Inventory Control
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                    Live telemetry bed counter control syncs ICU, Cardiac CCU, Trauma Wards, and General Bed availability instantly with emergency match algorithms.
+                  </p>
+                </div>
+                <span class="price-tag tier-budget" style="font-size: 12px; padding: 6px 14px;">⚡ Telemetry Sync Active</span>
+              </div>
+
+              <!-- Live Counter Controls -->
+              <div style="display: flex; flex-direction: column; gap: 14px; max-width: 640px; margin-bottom: 24px;">
+                <div class="inv-control-row" style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 700; font-size: 15px; color: var(--color-dark-forest);">ICU Beds Available</span>
+                    <span class="price-tag tier-budget" style="margin-left: 8px; background: #fee2e2; color: #b91c1c;">CRITICAL</span>
+                  </div>
+                  <div class="inv-counter-btns" style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', -1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">-</button>
+                    <span class="counter-val" id="cntIcuWard" style="font-size: 20px; font-weight: 800; min-width: 28px; text-align: center;">4</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('icuBedsAvailable', 1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row" style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 700; font-size: 15px; color: var(--color-dark-forest);">Cardiac Ward Beds</span>
+                  </div>
+                  <div class="inv-counter-btns" style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', -1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">-</button>
+                    <span class="counter-val" id="cntCardiacWard" style="font-size: 20px; font-weight: 800; min-width: 28px; text-align: center;">3</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('cardiacBedsAvailable', 1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row" style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 700; font-size: 15px; color: var(--color-dark-forest);">Trauma Unit Beds</span>
+                  </div>
+                  <div class="inv-counter-btns" style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', -1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">-</button>
+                    <span class="counter-val" id="cntTraumaWard" style="font-size: 20px; font-weight: 800; min-width: 28px; text-align: center;">4</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('traumaBedsAvailable', 1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row" style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 700; font-size: 15px; color: var(--color-dark-forest);">General Ward Beds</span>
+                  </div>
+                  <div class="inv-counter-btns" style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', -1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">-</button>
+                    <span class="counter-val" id="cntGeneralWard" style="font-size: 20px; font-weight: 800; min-width: 28px; text-align: center;">15</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('generalBedsAvailable', 1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">+</button>
+                  </div>
+                </div>
+
+                <div class="inv-control-row" style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-weight: 700; font-size: 15px; color: var(--color-dark-forest);">Available Ambulances</span>
+                    <span class="price-tag" style="margin-left: 8px; background: #e0f2fe; color: #0369a1;" id="fleetTagWard">Fleet: 4</span>
+                  </div>
+                  <div class="inv-counter-btns" style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', -1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">-</button>
+                    <span class="counter-val" id="cntAmbulanceWard" style="font-size: 20px; font-weight: 800; min-width: 28px; text-align: center;">3</span>
+                    <button type="button" class="counter-btn" onclick="updateBedCount('ambulancesAvailable', 1)" style="width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--color-sage-ash); background: #f1f5f9; font-weight: bold; cursor: pointer;">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-success" style="width: 100%; max-width: 640px; padding: 14px; font-size: 15px; font-weight: 800;" onclick="saveHospitalSettings()">
+                💾 Save Ward Bed Counters & Live Telemetry to API
+              </button>
+            </section>
+          </div>
+
+          <!-- 5. HOSPITAL FLEET DISPATCH TAB PANEL -->
+          <div id="hTabPanel-fleet" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--primary); background: #ffffff; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">🚑</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Emergency Fleet Dispatch & Ambulance Operations
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                    Monitor active emergency dispatch requests, driver GPS status, and ambulance response SLAs.
+                  </p>
+                </div>
+                <span class="price-tag tier-premium" style="font-size: 12px; padding: 6px 14px;">⚡ GPS Live Dispatch</span>
+              </div>
+
+              <!-- Active Fleet Units List -->
+              <div class="grid-2" style="gap: 14px; margin-bottom: 20px;">
+                <div style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); border-radius: 14px; padding: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong style="font-size: 15px; color: var(--color-dark-forest);">🚑 Ambulance AMB-104</strong>
+                    <span class="price-tag" style="background: #dcfce7; color: #166534;">🟢 En-Route (ETA: 6 Mins)</span>
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-muted);">Assigned to Patient: <strong>Jane Doe (SpO2 86%)</strong></div>
+                  <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Driver: Capt. Rajesh Kumar • Equipment: Ventilator + Defibrillator</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); border-radius: 14px; padding: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong style="font-size: 15px; color: var(--color-dark-forest);">🚑 Ambulance AMB-105</strong>
+                    <span class="price-tag" style="background: #e0f2fe; color: #0369a1;">🟢 Standby Ready</span>
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-muted);">Stationed at: <strong>Main Trauma Bay</strong></div>
+                  <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Driver: Alex Miller • Equipment: Advanced Cardiac Life Support (ACLS)</div>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-ivory-light); padding: 14px 18px; border-radius: 12px; border: 1.5px solid var(--color-sage-ash);">
+                <span style="font-size: 13px; font-weight: 700; color: var(--color-dark-forest);">Active Ambulance Fleet Units:</span>
+                <span style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest);" id="fleetSummaryText">3 Ready / 4 Total Units</span>
+              </div>
+            </section>
+          </div>
+
         </main>
       </div>
     </div>
@@ -2951,8 +3121,16 @@
       const activePanel = document.getElementById(`hTabPanel-${tabName}`);
       if (activePanel) activePanel.classList.add('active');
 
+      const current = state.hospitalsMap[state.currentHospitalId];
+      const hospName = current && current.hospital ? current.hospital.name : 'St. Jude Trauma Center';
+      const sideHosp = document.getElementById('sideHospName');
+      if (sideHosp) sideHosp.innerText = hospName;
+
       if (tabName === 'profile') {
         renderHospitalProfileTab();
+      }
+      if (tabName === 'ward' || tabName === 'home') {
+        renderInventoryCounters();
       }
     }
 
@@ -4503,19 +4681,24 @@
     }
 
     function renderInventoryCounters() {
-      const inv = state.hospitalInventory;
-      const icuEl = document.getElementById('cntIcu');
-      if (icuEl) icuEl.innerText = inv.icuBedsAvailable;
-      const cdcEl = document.getElementById('cntCardiac');
-      if (cdcEl) cdcEl.innerText = inv.cardiacBedsAvailable;
-      const trmEl = document.getElementById('cntTrauma');
-      if (trmEl) trmEl.innerText = inv.traumaBedsAvailable;
-      const genEl = document.getElementById('cntGeneral');
-      if (genEl) genEl.innerText = inv.generalBedsAvailable;
-      const ambEl = document.getElementById('cntAmb');
-      if (ambEl) ambEl.innerText = inv.ambulancesAvailable;
-      const fltEl = document.getElementById('fleetTotalLabel');
-      if (fltEl) fltEl.innerText = `Fleet: ${inv.totalAmbulanceFleet}`;
+      const inv = state.hospitalInventory || { icuBedsAvailable: 4, cardiacBedsAvailable: 3, traumaBedsAvailable: 4, generalBedsAvailable: 15, ambulancesAvailable: 3, totalAmbulanceFleet: 5 };
+
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+
+      setTxt('cntIcu', inv.icuBedsAvailable);
+      setTxt('cntIcuWard', inv.icuBedsAvailable);
+      setTxt('cntCardiac', inv.cardiacBedsAvailable);
+      setTxt('cntCardiacWard', inv.cardiacBedsAvailable);
+      setTxt('cntTrauma', inv.traumaBedsAvailable);
+      setTxt('cntTraumaWard', inv.traumaBedsAvailable);
+      setTxt('cntGeneral', inv.generalBedsAvailable);
+      setTxt('cntGeneralWard', inv.generalBedsAvailable);
+      setTxt('cntAmb', inv.ambulancesAvailable);
+      setTxt('cntAmbulanceWard', inv.ambulancesAvailable);
+
+      setTxt('fleetTotalLabel', `Fleet: ${inv.totalAmbulanceFleet}`);
+      setTxt('fleetTagWard', `Fleet: ${inv.totalAmbulanceFleet}`);
+      setTxt('fleetSummaryText', `${inv.ambulancesAvailable} Ready / ${inv.totalAmbulanceFleet} Total Units`);
     }
 
     function updateBedCount(field, delta) {
