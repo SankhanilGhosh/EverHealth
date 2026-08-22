@@ -1584,7 +1584,7 @@
                   </select>
                 </div>
 
-                <button type="button" id="btnRequeryMatches" class="btn" style="white-space: nowrap;" onclick="requeryHospitalMatches()">🔍 Search & Rank Now</button>
+                <button type="button" id="btnRequeryMatchesHero" class="btn" style="white-space: nowrap;" onclick="requeryHospitalMatches()">🔍 Search & Rank Now</button>
               </div>
             </section>
 
@@ -2120,7 +2120,7 @@
                   </div>
                 </div>
 
-                <button type="button" class="btn" style="width: 100%; font-weight: 700; font-size: 14px;" onclick="requeryHospitalMatches()">
+                <button type="button" id="btnRequeryMatches" class="btn" style="width: 100%; font-weight: 700; font-size: 14px;" onclick="requeryHospitalMatches()">
                   🔍 Search & Rank Nearby Emergency Hospitals Now
                 </button>
               </div>
@@ -2731,6 +2731,11 @@
                 <select id="hospitalSelector" class="form-control" style="width: auto; min-width: 200px;" onchange="switchManagedHospital(this.value)">
                   <option value="hosp-001">St. Jude Trauma Center</option>
                   <option value="hosp-002">Mercy Regional Emergency</option>
+                  <option value="hosp-aiims-delhi">1. AIIMS New Delhi</option>
+                  <option value="hosp-apollo-delhi">2. Apollo Hospitals – Delhi</option>
+                  <option value="hosp-fortis-gurugram">3. Fortis Memorial Research Institute – Gurugram</option>
+                  <option value="hosp-narayana-bengaluru">4. Narayana Health – Bengaluru</option>
+                  <option value="hosp-tata-mumbai">5. Tata Memorial Hospital – Mumbai</option>
                 </select>
                 <button type="button" class="btn btn-secondary" onclick="handleLogout()">Logout</button>
               </div>
@@ -3302,7 +3307,7 @@
       updateHeaderNavVisibility();
 
       if (route === 'user-dashboard') {
-        fetchHospitalMatches();
+        fetchHospitalMatches('hospitalsTabGrid');
         initRealtimeVitalsStream();
         calculateHealthRecommendations();
         switchPatientTab('home');
@@ -3414,11 +3419,35 @@
        DOCTORS & APPOINTMENTS ENGINE
        ======================================================== */
     state.doctors = [
+      // AIIMS New Delhi Roster
+      { id: 'doc-aiims-1', name: 'Dr. Arjun Mehta', specialty: 'Cardiology', qualification: 'MD, DM (Cardiology)', experience: '15 Years Exp.', hospital: 'AIIMS New Delhi', fee: 800, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👨‍⚕️', timing: 'Mon/Wed/Fri 09:00 AM - 12:00 PM' },
+      { id: 'doc-aiims-2', name: 'Dr. Riya Sharma', specialty: 'Neurology', qualification: 'DM (Neurology), MBBS', experience: '14 Years Exp.', hospital: 'AIIMS New Delhi', fee: 900, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👩‍⚕️', timing: 'Tue/Thu/Sat 10:00 AM - 01:00 PM' },
+      { id: 'doc-aiims-3', name: 'Dr. Karan Singh', specialty: 'Orthopaedics', qualification: 'MS (Orthopaedics), MCh', experience: '16 Years Exp.', hospital: 'AIIMS New Delhi', fee: 700, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👨‍⚕️', timing: 'Mon-Sat 02:00 PM - 05:00 PM' },
+      { id: 'doc-aiims-4', name: 'Dr. Ananya Das', specialty: 'Paediatrics', qualification: 'MD (Paediatrics), DCH', experience: '11 Years Exp.', hospital: 'AIIMS New Delhi', fee: 600, rating: 4.8, availableToday: true, mode: 'Both', avatar: '👩‍⚕️', timing: 'Mon-Sat 09:00 AM - 01:00 PM' },
+      { id: 'doc-aiims-5', name: 'Dr. Priya Nair', specialty: 'Gynaecology', qualification: 'MD (OBGYN), DNB', experience: '13 Years Exp.', hospital: 'AIIMS New Delhi', fee: 750, rating: 4.7, availableToday: true, mode: 'In-Person', avatar: '👩‍⚕️', timing: 'Mon/Wed/Fri 03:00 PM - 06:00 PM' },
+      { id: 'doc-aiims-6', name: 'Dr. Neha Kapoor', specialty: 'Dermatology', qualification: 'MD (Dermatology, Venereology)', experience: '10 Years Exp.', hospital: 'AIIMS New Delhi', fee: 650, rating: 4.7, availableToday: true, mode: 'Video', avatar: '👩‍⚕️', timing: 'Tue/Thu/Sat 11:00 AM - 02:00 PM' },
+
+      // Apollo Hospitals – Delhi Roster
+      { id: 'doc-apollo-1', name: 'Dr. Riya Sharma', specialty: 'Cardiology', qualification: 'MD, DM (Cardiology)', experience: '14 Years Exp.', hospital: 'Apollo Hospitals – Delhi', fee: 800, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👩‍⚕️', timing: 'Mon/Wed/Fri 09:00 AM - 12:00 PM' },
+      { id: 'doc-apollo-2', name: 'Dr. Amit Roy', specialty: 'Neurology', qualification: 'DM (Neurology), FRCP', experience: '18 Years Exp.', hospital: 'Apollo Hospitals – Delhi', fee: 900, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👨‍⚕️', timing: 'Tue/Thu/Sat 10:00 AM - 01:00 PM' },
+      { id: 'doc-apollo-3', name: 'Dr. Neha Kapoor', specialty: 'Orthopaedics', qualification: 'MS (Orthopaedics)', experience: '10 Years Exp.', hospital: 'Apollo Hospitals – Delhi', fee: 700, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👩‍⚕️', timing: 'Mon-Sat 02:00 PM - 05:00 PM' },
+
+      // Fortis Memorial Research Institute – Gurugram Roster
+      { id: 'doc-fortis-1', name: 'Dr. Karan Singh', specialty: 'Cardiology', qualification: 'MD, DM (Cardiology)', experience: '16 Years Exp.', hospital: 'Fortis Memorial Research Institute – Gurugram', fee: 800, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👨‍⚕️', timing: 'Mon/Wed/Fri 09:00 AM - 12:00 PM' },
+      { id: 'doc-fortis-2', name: 'Dr. Sneha Iyer', specialty: 'Neurology', qualification: 'DM (Neurology), DNB', experience: '15 Years Exp.', hospital: 'Fortis Memorial Research Institute – Gurugram', fee: 900, rating: 4.8, availableToday: true, mode: 'Both', avatar: '👩‍⚕️', timing: 'Tue/Thu/Sat 10:00 AM - 01:00 PM' },
+      { id: 'doc-fortis-3', name: 'Dr. Arjun Mehta', specialty: 'Orthopaedics', qualification: 'MS (Orthopaedics), MCh', experience: '15 Years Exp.', hospital: 'Fortis Memorial Research Institute – Gurugram', fee: 700, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👨‍⚕️', timing: 'Mon-Sat 02:00 PM - 05:00 PM' },
+
+      // Narayana Health – Bengaluru Roster
+      { id: 'doc-narayana-1', name: 'Dr. Ananya Das', specialty: 'Cardiology', qualification: 'MD, DM (Cardiology)', experience: '11 Years Exp.', hospital: 'Narayana Health – Bengaluru', fee: 800, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👩‍⚕️', timing: 'Mon/Wed/Fri 09:00 AM - 12:00 PM' },
+      { id: 'doc-narayana-2', name: 'Dr. Rahul Verma', specialty: 'Neurology', qualification: 'DM (Neurology), MD', experience: '17 Years Exp.', hospital: 'Narayana Health – Bengaluru', fee: 900, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👨‍⚕️', timing: 'Tue/Thu/Sat 10:00 AM - 01:00 PM' },
+
+      // Tata Memorial Hospital – Mumbai Roster
+      { id: 'doc-tata-1', name: 'Dr. Vikram Shah', specialty: 'Cardiology / Surgical Oncology', qualification: 'MS, MCh (Oncology)', experience: '22 Years Exp.', hospital: 'Tata Memorial Hospital – Mumbai', fee: 800, rating: 4.95, availableToday: true, mode: 'Both', avatar: '👨‍⚕️', timing: 'Mon/Wed/Fri 09:00 AM - 12:00 PM' },
+      { id: 'doc-tata-2', name: 'Dr. Priya Nair', specialty: 'Neurology', qualification: 'DM (Neurology)', experience: '13 Years Exp.', hospital: 'Tata Memorial Hospital – Mumbai', fee: 900, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👩‍⚕️', timing: 'Tue/Thu/Sat 10:00 AM - 01:00 PM' },
+
+      // Legacy Demo Roster
       { id: 'doc-1', name: 'Dr. Rajesh Sharma', specialty: 'Cardiology', qualification: 'MD, DM (Cardiology)', experience: '16 Years Exp.', hospital: 'St. Jude Emergency Center', fee: 800, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👨‍⚕️', timing: '10:00 AM - 04:00 PM' },
-      { id: 'doc-2', name: 'Dr. Ananya Roy', specialty: 'Pediatrics', qualification: 'MD (Pediatrics), DCH', experience: '12 Years Exp.', hospital: 'St. Jude Emergency Center', fee: 650, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👩‍⚕️', timing: '09:00 AM - 02:00 PM' },
-      { id: 'doc-3', name: 'Dr. Vikram Patel', specialty: 'Neurology', qualification: 'DM (Neurology), MBBS', experience: '20 Years Exp.', hospital: 'Mercy Regional Emergency', fee: 1200, rating: 4.9, availableToday: false, mode: 'Both', avatar: '👨‍⚕️', timing: '02:00 PM - 07:00 PM' },
-      { id: 'doc-4', name: 'Dr. Sunita Deshmukh', specialty: 'General Medicine', qualification: 'MD (Internal Medicine)', experience: '14 Years Exp.', hospital: 'Mercy Regional Emergency', fee: 500, rating: 4.7, availableToday: true, mode: 'Video', avatar: '👩‍⚕️', timing: '11:00 AM - 05:00 PM' },
-      { id: 'doc-5', name: 'Dr. Aris Thorne', specialty: 'Orthopedics', qualification: 'MS (Orthopedics), FRCS', experience: '18 Years Exp.', hospital: 'St. Jude Emergency Center', fee: 900, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👨‍⚕️', timing: '10:00 AM - 03:00 PM' }
+      { id: 'doc-3', name: 'Dr. Vikram Patel', specialty: 'Neurology', qualification: 'DM (Neurology), MBBS', experience: '20 Years Exp.', hospital: 'Mercy Regional Emergency', fee: 1200, rating: 4.9, availableToday: false, mode: 'Both', avatar: '👨‍⚕️', timing: '02:00 PM - 07:00 PM' }
     ];
 
     state.appointments = [
@@ -4175,7 +4204,12 @@
       if (role === 'hospital') {
         let validHospitals = [
           { id: 'hosp-001', licenseId: 'lic-ca-94812', email: 'admin@stjude-hospital.org', name: 'St. Jude Trauma Center' },
-          { id: 'hosp-002', licenseId: 'lic-ca-94815', email: 'contact@mercyregional.org', name: 'Mercy Regional Emergency' }
+          { id: 'hosp-002', licenseId: 'lic-ca-94815', email: 'contact@mercyregional.org', name: 'Mercy Regional Emergency' },
+          { id: 'hosp-aiims-delhi', licenseId: 'lic-dl-00101', email: 'contact@aiims.edu', name: 'AIIMS New Delhi' },
+          { id: 'hosp-apollo-delhi', licenseId: 'lic-dl-00102', email: 'admin@apollohospitals.com', name: 'Apollo Hospitals – Delhi' },
+          { id: 'hosp-fortis-gurugram', licenseId: 'lic-hr-00201', email: 'info@fmri.fortis.com', name: 'Fortis Memorial Research Institute – Gurugram' },
+          { id: 'hosp-narayana-bengaluru', licenseId: 'lic-ka-00301', email: 'contact@narayanahealth.org', name: 'Narayana Health – Bengaluru' },
+          { id: 'hosp-tata-mumbai', licenseId: 'lic-mh-00401', email: 'admin@tmc.gov.in', name: 'Tata Memorial Hospital – Mumbai' }
         ];
         try {
           const savedH = JSON.parse(localStorage.getItem('everhealth_registered_hospitals') || '[]');
@@ -4992,10 +5026,20 @@
 
     async function syncUserBudget(val) {
       const numVal = Number(val);
-      const displayEl = document.getElementById('dashBuddisplay');
-      if (displayEl) displayEl.innerText = numVal.toLocaleString('en-IN');
-      const rangeEl = document.getElementById('dashBudgetRange');
-      if (rangeEl) rangeEl.value = numVal;
+
+      ['dashBuddisplay', 'matchTabBuddisplay', 'pBudgetValue'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (el.tagName === 'INPUT') el.value = numVal;
+          else el.innerText = numVal.toLocaleString('en-IN');
+        }
+      });
+
+      ['dashBudgetRange', 'matchTabBudgetRange', 'pBudgetRange'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = numVal;
+      });
+
       state.currentUser.budgetCeiling = numVal;
       
       try {
@@ -5008,11 +5052,17 @@
         console.warn('Failed to update user budget on server:', err);
       }
 
-      fetchHospitalMatches();
+      fetchHospitalMatches('hospitalsTabGrid');
     }
 
     async function updateUserInsurance(val) {
       state.currentUser.insuranceProvider = val;
+
+      ['dashInsurance', 'matchTabInsurance', 'pInsurance', 'setInsuranceSelect'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+      });
+
       try {
         await fetch(`/v1/users/${state.currentUser.id}`, {
           method: 'PUT',
@@ -5023,18 +5073,24 @@
         console.warn('Failed to update insurance provider on server:', err);
       }
 
-      fetchHospitalMatches();
+      fetchHospitalMatches('hospitalsTabGrid');
     }
 
     async function requeryHospitalMatches() {
-      const btn = document.getElementById('btnRequeryMatches');
-      if (btn) {
-        btn.innerText = '⌛ Searching...';
-        btn.disabled = true;
-      }
+      // Auto-redirect user to the Hospital Matching tab
+      switchPatientTab('hospitals');
 
-      const budgetEl = document.getElementById('dashBudgetRange');
-      const insuranceEl = document.getElementById('dashInsurance');
+      const btn1 = document.getElementById('btnRequeryMatches');
+      const btn2 = document.getElementById('btnRequeryMatchesHero');
+      [btn1, btn2].forEach(btn => {
+        if (btn) {
+          btn.innerText = '⌛ Searching...';
+          btn.disabled = true;
+        }
+      });
+
+      const budgetEl = document.getElementById('matchTabBudgetRange') || document.getElementById('dashBudgetRange');
+      const insuranceEl = document.getElementById('matchTabInsurance') || document.getElementById('dashInsurance');
       const budgetVal = budgetEl ? Number(budgetEl.value) : state.currentUser.budgetCeiling;
       const insuranceVal = insuranceEl ? insuranceEl.value : state.currentUser.insuranceProvider;
 
@@ -5054,25 +5110,39 @@
         console.warn('Failed to sync profile update prior to requery:', err);
       }
 
-      await fetchHospitalMatches();
+      await fetchHospitalMatches('hospitalsTabGrid');
 
-      if (btn) {
-        btn.innerText = '✓ Matches Updated!';
+      const targetGrid = document.getElementById('hospitalsTabGrid');
+      if (targetGrid) {
+        targetGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      if (btn1) {
+        btn1.innerText = '✓ Matches Updated!';
         setTimeout(() => {
-          btn.innerText = '🔍 Search & Rank Now';
-          btn.disabled = false;
+          btn1.innerText = '🔍 Search & Rank Nearby Emergency Hospitals Now';
+          btn1.disabled = false;
+        }, 1200);
+      }
+      if (btn2) {
+        btn2.innerText = '✓ Matches Updated!';
+        setTimeout(() => {
+          btn2.innerText = '🔍 Search & Rank Now';
+          btn2.disabled = false;
         }, 1200);
       }
     }
 
-    async function fetchHospitalMatches() {
-      const severityEl = document.getElementById('dashSeverity');
+    async function fetchHospitalMatches(targetGridId) {
+      const severityEl = document.getElementById('matchTabSeverity') || document.getElementById('dashSeverity');
       const severity = severityEl ? severityEl.value : 'SEVERE';
-      const insuranceEl = document.getElementById('dashInsurance');
+      const insuranceEl = document.getElementById('matchTabInsurance') || document.getElementById('dashInsurance');
       const insurance = insuranceEl ? insuranceEl.value : state.currentUser.insuranceProvider;
-      const budget = state.currentUser.budgetCeiling || 40000;
+      const budgetEl = document.getElementById('matchTabBudgetRange') || document.getElementById('dashBudgetRange');
+      const budget = budgetEl ? Number(budgetEl.value) : (state.currentUser.budgetCeiling || 40000);
 
-      const grid = document.getElementById('hospitalMatchesGrid');
+      const targetId = targetGridId || 'hospitalsTabGrid';
+      const grid = document.getElementById(targetId) || document.getElementById('hospitalsTabGrid') || document.getElementById('hospitalMatchesGrid');
       if (!grid) return;
       grid.innerHTML = '<div style="color: var(--text-muted); font-size: 14px; padding: 20px;">Querying spatial match engine...</div>';
 
@@ -5154,57 +5224,136 @@
       } catch (err) {
         console.warn('Backend API query fallback:', err);
         const countText = document.getElementById('matchCountText');
-        if (countText) countText.innerText = `Found 2 suitable facility matches`;
+        if (countText) countText.innerText = `Found 5 suitable facility matches from Database`;
         grid.innerHTML = `
           <div class="hospital-card preferred">
-            <span class="rank-badge">RANK #1 • SCORE 98</span>
-            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">St. Jude Trauma & Cardiac Emergency Center</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">500 Medical Plaza, San Francisco, CA</p>
+            <span class="rank-badge">RANK #1 • SCORE 99</span>
+            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">AIIMS New Delhi</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Ansari Nagar, New Delhi | 📞 +91-11-26588500</p>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-              <span class="price-tag tier-standard">Tier 2 (Standard ~₹35,000)</span>
-              <span class="price-tag" style="background: #e8f5e9; color:#1b5e20; border:1px solid #a5d6a7;">✓ Within Budget (₹35,000)</span>
-              <span class="price-tag" style="background: var(--color-cream-warm); color:var(--color-dark-forest); border:1px solid var(--color-sage-ash);">✓ In-Network (${insurance})</span>
+              <span class="price-tag tier-budget">Tier 1 (Government ~₹15,000)</span>
+              <span class="price-tag" style="background: #e8f5e9; color:#1b5e20; border:1px solid #a5d6a7;">✓ Within Budget (₹15,000)</span>
+              <span class="price-tag" style="background: var(--color-cream-warm); color:var(--color-dark-forest); border:1px solid var(--color-sage-ash);">✓ In-Network (Ayushman Bharat / BlueCross)</span>
             </div>
             <div style="background: var(--color-ivory-light); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border: 1px solid var(--color-sage-ash);">
               <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <span>⏱️ Estimated ETA: <strong>6 mins</strong></span>
-                <span>🚑 Ambulances: <strong>3 avail</strong></span>
+                <span>⏱️ Estimated ETA: <strong>5 mins</strong></span>
+                <span>🚑 Ambulances: <strong>8 avail</strong></span>
               </div>
               <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
-                <span>🛏️ ICU: 4 | Trauma: 3</span>
-                <span>Cardiac: 2 | General: 12</span>
+                <span>🛏️ ICU: 15 | Trauma: 12</span>
+                <span>Cardiac: 10 | General: 50</span>
               </div>
             </div>
             <div class="tag-list" style="margin-bottom: 12px;">
-              <span class="tag-item">cardiac</span><span class="tag-item">trauma</span><span class="tag-item">icu</span><span class="tag-item">pediatric</span>
+              <span class="tag-item">cardiology</span><span class="tag-item">neurology</span><span class="tag-item">orthopaedics</span><span class="tag-item">paediatrics</span><span class="tag-item">icu</span>
             </div>
-            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('hosp-001')">
+            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('hosp-aiims-delhi')">
               🏥 Open Hospital Page & Department Details →
             </button>
           </div>
 
           <div class="hospital-card">
-            <span class="rank-badge">RANK #2 • SCORE 84</span>
-            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">Mercy Regional Emergency Care</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">120 Mission St, San Francisco, CA</p>
+            <span class="rank-badge">RANK #2 • SCORE 94</span>
+            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">Apollo Hospitals – Delhi</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Sarita Vihar, Delhi-Mathura Road, New Delhi | 📞 +91-11-26925858</p>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-              <span class="price-tag tier-budget">Tier 1 (Budget ~₹15,000)</span>
+              <span class="price-tag tier-standard">Tier 2 (Standard ~₹35,000)</span>
+              <span class="price-tag" style="background: #e8f5e9; color:#1b5e20; border:1px solid #a5d6a7;">✓ Within Budget (₹35,000)</span>
+              <span class="price-tag" style="background: var(--color-cream-warm); color:var(--color-dark-forest); border:1px solid var(--color-sage-ash);">✓ In-Network (BlueCross / Star Health)</span>
+            </div>
+            <div style="background: var(--color-ivory-light); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border: 1px solid var(--color-sage-ash);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>⏱️ Estimated ETA: <strong>7 mins</strong></span>
+                <span>🚑 Ambulances: <strong>5 avail</strong></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                <span>🛏️ ICU: 10 | Trauma: 6</span>
+                <span>Cardiac: 8 | General: 35</span>
+              </div>
+            </div>
+            <div class="tag-list" style="margin-bottom: 12px;">
+              <span class="tag-item">cardiology</span><span class="tag-item">neurology</span><span class="tag-item">gynaecology</span><span class="tag-item">dermatology</span>
+            </div>
+            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('hosp-apollo-delhi')">
+              🏥 Open Hospital Page & Department Details →
+            </button>
+          </div>
+
+          <div class="hospital-card">
+            <span class="rank-badge">RANK #3 • SCORE 91</span>
+            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">Fortis Memorial Research Institute – Gurugram</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Sector 44, Gurugram, Haryana | 📞 +91-124-4921021</p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="price-tag tier-premium">Tier 3 (Premium ~₹60,000)</span>
+              <span class="price-tag" style="background: var(--color-cream-warm); color:var(--color-dark-forest); border:1px solid var(--color-sage-ash);">✓ In-Network (BlueCross / Cigna)</span>
+            </div>
+            <div style="background: var(--color-ivory-light); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border: 1px solid var(--color-sage-ash);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>⏱️ Estimated ETA: <strong>9 mins</strong></span>
+                <span>🚑 Ambulances: <strong>6 avail</strong></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                <span>🛏️ ICU: 12 | Trauma: 8</span>
+                <span>Cardiac: 6 | General: 40</span>
+              </div>
+            </div>
+            <div class="tag-list" style="margin-bottom: 12px;">
+              <span class="tag-item">cardiology</span><span class="tag-item">neurology</span><span class="tag-item">orthopaedics</span><span class="tag-item">paediatrics</span>
+            </div>
+            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('hosp-fortis-gurugram')">
+              🏥 Open Hospital Page & Department Details →
+            </button>
+          </div>
+
+          <div class="hospital-card">
+            <span class="rank-badge">RANK #4 • SCORE 88</span>
+            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">Narayana Health – Bengaluru</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Bommasandra Industrial Area, Bengaluru | 📞 +91-80-71222222</p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="price-tag tier-standard">Tier 2 (Standard ~₹35,000)</span>
+              <span class="price-tag" style="background: #e8f5e9; color:#1b5e20; border:1px solid #a5d6a7;">✓ Within Budget (₹35,000)</span>
+            </div>
+            <div style="background: var(--color-ivory-light); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border: 1px solid var(--color-sage-ash);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>⏱️ Estimated ETA: <strong>10 mins</strong></span>
+                <span>🚑 Ambulances: <strong>5 avail</strong></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                <span>🛏️ ICU: 14 | Trauma: 6</span>
+                <span>Cardiac: 12 | General: 45</span>
+              </div>
+            </div>
+            <div class="tag-list" style="margin-bottom: 12px;">
+              <span class="tag-item">cardiology</span><span class="tag-item">neurology</span><span class="tag-item">orthopaedics</span><span class="tag-item">gynaecology</span>
+            </div>
+            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('hosp-narayana-bengaluru')">
+              🏥 Open Hospital Page & Department Details →
+            </button>
+          </div>
+
+          <div class="hospital-card">
+            <span class="rank-badge">RANK #5 • SCORE 86</span>
+            <h3 style="font-size: 17px; color: var(--color-dark-forest); margin-bottom: 6px; padding-right: 80px;">Tata Memorial Hospital – Mumbai</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Parel, Mumbai, Maharashtra | 📞 +91-22-24177000</p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="price-tag tier-budget">Tier 1 (Government ~₹15,000)</span>
               <span class="price-tag" style="background: #e8f5e9; color:#1b5e20; border:1px solid #a5d6a7;">✓ Within Budget (₹15,000)</span>
             </div>
             <div style="background: var(--color-ivory-light); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border: 1px solid var(--color-sage-ash);">
               <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <span>⏱️ Estimated ETA: <strong>11 mins</strong></span>
-                <span>🚑 Ambulances: <strong>2 avail</strong></span>
+                <span>⏱️ Estimated ETA: <strong>12 mins</strong></span>
+                <span>🚑 Ambulances: <strong>7 avail</strong></span>
               </div>
               <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
-                <span>🛏️ ICU: 2 | Trauma: 1</span>
-                <span>Cardiac: 2 | General: 8</span>
+                <span>🛏️ ICU: 18 | Trauma: 10</span>
+                <span>Cardiac: 8 | General: 60</span>
               </div>
             </div>
             <div class="tag-list" style="margin-bottom: 12px;">
-              <span class="tag-item">general</span><span class="tag-item">icu</span><span class="tag-item">pediatric</span>
+              <span class="tag-item">oncology</span><span class="tag-item">cardiology</span><span class="tag-item">surgery</span><span class="tag-item">icu</span>
             </div>
-            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('hosp-002')">
+            <button class="btn" style="width: 100%; font-size: 13px;" onclick="openHospitalProfilePage('hosp-tata-mumbai')">
               🏥 Open Hospital Page & Department Details →
             </button>
           </div>

@@ -143,7 +143,12 @@ ON CONFLICT (user_code) DO NOTHING;
 INSERT INTO public.hospitals (hospital_code, name, license_id, phone_number, address, latitude, longitude, service_tags, pricing_tier, accepted_insurance)
 VALUES 
 ('hosp-001', 'St. Jude Trauma & Cardiac Emergency Center', 'LIC-CA-94812', '+1-555-0190', '500 Medical Plaza, San Francisco, CA', 37.7749, -122.4194, '{"cardiac","trauma","icu","pediatric"}', 2, '{"BlueCross","UnitedHealth","Kaiser"}'),
-('hosp-002', 'Mercy Regional Emergency Care', 'LIC-CA-94815', '+1-555-0195', '120 Mission St, San Francisco, CA', 37.7833, -122.4167, '{"general","icu"}', 1, '{"BlueCross"}')
+('hosp-002', 'Mercy Regional Emergency Care', 'LIC-CA-94815', '+1-555-0195', '120 Mission St, San Francisco, CA', 37.7833, -122.4167, '{"general","icu"}', 1, '{"BlueCross"}'),
+('hosp-aiims-delhi', 'AIIMS New Delhi', 'LIC-DL-00101', '+91-11-26588500', 'Ansari Nagar, New Delhi', 28.5672, 77.2100, '{"medicine","surgery","cardiology","neurology","orthopaedics","paediatrics","gynaecology","ent","dermatology","diagnostics","emergency","icu"}', 1, '{"Ayushman Bharat","Government Schemes","BlueCross","UnitedHealth"}'),
+('hosp-apollo-delhi', 'Apollo Hospitals – Delhi', 'LIC-DL-00102', '+91-11-26925858', 'Sarita Vihar, Delhi-Mathura Road, New Delhi', 28.5355, 77.2880, '{"medicine","surgery","cardiology","neurology","orthopaedics","paediatrics","gynaecology","ent","dermatology","diagnostics","emergency","icu"}', 2, '{"BlueCross","UnitedHealth","Star Health","Max Bupa","Cigna"}'),
+('hosp-fortis-gurugram', 'Fortis Memorial Research Institute – Gurugram', 'LIC-HR-00201', '+91-124-4921021', 'Sector 44, Opposite HUDA City Centre, Gurugram, Haryana', 28.4595, 77.0725, '{"medicine","surgery","cardiology","neurology","orthopaedics","paediatrics","gynaecology","ent","dermatology","diagnostics","emergency","icu"}', 3, '{"BlueCross","UnitedHealth","Religare","Cigna","Max Bupa"}'),
+('hosp-narayana-bengaluru', 'Narayana Health – Bengaluru', 'LIC-KA-00301', '+91-80-71222222', '258/A, Bommasandra Industrial Area, Anekal Taluk, Bengaluru, Karnataka', 12.8093, 77.6974, '{"medicine","surgery","cardiology","neurology","orthopaedics","paediatrics","gynaecology","ent","dermatology","diagnostics","emergency","icu"}', 2, '{"BlueCross","Star Health","Ayushman Bharat","UnitedHealth"}'),
+('hosp-tata-mumbai', 'Tata Memorial Hospital – Mumbai', 'LIC-MH-00401', '+91-22-24177000', 'Dr. Ernest Borges Road, Parel, Mumbai, Maharashtra', 19.0028, 72.8427, '{"medicine","surgery","cardiology","neurology","orthopaedics","paediatrics","gynaecology","ent","dermatology","diagnostics","emergency","icu","oncology"}', 1, '{"Ayushman Bharat","Government Schemes","BlueCross","Star Health"}')
 ON CONFLICT (hospital_code) DO NOTHING;
 
 -- Seed inventory linked to hospitals
@@ -153,6 +158,26 @@ ON CONFLICT (hospital_id) DO NOTHING;
 
 INSERT INTO public.hospital_inventory (hospital_id, icu_beds_available, general_beds_available, cardiac_beds_available, trauma_beds_available, ambulances_available, total_ambulance_fleet)
 SELECT id, 2, 8, 0, 1, 2, 3 FROM public.hospitals WHERE hospital_code = 'hosp-002'
+ON CONFLICT (hospital_id) DO NOTHING;
+
+INSERT INTO public.hospital_inventory (hospital_id, icu_beds_available, general_beds_available, cardiac_beds_available, trauma_beds_available, ambulances_available, total_ambulance_fleet)
+SELECT id, 15, 50, 10, 12, 8, 10 FROM public.hospitals WHERE hospital_code = 'hosp-aiims-delhi'
+ON CONFLICT (hospital_id) DO NOTHING;
+
+INSERT INTO public.hospital_inventory (hospital_id, icu_beds_available, general_beds_available, cardiac_beds_available, trauma_beds_available, ambulances_available, total_ambulance_fleet)
+SELECT id, 10, 35, 8, 6, 5, 8 FROM public.hospitals WHERE hospital_code = 'hosp-apollo-delhi'
+ON CONFLICT (hospital_id) DO NOTHING;
+
+INSERT INTO public.hospital_inventory (hospital_id, icu_beds_available, general_beds_available, cardiac_beds_available, trauma_beds_available, ambulances_available, total_ambulance_fleet)
+SELECT id, 12, 40, 6, 8, 6, 8 FROM public.hospitals WHERE hospital_code = 'hosp-fortis-gurugram'
+ON CONFLICT (hospital_id) DO NOTHING;
+
+INSERT INTO public.hospital_inventory (hospital_id, icu_beds_available, general_beds_available, cardiac_beds_available, trauma_beds_available, ambulances_available, total_ambulance_fleet)
+SELECT id, 14, 45, 12, 6, 5, 7 FROM public.hospitals WHERE hospital_code = 'hosp-narayana-bengaluru'
+ON CONFLICT (hospital_id) DO NOTHING;
+
+INSERT INTO public.hospital_inventory (hospital_id, icu_beds_available, general_beds_available, cardiac_beds_available, trauma_beds_available, ambulances_available, total_ambulance_fleet)
+SELECT id, 18, 60, 8, 10, 7, 10 FROM public.hospitals WHERE hospital_code = 'hosp-tata-mumbai'
 ON CONFLICT (hospital_id) DO NOTHING;
 
 -- --------------------------------------------------------

@@ -100,6 +100,21 @@ export default function HospitalDashboard({ hospitalId = 'hosp-001' }) {
     }));
   };
 
+  const hospitalDetailsMap = {
+    'hosp-001': { name: 'St. Jude Trauma & Cardiac Emergency Center', license: 'LIC-CA-94812' },
+    'hosp-002': { name: 'Mercy Regional Emergency Care', license: 'LIC-CA-94815' },
+    'hosp-aiims-delhi': { name: 'AIIMS New Delhi', license: 'LIC-DL-00101' },
+    'hosp-apollo-delhi': { name: 'Apollo Hospitals – Delhi', license: 'LIC-DL-00102' },
+    'hosp-fortis-gurugram': { name: 'Fortis Memorial Research Institute – Gurugram', license: 'LIC-HR-00201' },
+    'hosp-narayana-bengaluru': { name: 'Narayana Health – Bengaluru', license: 'LIC-KA-00301' },
+    'hosp-tata-mumbai': { name: 'Tata Memorial Hospital – Mumbai', license: 'LIC-MH-00401' },
+  };
+
+  const currentHospital = hospitalDetailsMap[hospitalId] || {
+    name: 'St. Jude Trauma & Cardiac Emergency Center',
+    license: 'HOSP-CA-94812'
+  };
+
   return (
     <div style={styles.container}>
       {/* Top Header */}
@@ -107,8 +122,8 @@ export default function HospitalDashboard({ hospitalId = 'hosp-001' }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <img src="/everhealth-logo.png" alt="EverHealth Logo" style={{ height: '52px', borderRadius: '10px', background: '#fff', padding: '4px 8px', border: '1px solid #C0C3B9' }} />
           <div>
-            <h1 style={styles.title}>St. Jude Trauma & Cardiac Emergency Center</h1>
-            <p style={styles.subtitle}>EverHealth Network | Hospital ID: {hospitalId} | License: HOSP-CA-94812</p>
+            <h1 style={styles.title}>{currentHospital.name}</h1>
+            <p style={styles.subtitle}>EverHealth Network | Hospital ID: {hospitalId} | License: {currentHospital.license}</p>
           </div>
         </div>
         <div style={styles.headerActions}>
