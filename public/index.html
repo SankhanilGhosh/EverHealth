@@ -1731,6 +1731,19 @@
                   </div>
                 </div>
 
+                <!-- Emergency Hospital Matching Callout Button for High/Critical Risk -->
+                <div id="seriousEmergencyCallout" style="display: none; margin-bottom: 24px; background: linear-gradient(135deg, #fee2e2, #fff1f2); border: 2.5px solid #dc2626; border-radius: 16px; padding: 18px; text-align: center; box-shadow: 0 10px 30px rgba(220, 38, 38, 0.25);">
+                  <div style="font-size: 16px; font-weight: 800; color: #991b1b; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>🚨 EMERGENCY ALERT: Critical Health Risk Detected (Score <span id="emerScoreVal">45</span>/100)</span>
+                  </div>
+                  <p style="font-size: 13px; color: #7f1d1d; margin-bottom: 14px; line-height: 1.4;">
+                    AI Risk Predictor detected physiological instability. Instant hospital bed matching & ambulance dispatch recommended.
+                  </p>
+                  <button type="button" class="btn btn-danger" style="background: linear-gradient(135deg, #dc2626, #991b1b); font-size: 16px; font-weight: 800; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4); width: 100%; cursor: pointer;" onclick="openEmergencyHospitalMatching()">
+                    🚨 Emergency — Open Hospital Matching Now 🏥
+                  </button>
+                </div>
+
                 <!-- 2. DYNAMIC DAILY FITNESS TARGETS GRID -->
                 <div style="margin-bottom: 24px;">
                   <h3 style="font-size: 15px; font-weight: 800; color: var(--color-dark-forest); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
@@ -3025,15 +3038,18 @@
     }
 
     function filterNotifications(category) {
-      document.querySelectorAll('#notificationsModal .btn-secondary').forEach(b => b.classList.remove('active'));
-      const activeBtn = document.getElementById(`notifFilter-${category}`);
-      if (activeBtn) activeBtn.classList.add('active');
+      document.querySelectorAll('#notificationsModal .btn-secondary, #pTabPanel-notifications .btn-secondary').forEach(b => b.classList.remove('active'));
+      const activeBtnModal = document.getElementById(`notifFilter-${category}`);
+      if (activeBtnModal) activeBtnModal.classList.add('active');
+      const activeBtnTab = document.getElementById(`notifFilterTab-${category}`);
+      if (activeBtnTab) activeBtnTab.classList.add('active');
       renderNotificationsList(category);
     }
 
     function renderNotificationsList(filterCategory = 'all') {
       const container = document.getElementById('notificationsList');
-      if (!container) return;
+      const tabContainer = document.getElementById('notificationsTabList');
+      if (!container && !tabContainer) return;
 
       const items = filterCategory === 'all' 
         ? state.notifications 
@@ -3043,20 +3059,20 @@
       const badgeCountEl = document.getElementById('notifBadgeCount');
       if (badgeCountEl) badgeCountEl.innerText = unreadCount;
 
-      if (items.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No notifications found for this category.</div>`;
-        return;
-      }
-
-      container.innerHTML = items.map(n => `
-        <div style="background: ${n.unread ? '#f0fdf4' : '#f8fafc'}; border: 1.5px solid ${n.unread ? '#86efac' : 'var(--color-sage-ash)'}; border-radius: 12px; padding: 12px 14px; position: relative;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <strong style="font-size: 13px; color: var(--color-dark-forest);">${n.title}</strong>
-            <span style="font-size: 11px; color: var(--text-muted);">${n.time}</span>
+      const renderHTML = items.length === 0 
+        ? `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">No notifications found for this category.</div>`
+        : items.map(n => `
+          <div style="background: ${n.unread ? '#f0fdf4' : '#f8fafc'}; border: 1.5px solid ${n.unread ? '#86efac' : 'var(--color-sage-ash)'}; border-radius: 12px; padding: 14px 16px; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <strong style="font-size: 14px; color: var(--color-dark-forest);">${n.title}</strong>
+              <span style="font-size: 11px; color: var(--text-muted);">${n.time}</span>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">${n.detail}</p>
           </div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">${n.detail}</p>
-        </div>
-      `).join('');
+        `).join('');
+
+      if (container) container.innerHTML = renderHTML;
+      if (tabContainer) tabContainer.innerHTML = renderHTML;
     }
 
     function markAllNotificationsRead() {
@@ -3752,6 +3768,18 @@
 
       if (summaryEl) summaryEl.innerText = data.statusSummary;
 
+      // Check for High or Critical Serious Health Risk
+      const emerCallout = document.getElementById('seriousEmergencyCallout');
+      const emerScoreVal = document.getElementById('emerScoreVal');
+      if (emerCallout) {
+        if (data.riskLevel === 'HIGH' || data.riskLevel === 'CRITICAL' || data.healthScore <= 60) {
+          emerCallout.style.display = 'block';
+          if (emerScoreVal) emerScoreVal.innerText = data.healthScore;
+        } else {
+          emerCallout.style.display = 'none';
+        }
+      }
+
       const targets = data.fitnessTargets || generateLocalFitnessTargets(data.healthScore, data.riskLevel);
       if (modeEl) modeEl.innerText = targets.modeLabel;
       if (reasonEl) reasonEl.innerText = targets.adjustmentReason;
@@ -3842,6 +3870,59 @@
           `;
         }).join('');
       }
+    }
+
+    function openEmergencyHospitalMatching() {
+      switchPatientTab('hospitals');
+      const severityEl = document.getElementById('matchTabSeverity');
+      if (severityEl) severityEl.value = 'LIFE_THREATENING';
+      fetchHospitalMatches('hospitalsTabGrid');
+      const dashLayout = document.querySelector('#view-user-dashboard .dashboard-layout');
+      if (dashLayout) dashLayout.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function applyVitalsPreset(type) {
+      const hrEl = document.getElementById('recHr');
+      const spo2El = document.getElementById('recSpo2');
+      const stressEl = document.getElementById('recStress');
+      const activityEl = document.getElementById('recActivity');
+
+      if (type === 'optimal') {
+        if (hrEl) hrEl.value = 74;
+        if (spo2El) spo2El.value = 98.5;
+        if (stressEl) stressEl.value = 28;
+        if (activityEl) activityEl.value = 35;
+      } else if (type === 'moderate') {
+        if (hrEl) hrEl.value = 88;
+        if (spo2El) spo2El.value = 96.0;
+        if (stressEl) stressEl.value = 65;
+        if (activityEl) activityEl.value = 20;
+      } else if (type === 'high') {
+        if (hrEl) hrEl.value = 135;
+        if (spo2El) spo2El.value = 91.0;
+        if (stressEl) stressEl.value = 75;
+        if (activityEl) activityEl.value = 10;
+      } else if (type === 'critical') {
+        if (hrEl) hrEl.value = 165;
+        if (spo2El) spo2El.value = 84.5;
+        if (stressEl) stressEl.value = 90;
+        if (activityEl) activityEl.value = 5;
+      }
+
+      calculateHealthRecommendations();
+    }
+
+    function syncNoiseFitToPredictor() {
+      const nFitHr = document.getElementById('nFitHrVal') ? parseInt(document.getElementById('nFitHrVal').innerText) : 74;
+      const nFitSpo2 = document.getElementById('nFitSpo2Val') ? parseFloat(document.getElementById('nFitSpo2Val').innerText) : 98.5;
+
+      const hrEl = document.getElementById('recHr');
+      const spo2El = document.getElementById('recSpo2');
+
+      if (hrEl) hrEl.value = nFitHr || 74;
+      if (spo2El) spo2El.value = nFitSpo2 || 98.5;
+
+      calculateHealthRecommendations();
     }
 
     function toggleRecoveryGoalStep(stepId) {
