@@ -1280,14 +1280,31 @@
                 <input type="text" id="hName" class="form-control" placeholder="Apollo Hospital Center" required>
               </div>
               <div class="form-group">
-                <label>License ID</label>
+                <label>Medical License ID</label>
                 <input type="text" id="hLicense" class="form-control" placeholder="LIC-CA-94812" required>
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Street Address</label>
-              <input type="text" id="hAddress" class="form-control" placeholder="500 Medical Drive, MG Road, India" required>
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Hospital Official Email</label>
+                <input type="email" id="hEmail" class="form-control" placeholder="admin@apollohospital.org" required>
+              </div>
+              <div class="form-group">
+                <label>Admin Security Password</label>
+                <input type="password" id="hPassword" class="form-control" placeholder="••••••••••••" required>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Emergency Dispatch Hotline Phone</label>
+                <input type="tel" id="hPhone" class="form-control" placeholder="+1-555-0190" required>
+              </div>
+              <div class="form-group">
+                <label>Street Address & City</label>
+                <input type="text" id="hAddress" class="form-control" placeholder="500 Medical Drive, MG Road, India" required>
+              </div>
             </div>
 
             <div class="grid-2">
@@ -3394,18 +3411,29 @@
       const query = emailOrPhone.toLowerCase();
       
       if (role === 'hospital') {
-        const validHospitals = [
-          { id: 'hosp-001', licenseId: 'lic-ca-94812', name: 'St. Jude Trauma Center' },
-          { id: 'hosp-002', licenseId: 'lic-ca-94815', name: 'Mercy Regional Emergency' }
+        let validHospitals = [
+          { id: 'hosp-001', licenseId: 'lic-ca-94812', email: 'admin@stjude-hospital.org', name: 'St. Jude Trauma Center' },
+          { id: 'hosp-002', licenseId: 'lic-ca-94815', email: 'contact@mercyregional.org', name: 'Mercy Regional Emergency' }
         ];
-        const match = validHospitals.find(h => h.id.toLowerCase() === query || h.licenseId.toLowerCase() === query || h.name.toLowerCase().includes(query));
+        try {
+          const savedH = JSON.parse(localStorage.getItem('everhealth_registered_hospitals') || '[]');
+          validHospitals = validHospitals.concat(savedH);
+        } catch (e) {}
+
+        const match = validHospitals.find(h => 
+          h.id.toLowerCase() === query || 
+          (h.licenseId && h.licenseId.toLowerCase() === query) || 
+          (h.email && h.email.toLowerCase() === query) ||
+          h.name.toLowerCase().includes(query)
+        );
+
         if (match) {
           savePersistentSession('hospital', match.id);
           openHospitalVerificationModal(match.id);
         } else {
           if (statusBox) {
             statusBox.style.display = 'block';
-            statusBox.innerText = `❌ Login Failed: Hospital license or ID "${emailOrPhone}" not found in database. New hospital facilities must register first.`;
+            statusBox.innerText = `❌ Login Failed: Hospital email, license ID, or name "${emailOrPhone}" not found in database. New hospital facilities must register first.`;
           }
         }
         return;
@@ -3652,6 +3680,70 @@
       renderPatientProfileUI();
       alert(`Account successfully created for ${name}!\n\nYour Medical History (${medicalHistoryDetails.length} household condition(s) declared) has been saved.`);
       navigateTo('user-dashboard');
+    }
+
+    async function handleHospitalSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('hName').value.trim();
+      const licenseId = document.getElementById('hLicense').value.trim();
+      const email = document.getElementById('hEmail').value.trim();
+      const password = document.getElementById('hPassword').value.trim();
+      const phone = document.getElementById('hPhone') ? document.getElementById('hPhone').value.trim() : '+1-555-0190';
+      const address = document.getElementById('hAddress').value.trim();
+      const pricingTier = Number(document.getElementById('hPricingTier').value) || 2;
+      const totalFleet = Number(document.getElementById('hFleet').value) || 4;
+
+      const serviceChips = document.querySelectorAll('#signupServicesTagBox .service-chip.active');
+      const serviceTags = Array.from(serviceChips).map(c => c.innerText.replace('✓ ', '').replace(' Care', '').toLowerCase().trim());
+
+      const hospId = `hosp-${Date.now()}`;
+
+      const hospitalPayload = {
+        id: hospId,
+        name: name,
+        licenseId: licenseId,
+        email: email,
+        password: password,
+        address: address,
+        phoneNumber: phone,
+        pricingTier: pricingTier,
+        totalAmbulanceFleet: totalFleet,
+        serviceTags: serviceTags.length > 0 ? serviceTags : ['cardiac', 'trauma', 'icu'],
+        acceptedInsurance: ['BlueCross', 'UnitedHealth', 'Kaiser', 'Aetna']
+      };
+
+      try {
+        const savedHospitals = JSON.parse(localStorage.getItem('everhealth_registered_hospitals') || '[]');
+        savedHospitals.push(hospitalPayload);
+        localStorage.setItem('everhealth_registered_hospitals', JSON.stringify(savedHospitals));
+      } catch (err) {}
+
+      state.hospitalsMap[hospId] = {
+        hospital: hospitalPayload,
+        inventory: {
+          icuBedsAvailable: 4,
+          cardiacBedsAvailable: 3,
+          traumaBedsAvailable: 4,
+          generalBedsAvailable: 15,
+          ambulancesAvailable: totalFleet,
+          totalAmbulanceFleet: totalFleet
+        }
+      };
+
+      state.currentHospitalId = hospId;
+      state.pendingHospitalLoginId = hospId;
+
+      try {
+        await fetch('/v1/hospitals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(hospitalPayload)
+        });
+      } catch (err) {
+        console.warn('Backend hospital registration API sync skipped, using local registration state:', err);
+      }
+
+      openHospitalVerificationModal(hospId);
     }
 
     function renderPatientProfileUI() {
