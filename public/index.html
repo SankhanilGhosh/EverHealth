@@ -3086,6 +3086,11 @@
       <div style="display: flex; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1.5px solid var(--color-sage-ash);">
         <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="markAllNotificationsRead()">✓ Mark All Read</button>
         <button type="button" class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="clearNotifications()">🗑️ Clear History</button>
+        <button type="button" class="btn" style="flex: 1; font-size: 12px;" onclick="closeNotificationsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ========================================== -->
   <!-- USER-ONLY FLOATING AI HEALTH ASSISTANT     -->
   <!-- ========================================== -->
@@ -6043,12 +6048,37 @@
         `The emergency department has been notified of your incoming transfer.`);
     }
 
+    function checkPersistentSession() {
+      try {
+        const raw = localStorage.getItem('everhealth_persistent_session');
+        if (raw) {
+          const session = JSON.parse(raw);
+          if (session && session.role === 'patient') {
+            state.authRole = 'patient';
+            if (session.user) state.currentUser = session.user;
+            renderPatientProfileUI();
+            navigateTo('user-dashboard');
+            return true;
+          }
+          if (session && session.role === 'hospital') {
+            state.authRole = 'hospital';
+            if (session.hospitalId) state.currentHospitalId = session.hospitalId;
+            navigateTo('hospital-dashboard');
+            return true;
+          }
+        }
+      } catch (e) {}
+
+      // Default to Patient Dashboard mode so AI Assistant and patient features load immediately
+      state.authRole = 'patient';
+      renderPatientProfileUI();
+      navigateTo('user-dashboard');
+      return true;
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       syncUserBudget(40000);
-      const isRestored = checkPersistentSession();
-      if (!isRestored) {
-        navigateTo('login');
-      }
+      checkPersistentSession();
     });
   </script>
 </body>
