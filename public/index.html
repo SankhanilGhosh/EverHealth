@@ -555,6 +555,42 @@
     .tier-standard { background: var(--color-cream-warm); color: var(--color-dark-forest); border: 1px solid var(--color-sage-ash); }
     .tier-premium { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
 
+    @keyframes pulseBot {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 10px 30px rgba(22, 101, 52, 0.4), 0 0 0 0 rgba(167, 243, 208, 0.7); }
+      70% { box-shadow: 0 14px 35px rgba(22, 101, 52, 0.5), 0 0 0 12px rgba(167, 243, 208, 0); }
+      100% { box-shadow: 0 10px 30px rgba(22, 101, 52, 0.4), 0 0 0 0 rgba(167, 243, 208, 0); }
+    }
+    .floating-circle-ai-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50% !important;
+      background: linear-gradient(135deg, #166534, #064e3b, #022c22) !important;
+      border: 3px solid #a7f3d0 !important;
+      color: #ffffff;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer;
+      position: relative;
+      outline: none;
+      animation: pulseGlow 2.5s infinite;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+    }
+    .floating-circle-ai-btn:hover {
+      transform: scale(1.12) translateY(-3px);
+      border-color: #ffffff !important;
+      box-shadow: 0 18px 45px rgba(22, 101, 52, 0.6), 0 0 25px rgba(34, 197, 94, 0.5);
+    }
+    .floating-circle-ai-btn:active {
+      transform: scale(0.95);
+    }
+
     .tag-list {
       display: flex;
       flex-wrap: wrap;
@@ -6125,59 +6161,77 @@
   <!-- ========================================== -->
   <!-- USER-ONLY FLOATING AI HEALTH ASSISTANT     -->
   <!-- ========================================== -->
+  <!-- ========================================== -->
+  <!-- USER-ONLY FLOATING AI HEALTH ASSISTANT     -->
+  <!-- ========================================== -->
   <div id="aiAssistantFloatingWidget" style="display: block; position: fixed !important; bottom: 28px !important; right: 28px !important; z-index: 9999999 !important; font-family: inherit;">
     
-    <!-- Floating Circular Trigger Button -->
-    <button type="button" id="aiAssistantTriggerBtn" onclick="toggleAiAssistantDrawer()" style="background: linear-gradient(135deg, #166534, #064e3b); color: #ffffff; border: 3.5px solid #a7f3d0; border-radius: 50px; padding: 14px 22px; display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(167, 243, 208, 0.5); transition: all 0.3s ease; position: relative;">
-      <span style="font-size: 26px; animation: pulseBot 2s infinite;">🤖</span>
-      <div style="text-align: left;">
-        <div style="font-size: 14px; font-weight: 800; line-height: 1.1; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">AI Health Advisor</div>
-        <div style="font-size: 11px; color: #a7f3d0; margin-top: 2px; font-weight: 600;" id="aiAssistantSubLabel">Task Reminders & Q&A</div>
-      </div>
-      <span class="badge-tag" style="background: #ef4444; color: #ffffff; font-size: 11px; border-radius: 12px; padding: 3px 8px; font-weight: bold; position: absolute; top: -8px; right: -4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" id="aiTaskPendingBadge">2 Tasks</span>
+    <!-- Circular Floating Popup Trigger Button -->
+    <button type="button" id="aiAssistantTriggerBtn" class="floating-circle-ai-btn" onclick="toggleAiAssistantDrawer()" title="Open 24/7 AI Health Assistant">
+      <span style="font-size: 30px; animation: pulseBot 2s infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🤖</span>
+      
+      <!-- Notification Badge Count -->
+      <span id="aiTaskPendingBadge" style="position: absolute; top: -2px; right: -2px; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 12px; background: #ef4444; color: #ffffff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 3px 8px rgba(0,0,0,0.3);">
+        2
+      </span>
     </button>
 
     <!-- Interactive AI Assistant Chat Drawer Window -->
-    <div id="aiAssistantDrawer" style="display: none; width: 390px; max-width: calc(100vw - 32px); height: 540px; max-height: calc(100vh - 100px); background: #ffffff; border: 2.5px solid #166534; border-radius: 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); overflow: hidden; flex-direction: column; position: absolute; bottom: 75px; right: 0; z-index: 9999999;">
+    <div id="aiAssistantDrawer" style="display: none; width: 440px; max-width: calc(100vw - 36px); height: 580px; max-height: calc(100vh - 100px); background: #ffffff; border: 2.5px solid #166534; border-radius: 24px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35), 0 4px 15px rgba(0,0,0,0.08); overflow: hidden; flex-direction: column; position: absolute; bottom: 78px; right: 0; z-index: 9999999; animation: modalSlide 0.25s ease-out;">
       
-      <!-- Drawer Header -->
-      <div style="background: linear-gradient(135deg, #166534, #064e3b); color: #ffffff; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="font-size: 26px; background: rgba(255,255,255,0.15); width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">🤖</div>
-          <div>
-            <div style="font-size: 15px; font-weight: 800; margin: 0;">EverHealth AI Assistant</div>
-            <div style="font-size: 11px; color: #a7f3d0; display: flex; align-items: center; gap: 4px;">
-              <span style="display: inline-block; width: 7px; height: 7px; background: #22c55e; border-radius: 50%;"></span> Online • Personal Health Advisor
+      <!-- Drawer Header matching User Screenshot -->
+      <div style="background: linear-gradient(135deg, #166534, #064e3b); color: #ffffff; padding: 16px 18px; border-bottom: 1.5px solid rgba(167, 243, 208, 0.4);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 26px; background: #dcfce7; width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #a7f3d0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">🤖</div>
+            <div>
+              <div style="font-size: 15.5px; font-weight: 800; margin: 0; letter-spacing: -0.3px; color: #ffffff;">EverHealth AI Assistant & Predictor</div>
+              <div style="font-size: 11.5px; color: #a7f3d0; margin-top: 2px;">Ask any health question, monitor daily tasks, or evaluate symptoms</div>
             </div>
           </div>
+          <button type="button" onclick="toggleAiAssistantDrawer()" style="background: rgba(255,255,255,0.2); border: none; color: #ffffff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✕</button>
         </div>
-        <button type="button" onclick="toggleAiAssistantDrawer()" style="background: rgba(255,255,255,0.2); border: none; color: #ffffff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 14px;">✕</button>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.15);">
+          <div style="font-size: 11px; color: #a7f3d0; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+            <span style="display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e;"></span> 24/7 Clinical Model Active
+          </div>
+          <span style="background: rgba(255,255,255,0.18); color: #ffffff; font-size: 11px; font-weight: 700; border-radius: 12px; padding: 2px 10px; border: 1px solid rgba(255,255,255,0.3);">
+            ✨ 87.4% Diagnostic Accuracy
+          </span>
+        </div>
       </div>
 
-      <!-- Quick Action Buttons / Task Reminders Bar -->
-      <div style="background: var(--color-ivory-light); padding: 10px 12px; border-bottom: 1px solid var(--color-sage-ash); display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;">
-        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px; white-space: nowrap; border-radius: 12px;" onclick="triggerAiTaskReminder()">🎯 Daily Tasks Reminder</button>
-        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px; white-space: nowrap; border-radius: 12px;" onclick="askAiQuickQuery('hydration')">💧 Hydration Goal</button>
-        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px; white-space: nowrap; border-radius: 12px;" onclick="askAiQuickQuery('vitals')">🩺 Vitals Check</button>
-        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px; white-space: nowrap; border-radius: 12px;" onclick="askAiQuickQuery('meds')">💊 Medications</button>
+      <!-- Quick Action Buttons / Task Reminders Chips Bar -->
+      <div style="background: #f8fafc; padding: 10px 12px; border-bottom: 1px solid var(--color-sage-ash); display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;">
+        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 5px 11px; white-space: nowrap; border-radius: 14px; font-weight: 700; background: #ffffff; border: 1px solid var(--color-sage-ash);" onclick="triggerAiTaskReminder()">🎯 Daily Tasks Reminder</button>
+        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 5px 11px; white-space: nowrap; border-radius: 14px; font-weight: 700; background: #ffffff; border: 1px solid var(--color-sage-ash);" onclick="askAiQuickQuery('hydration')">💧 Hydration Goal</button>
+        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 5px 11px; white-space: nowrap; border-radius: 14px; font-weight: 700; background: #ffffff; border: 1px solid var(--color-sage-ash);" onclick="askAiQuickQuery('vitals')">🩺 Baseline Vitals Check</button>
+        <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 5px 11px; white-space: nowrap; border-radius: 14px; font-weight: 700; background: #ffffff; border: 1px solid var(--color-sage-ash);" onclick="askAiQuickQuery('meds')">💊 Medication Schedule</button>
       </div>
 
       <!-- Chat Messages Container -->
       <div id="aiChatMessages" style="flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fafafa;">
-        <!-- Welcome Message from AI -->
+        <!-- Welcome Card from AI (Matching User Image) -->
         <div style="display: flex; gap: 10px; align-items: flex-start;">
-          <div style="font-size: 20px; background: #e0f2fe; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">🤖</div>
-          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); padding: 10px 14px; border-radius: 14px; font-size: 12.5px; color: var(--color-dark-forest); line-height: 1.4; max-width: 85%; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
-            Hello <strong id="aiUserNameGreet">Jane Doe</strong>! 👋 I'm your 24/7 personal AI Health Assistant.<br><br>
-            I can answer any health, symptoms, diet, or fitness questions, and remind you about your <strong>daily fitness targets and recovery plan tasks</strong>. How can I help you today?
+          <div style="font-size: 20px; background: #dcfce7; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid #a7f3d0;">🤖</div>
+          <div style="background: #ffffff; border: 1.5px solid var(--color-sage-ash); padding: 12px 16px; border-radius: 16px; font-size: 12.5px; color: var(--color-dark-forest); line-height: 1.5; flex: 1; box-shadow: 0 3px 10px rgba(0,0,0,0.03);">
+            <div style="font-size: 13.5px; font-weight: 800; color: #166534; margin-bottom: 6px;">
+              Welcome to your <strong>24/7 AI Health Assistant Dashboard!</strong> 🩺
+            </div>
+            <ul style="margin: 0 0 10px 0; padding-left: 16px; font-size: 12px; color: var(--text-dark);">
+              <li style="margin-bottom: 4px;"><strong>Clinical Diagnostic Model Accuracy:</strong> 87.4% (Validated against physiological datasets).</li>
+              <li style="margin-bottom: 4px;">I monitor your vitals, remind you about your <strong>daily fitness recovery tasks</strong>, and provide evidence-based guidance for symptoms.</li>
+            </ul>
+            <em style="color: var(--text-muted); font-size: 12px;">Hello <strong id="aiUserNameGreet">Jane Doe</strong>! How can I assist you today?</em>
           </div>
         </div>
       </div>
 
       <!-- Chat Input Controls -->
-      <div style="padding: 10px 12px; background: #ffffff; border-top: 1.5px solid var(--color-sage-ash); display: flex; gap: 8px; align-items: center;">
-        <input type="text" id="aiChatInput" class="form-control" style="font-size: 12.5px; padding: 8px 12px; border-radius: 10px;" placeholder="Ask any health question or ask for task reminders..." onkeypress="if(event.key==='Enter') sendAiChatMessage()">
-        <button type="button" class="btn btn-success" style="font-size: 13px; padding: 8px 14px; border-radius: 10px; font-weight: bold;" onclick="sendAiChatMessage()">Send</button>
+      <div style="padding: 12px 14px; background: #ffffff; border-top: 1.5px solid var(--color-sage-ash); display: flex; gap: 8px; align-items: center;">
+        <input type="text" id="aiChatInput" class="form-control" style="font-size: 13px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--color-sage-ash);" placeholder="Ask AI any health question, symptoms advice, or task reminders..." onkeypress="if(event.key==='Enter') sendAiChatMessage()">
+        <button type="button" class="btn btn-success" style="font-size: 13px; padding: 10px 16px; border-radius: 12px; font-weight: 800; background: linear-gradient(135deg, #166534, #064e3b); white-space: nowrap; border: none; cursor: pointer;" onclick="sendAiChatMessage()">🤖 Ask AI Assistant</button>
       </div>
 
     </div>
