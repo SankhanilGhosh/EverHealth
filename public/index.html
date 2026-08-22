@@ -1374,6 +1374,15 @@
               <span class="nav-left"><span style="font-size: 16px;">🏥</span> Hospital Matching</span>
             </a>
 
+            <div class="menu-group-label">CONSULTATION & APPOINTMENTS</div>
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-doctors" onclick="switchPatientTab('doctors')">
+              <span class="nav-left"><span style="font-size: 16px;">👨‍⚕️</span> Find a Doctor</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-item" id="pSideTab-appointments" onclick="switchPatientTab('appointments')">
+              <span class="nav-left"><span style="font-size: 16px;">📅</span> Appointments</span>
+              <span class="badge-tag badge-count" id="apptBadgeCount">2</span>
+            </a>
+
             <div class="menu-group-label">CLINICAL & DEPARTMENTS</div>
             <a href="javascript:void(0)" class="sidebar-nav-item" onclick="switchPatientTab('home')">
               <span class="nav-left"><span style="font-size: 16px;">🔬</span> Live Bio-Telemetry</span>
@@ -2116,6 +2125,150 @@
               <div style="display: flex; gap: 12px; padding-top: 14px; border-top: 1.5px solid var(--color-sage-ash);">
                 <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="markAllNotificationsRead()">✓ Mark All Read</button>
                 <button type="button" class="btn btn-secondary" style="font-size: 13px;" onclick="clearNotifications()">🗑️ Clear History</button>
+              </div>
+            </section>
+          </div>
+
+          <!-- 7. FIND A DOCTOR TAB PANEL -->
+          <div id="pTabPanel-doctors" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--primary); background: #ffffff; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">👨‍⚕️</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Find Verified Specialist Doctors & Consultants
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                    Browse board-certified specialists, check real-time OPD availability, and schedule in-person or video consultations.
+                  </p>
+                </div>
+                <button type="button" class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;" onclick="switchPatientTab('appointments')">
+                  📅 View My Scheduled Appointments
+                </button>
+              </div>
+
+              <!-- Search & Filter Controls -->
+              <div class="grid-3" style="margin-bottom: 20px;">
+                <div class="form-group">
+                  <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Search Doctor Name / Keyword</label>
+                  <input type="text" id="docSearchQuery" class="form-control" placeholder="Dr. Sharma / Cardiologist / Pediatric..." oninput="filterDoctorsList()">
+                </div>
+                <div class="form-group">
+                  <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Medical Specialty</label>
+                  <select id="docSpecialtyFilter" class="form-control" onchange="filterDoctorsList()">
+                    <option value="all">All Specialties</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="General Medicine">General Medicine</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Consultation Mode</label>
+                  <select id="docModeFilter" class="form-control" onchange="filterDoctorsList()">
+                    <option value="all">All Modes (In-Clinic & Video)</option>
+                    <option value="In-Person">In-Person Clinic Visit</option>
+                    <option value="Video">Video Tele-Consultation</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Doctors List Grid -->
+              <div id="doctorsListGrid" class="grid-2" style="gap: 16px;">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </section>
+          </div>
+
+          <!-- 8. APPOINTMENTS TAB PANEL -->
+          <div id="pTabPanel-appointments" class="dash-subtab-panel">
+            <section class="card" style="border: 2px solid var(--primary); background: #ffffff; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid var(--color-sage-ash); flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">📅</span>
+                    <h2 style="font-size: 20px; color: var(--color-dark-forest); margin: 0; font-weight: 800;">
+                      Doctor Appointments & Tele-Consult Schedule
+                    </h2>
+                  </div>
+                  <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                    Manage upcoming consultations, schedule new doctor appointments, and join video tele-consultations.
+                  </p>
+                </div>
+                <button type="button" class="btn btn-success" style="font-size: 12px; padding: 6px 14px;" onclick="scrollToBookAppointmentForm()">
+                  ➕ Schedule New Appointment
+                </button>
+              </div>
+
+              <!-- Schedule List Tabs -->
+              <div style="display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;">
+                <button class="btn btn-secondary active" id="apptFilterTab-upcoming" onclick="filterAppointments('upcoming')">Upcoming Appointments (<span id="cntUpcomingAppt">2</span>)</button>
+                <button class="btn btn-secondary" id="apptFilterTab-completed" onclick="filterAppointments('completed')">Completed Visits (<span id="cntCompletedAppt">1</span>)</button>
+                <button class="btn btn-secondary" id="apptFilterTab-cancelled" onclick="filterAppointments('cancelled')">Cancelled</button>
+              </div>
+
+              <!-- Appointments Schedule Grid -->
+              <div id="appointmentsListGrid" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px;">
+                <!-- Populated dynamically via JS -->
+              </div>
+
+              <!-- Book New Appointment Form Card -->
+              <div id="bookAppointmentFormCard" style="background: #f8fafc; border: 2px solid var(--color-sage-ash); border-radius: 16px; padding: 20px;">
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--color-dark-forest); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                  🗓️ Schedule a New Doctor Appointment
+                </h3>
+
+                <form onsubmit="handleBookAppointmentSubmit(event)">
+                  <div class="grid-2">
+                    <div class="form-group">
+                      <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Select Specialist Doctor</label>
+                      <select id="apptDocSelect" class="form-control" required>
+                        <!-- Populated dynamically -->
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Consultation Mode</label>
+                      <select id="apptModeSelect" class="form-control">
+                        <option value="In-Person Clinic Visit">🏥 In-Person Clinic Visit</option>
+                        <option value="Video Tele-Consultation">🎥 Video Tele-Consultation</option>
+                        <option value="Emergency Triage Consultation">🚑 Emergency Triage Consultation</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="grid-2">
+                    <div class="form-group">
+                      <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Appointment Date</label>
+                      <input type="date" id="apptDateInput" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                      <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Available Time Slot</label>
+                      <select id="apptTimeSelect" class="form-control">
+                        <option value="09:30 AM">09:30 AM (Morning Slot)</option>
+                        <option value="11:00 AM">11:00 AM (Morning Slot)</option>
+                        <option value="02:30 PM">02:30 PM (Afternoon Slot)</option>
+                        <option value="05:00 PM">05:00 PM (Evening Slot)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--color-dark-forest);">Symptoms / Reason for Visit</label>
+                    <input type="text" id="apptReasonInput" class="form-control" placeholder="e.g. Chest tightness, blood pressure follow-up, routine checkup..." value="Routine health evaluation and vital checkup.">
+                  </div>
+
+                  <div style="display: flex; gap: 12px; margin-top: 14px;">
+                    <button type="submit" class="btn btn-success" style="flex: 2; padding: 12px; font-size: 14px; font-weight: 800;">
+                      📅 Confirm & Book Appointment
+                    </button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1; padding: 12px; font-size: 13px;" onclick="resetAppointmentForm()">
+                      Reset Form
+                    </button>
+                  </div>
+                </form>
               </div>
             </section>
           </div>
@@ -3017,18 +3170,13 @@
       const activePanel = document.getElementById(`pTabPanel-${tabName}`);
       if (activePanel) activePanel.classList.add('active');
 
-      if (tabName === 'profile') {
-        renderPatientProfileTab();
-      }
-      if (tabName === 'tasks') {
-        calculateHealthRecommendations();
-      }
-      if (tabName === 'hospitals') {
-        fetchHospitalMatches('hospitalsTabGrid');
-      }
-      if (tabName === 'settings') {
-        renderPatientSettingsTab();
-      }
+      if (tabName === 'profile') renderPatientProfileTab();
+      if (tabName === 'tasks') calculateHealthRecommendations();
+      if (tabName === 'hospitals') fetchHospitalMatches('hospitalsTabGrid');
+      if (tabName === 'settings') renderPatientSettingsTab();
+      if (tabName === 'notifications') renderNotificationsList('all');
+      if (tabName === 'doctors') renderDoctorsList();
+      if (tabName === 'appointments') renderAppointmentsList();
     }
 
     /* ========================================================
@@ -3104,6 +3252,230 @@
       const badgeCountEl = document.getElementById('notifBadgeCount');
       if (badgeCountEl) badgeCountEl.innerText = '0';
       renderNotificationsList('all');
+    }
+
+    /* ========================================================
+       DOCTORS & APPOINTMENTS ENGINE
+       ======================================================== */
+    state.doctors = [
+      { id: 'doc-1', name: 'Dr. Rajesh Sharma', specialty: 'Cardiology', qualification: 'MD, DM (Cardiology)', experience: '16 Years Exp.', hospital: 'St. Jude Emergency Center', fee: 800, rating: 4.9, availableToday: true, mode: 'Both', avatar: '👨‍⚕️', timing: '10:00 AM - 04:00 PM' },
+      { id: 'doc-2', name: 'Dr. Ananya Roy', specialty: 'Pediatrics', qualification: 'MD (Pediatrics), DCH', experience: '12 Years Exp.', hospital: 'St. Jude Emergency Center', fee: 650, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👩‍⚕️', timing: '09:00 AM - 02:00 PM' },
+      { id: 'doc-3', name: 'Dr. Vikram Patel', specialty: 'Neurology', qualification: 'DM (Neurology), MBBS', experience: '20 Years Exp.', hospital: 'Mercy Regional Emergency', fee: 1200, rating: 4.9, availableToday: false, mode: 'Both', avatar: '👨‍⚕️', timing: '02:00 PM - 07:00 PM' },
+      { id: 'doc-4', name: 'Dr. Sunita Deshmukh', specialty: 'General Medicine', qualification: 'MD (Internal Medicine)', experience: '14 Years Exp.', hospital: 'Mercy Regional Emergency', fee: 500, rating: 4.7, availableToday: true, mode: 'Video', avatar: '👩‍⚕️', timing: '11:00 AM - 05:00 PM' },
+      { id: 'doc-5', name: 'Dr. Aris Thorne', specialty: 'Orthopedics', qualification: 'MS (Orthopedics), FRCS', experience: '18 Years Exp.', hospital: 'St. Jude Emergency Center', fee: 900, rating: 4.8, availableToday: true, mode: 'In-Person', avatar: '👨‍⚕️', timing: '10:00 AM - 03:00 PM' }
+    ];
+
+    state.appointments = [
+      { id: 'appt-1', docId: 'doc-1', docName: 'Dr. Rajesh Sharma', specialty: 'Cardiology', hospital: 'St. Jude Emergency Center', date: '2026-08-25', time: '11:00 AM', mode: 'In-Person Clinic Visit', reason: 'Routine cardiovascular checkup & blood pressure review.', status: 'upcoming' },
+      { id: 'appt-2', docId: 'doc-4', docName: 'Dr. Sunita Deshmukh', specialty: 'General Medicine', hospital: 'Mercy Regional Emergency', date: '2026-08-28', time: '02:30 PM', mode: 'Video Tele-Consultation', reason: 'High stress level follow-up & NoiseFit vitals sync.', status: 'upcoming' },
+      { id: 'appt-3', docId: 'doc-2', docName: 'Dr. Ananya Roy', specialty: 'Pediatrics', hospital: 'St. Jude Emergency Center', date: '2026-08-10', time: '10:00 AM', mode: 'In-Person Clinic Visit', reason: 'Pediatric vaccination & growth assessment.', status: 'completed' }
+    ];
+
+    function renderDoctorsList() {
+      filterDoctorsList();
+      populateDoctorSelectOptions();
+    }
+
+    function filterDoctorsList() {
+      const container = document.getElementById('doctorsListGrid');
+      if (!container) return;
+
+      const q = (document.getElementById('docSearchQuery') ? document.getElementById('docSearchQuery').value : '').toLowerCase().trim();
+      const spec = document.getElementById('docSpecialtyFilter') ? document.getElementById('docSpecialtyFilter').value : 'all';
+      const mode = document.getElementById('docModeFilter') ? document.getElementById('docModeFilter').value : 'all';
+
+      const filtered = state.doctors.filter(d => {
+        const matchesQ = !q || d.name.toLowerCase().includes(q) || d.specialty.toLowerCase().includes(q) || d.hospital.toLowerCase().includes(q);
+        const matchesSpec = spec === 'all' || d.specialty === spec;
+        const matchesMode = mode === 'all' || d.mode === 'Both' || (mode === 'In-Person' && d.mode === 'In-Person') || (mode === 'Video' && d.mode === 'Video');
+        return matchesQ && matchesSpec && matchesMode;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px; font-size: 14px;">No doctors found matching your search filters.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(d => `
+        <div style="background: #f8fafc; border: 1.5px solid var(--color-sage-ash); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <div style="font-size: 32px; background: #ffffff; border: 1px solid var(--color-sage-ash); width: 54px; height: 54px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
+                  ${d.avatar}
+                </div>
+                <div>
+                  <strong style="font-size: 16px; color: var(--color-dark-forest);">${d.name}</strong>
+                  <div style="font-size: 12px; color: #1b5e20; font-weight: 700;">${d.specialty} • ${d.qualification}</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">🏥 ${d.hospital}</div>
+                </div>
+              </div>
+              <span class="price-tag" style="background: #fef3c7; color: #92400e;">⭐ ${d.rating}</span>
+            </div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="price-tag" style="font-size: 10px; background: #e0f2fe; color: #0369a1;">🎓 ${d.experience}</span>
+              <span class="price-tag" style="font-size: 10px; background: #dcfce7; color: #166534;">💵 Fee: ₹${d.fee}</span>
+              <span class="price-tag" style="font-size: 10px; background: ${d.availableToday ? '#dcfce7' : '#fee2e2'}; color: ${d.availableToday ? '#166534' : '#b91c1c'};">
+                ${d.availableToday ? '🟢 Available Today' : '🔴 Next Slot Tomorrow'}
+              </span>
+            </div>
+
+            <div style="font-size: 12px; color: var(--text-muted); background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--color-sage-ash); margin-bottom: 14px;">
+              🕒 OPD Timings: <strong>${d.timing}</strong>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-success" style="width: 100%; font-size: 13px; padding: 10px; font-weight: 700;" onclick="selectDoctorForAppointment('${d.id}')">
+            📅 Book Appointment with ${d.name.split(' ')[1] || d.name}
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function populateDoctorSelectOptions(selectedDocId = null) {
+      const select = document.getElementById('apptDocSelect');
+      if (!select) return;
+
+      select.innerHTML = state.doctors.map(d => `
+        <option value="${d.id}" ${d.id === selectedDocId ? 'selected' : ''}>
+          ${d.name} (${d.specialty} • ${d.hospital})
+        </option>
+      `).join('');
+    }
+
+    function selectDoctorForAppointment(docId) {
+      switchPatientTab('appointments');
+      populateDoctorSelectOptions(docId);
+      scrollToBookAppointmentForm();
+    }
+
+    function scrollToBookAppointmentForm() {
+      const formCard = document.getElementById('bookAppointmentFormCard');
+      if (formCard) formCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderAppointmentsList(filterStatus = 'upcoming') {
+      const container = document.getElementById('appointmentsListGrid');
+      if (!container) return;
+
+      document.querySelectorAll('#pTabPanel-appointments .btn-secondary').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`apptFilterTab-${filterStatus}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const items = state.appointments.filter(a => a.status === filterStatus);
+
+      const upcomingCount = state.appointments.filter(a => a.status === 'upcoming').length;
+      const completedCount = state.appointments.filter(a => a.status === 'completed').length;
+
+      const cntUp = document.getElementById('cntUpcomingAppt');
+      if (cntUp) cntUp.innerText = upcomingCount;
+      const cntComp = document.getElementById('cntCompletedAppt');
+      if (cntComp) cntComp.innerText = completedCount;
+      const badgeNav = document.getElementById('apptBadgeCount');
+      if (badgeNav) badgeNav.innerText = upcomingCount;
+
+      if (items.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 24px; background: #f8fafc; border-radius: 12px;">No appointments found in "${filterStatus}" category.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(a => `
+        <div style="background: #f8fafc; border: 1.5px solid ${a.status === 'upcoming' ? '#86efac' : 'var(--color-sage-ash)'}; border-radius: 14px; padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">📅</span>
+                <strong style="font-size: 16px; color: var(--color-dark-forest);">${a.docName}</strong>
+                <span class="price-tag" style="background: #e0f2fe; color: #0369a1; font-size: 11px;">${a.specialty}</span>
+              </div>
+              <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
+                🏥 <strong>${a.hospital}</strong> • 📍 ${a.mode}
+              </div>
+              <div style="font-size: 12px; color: #1e3a8a; margin-top: 4px; background: #eff6ff; padding: 6px 10px; border-radius: 6px; display: inline-block;">
+                🕒 <strong>${a.date} at ${a.time}</strong>
+              </div>
+              ${a.reason ? `<div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">📝 Details: ${a.reason}</div>` : ''}
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+              <span class="price-tag" style="background: ${a.status === 'upcoming' ? '#dcfce7' : a.status === 'completed' ? '#f3e8ff' : '#fee2e2'}; color: ${a.status === 'upcoming' ? '#166534' : a.status === 'completed' ? '#6b21a8' : '#b91c1c'}; font-size: 11px; font-weight: 800;">
+                ${a.status === 'upcoming' ? '🟢 CONFIRMED' : a.status === 'completed' ? '🔵 COMPLETED' : '🔴 CANCELLED'}
+              </span>
+
+              ${a.status === 'upcoming' ? `
+                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                  ${a.mode.includes('Video') ? `
+                    <button type="button" class="btn btn-success" style="font-size: 11px; padding: 4px 10px;" onclick="alert('🎥 Connecting to Secure Tele-Consult Room for ${a.docName}...')">🎥 Join Video Call</button>
+                  ` : `
+                    <a href="tel:+1-555-0190" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px; text-decoration: none;">📞 Call Clinic</a>
+                  `}
+                  <button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px; color: #b91c1c;" onclick="cancelAppointment('${a.id}')">✕ Cancel</button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterAppointments(status) {
+      renderAppointmentsList(status);
+    }
+
+    function handleBookAppointmentSubmit(e) {
+      e.preventDefault();
+      const docSelect = document.getElementById('apptDocSelect');
+      const docId = docSelect ? docSelect.value : 'doc-1';
+      const doctor = state.doctors.find(d => d.id === docId) || state.doctors[0];
+
+      const mode = document.getElementById('apptModeSelect').value;
+      const date = document.getElementById('apptDateInput').value || '2026-08-26';
+      const time = document.getElementById('apptTimeSelect').value;
+      const reason = document.getElementById('apptReasonInput').value.trim();
+
+      const newAppt = {
+        id: `appt-${Date.now()}`,
+        docId: doctor.id,
+        docName: doctor.name,
+        specialty: doctor.specialty,
+        hospital: doctor.hospital,
+        date: date,
+        time: time,
+        mode: mode,
+        reason: reason,
+        status: 'upcoming'
+      };
+
+      state.appointments.unshift(newAppt);
+
+      state.notifications.unshift({
+        id: `notif-${Date.now()}`,
+        category: 'bookings',
+        title: `📅 Appointment Confirmed: ${doctor.name}`,
+        detail: `${mode} scheduled for ${date} at ${time} at ${doctor.hospital}.`,
+        time: 'Just now',
+        unread: true
+      });
+
+      renderAppointmentsList('upcoming');
+      renderNotificationsList('all');
+
+      alert(`✓ Appointment Successfully Confirmed!\n\nDoctor: ${doctor.name} (${doctor.specialty})\nDate & Time: ${date} at ${time}\nMode: ${mode}\nFacility: ${doctor.hospital}`);
+    }
+
+    function cancelAppointment(id) {
+      if (confirm('Are you sure you want to cancel this appointment?')) {
+        const appt = state.appointments.find(a => a.id === id);
+        if (appt) appt.status = 'cancelled';
+        renderAppointmentsList('upcoming');
+      }
+    }
+
+    function resetAppointmentForm() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('apptDateInput').value = today;
+      document.getElementById('apptReasonInput').value = 'Routine health evaluation and vital checkup.';
     }
 
     /* ========================================================
