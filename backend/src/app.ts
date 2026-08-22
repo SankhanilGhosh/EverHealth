@@ -173,7 +173,8 @@ app.post('/v1/auth/login', async (req: Request, res: Response) => {
       const list = hospitalMatchingService.getAllHospitals();
       let match = list.find(item => 
         item.hospital.id.toLowerCase() === query ||
-        item.hospital.licenseId.toLowerCase() === query ||
+        (item.hospital.licenseId && item.hospital.licenseId.toLowerCase() === query) ||
+        (item.hospital.email && item.hospital.email.toLowerCase() === query) ||
         item.hospital.name.toLowerCase().includes(query)
       );
 
@@ -182,7 +183,7 @@ app.post('/v1/auth/login', async (req: Request, res: Response) => {
           const { data: suHosp } = await supabase
             .from('hospitals')
             .select('*')
-            .or(`hospital_code.ilike.${query},license_id.ilike.${query},name.ilike.%${query}%`)
+            .or(`hospital_code.ilike.${query},license_id.ilike.${query},email.ilike.${query},name.ilike.%${query}%`)
             .maybeSingle();
 
           if (suHosp) {
@@ -190,6 +191,7 @@ app.post('/v1/auth/login', async (req: Request, res: Response) => {
               id: suHosp.hospital_code || suHosp.id,
               name: suHosp.name,
               licenseId: suHosp.license_id,
+              email: suHosp.email,
               address: suHosp.address,
               latitude: suHosp.latitude,
               longitude: suHosp.longitude,
@@ -588,26 +590,56 @@ app.get('/v1/hospitals', (req: Request, res: Response) => {
  * POST /v1/hospitals
  */
 app.post('/v1/hospitals', async (req: Request, res: Response) => {
-  const { hospital, inventory } = req.body;
-  if (!hospital || !hospital.id || !hospital.name) {
+  let hospital: Hospital;
+  let inventory: HospitalInventory;
+
+  if (req.body.hospital && req.body.hospital.id && req.body.hospital.name) {
+    hospital = req.body.hospital;
+    inventory = req.body.inventory || {
+      hospitalId: hospital.id,
+      icuBedsAvailable: 5,
+      generalBedsAvailable: 15,
+      cardiacBedsAvailable: 3,
+      traumaBedsAvailable: 4,
+      ambulancesAvailable: 2,
+      totalAmbulanceFleet: 4,
+      lastUpdatedAt: new Date(),
+    };
+  } else if (req.body.id && req.body.name) {
+    hospital = {
+      id: req.body.id,
+      name: req.body.name,
+      licenseId: req.body.licenseId || `LIC-CA-${Math.floor(10000 + Math.random() * 90000)}`,
+      email: req.body.email || 'admin@hospital.org',
+      address: req.body.address || 'Medical Center Drive',
+      latitude: req.body.latitude || 37.7749,
+      longitude: req.body.longitude || -122.4194,
+      pricingTier: req.body.pricingTier || 2,
+      serviceTags: req.body.serviceTags || ['cardiac', 'trauma', 'icu'],
+      acceptedInsurance: req.body.acceptedInsurance || ['BlueCross'],
+      phoneNumber: req.body.phoneNumber || '+1-555-0190',
+      isActive: true
+    };
+    inventory = {
+      hospitalId: hospital.id,
+      icuBedsAvailable: 5,
+      generalBedsAvailable: 15,
+      cardiacBedsAvailable: 3,
+      traumaBedsAvailable: 4,
+      ambulancesAvailable: req.body.totalAmbulanceFleet || 4,
+      totalAmbulanceFleet: req.body.totalAmbulanceFleet || 4,
+      lastUpdatedAt: new Date(),
+    };
+  } else {
     return res.status(400).json({ error: 'Invalid hospital registration payload' });
   }
-  const inv = inventory || {
-    hospitalId: hospital.id,
-    icuBedsAvailable: 5,
-    generalBedsAvailable: 15,
-    cardiacBedsAvailable: 3,
-    traumaBedsAvailable: 4,
-    ambulancesAvailable: 2,
-    totalAmbulanceFleet: 4,
-    lastUpdatedAt: new Date(),
-  };
-  hospitalMatchingService.registerHospital(hospital, inv);
+
+  hospitalMatchingService.registerHospital(hospital, inventory);
 
   // Sync to Supabase active database
-  syncHospitalToSupabase(hospital, inv);
+  syncHospitalToSupabase(hospital, inventory);
 
-  return res.status(201).json({ hospital, inventory: inv });
+  return res.status(201).json({ hospital, inventory });
 });
 
 /**

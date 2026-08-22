@@ -78,6 +78,7 @@ export interface Hospital {
   id: string;
   name: string;
   licenseId: string;
+  email?: string;
   phoneNumber: string;
   address: string;
   latitude: number;
